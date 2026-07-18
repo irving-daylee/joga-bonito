@@ -1368,6 +1368,17 @@ const HISTORY = {
   }
 };
 
+let srzaData = null;
+async function loadSRZA() {
+  try {
+    const res = await fetch('data/srza.json');
+    if (!res.ok) return;
+    srzaData = await res.json();
+    const active = document.querySelector('.bottomnav .active');
+    if (active && active.dataset.page === 'pageSchedule') renderSchedulePage();
+  } catch(e) {}
+}
+
 function avatarHTML(player, sizeClass) {
   const cls = sizeClass ? `avatar ${sizeClass}` : 'avatar';
   if (player && player.photo) {
@@ -2703,6 +2714,24 @@ function renderSchedulePage() {
       <button class="btn btn-outline btn-sm" onclick="openAddMatchModal()">+ Wedstrijd toevoegen</button></div>`;
   }
 
+  if (srzaData && srzaData.programma && srzaData.programma.length) {
+    h += `<div class="section-header" style="margin-top:16px"><h2 class="section-title">SRZA Programma</h2>
+      <span style="font-size:0.65rem;color:var(--text-muted)">srza.nl</span></div>`;
+    h += `<div class="card">`;
+    srzaData.programma.forEach(m => {
+      const d = new Date(m.date);
+      h += `<div class="schedule-match">
+        <div class="sched-date"><div class="sched-day">${d.getDate()}</div>${d.toLocaleDateString('nl-NL',{month:'short'})}</div>
+        <div class="sched-info">
+          <div class="sched-opponent">${m.opp}</div>
+          <div class="sched-meta">${m.hal} · ${m.time}${m.home ? ' (thuis)' : ' (uit)'}</div>
+        </div>
+        <div class="sched-result upcoming">–</div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
   h += `<div class="section-header" style="margin-top:16px"><h2 class="section-title">Uitslagen</h2>
     <button class="btn btn-outline btn-sm" onclick="openRetroModal()">Achteraf invoeren</button></div>`;
 
@@ -2723,6 +2752,12 @@ function renderSchedulePage() {
     h += `</div>`;
   } else {
     h += `<div class="empty-state" style="padding:20px 0"><p style="color:var(--text-muted)">Nog geen uitslagen</p></div>`;
+  }
+
+  if (srzaData) {
+    const updated = new Date(srzaData.lastUpdated);
+    h += `<p style="text-align:center;font-size:0.65rem;color:var(--text-muted);margin-top:12px">
+      SRZA data: ${updated.toLocaleDateString('nl-NL')} · ${srzaData.standen?.length||0} teams · ${srzaData.uitslagen?.length||0} wedstrijden</p>`;
   }
 
   c.innerHTML = h;
@@ -3086,6 +3121,7 @@ function formatDate(d) {
 // =========================================================
 document.getElementById('seasonBadge').textContent = DB.season;
 renderMatchView();
+loadSRZA();
 </script>
 </body>
 </html>

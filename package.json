@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "scrape": "node scripts/scrape-srza.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
