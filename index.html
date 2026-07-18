@@ -128,11 +128,11 @@ h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; }
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 6px 12px;
+  padding: 6px 6px;
   cursor: pointer;
   color: var(--text-muted);
   font-family: 'Nunito', sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 600;
   transition: color var(--transition);
   position: relative;
@@ -715,6 +715,158 @@ label {
 .sched-result.draw { background: var(--draw-bg); color: var(--text-muted); }
 .sched-result.upcoming { background: var(--bg); color: var(--text-muted); font-weight: 600; font-size: 0.78rem; }
 
+/* ===== SEASON SELECTOR ===== */
+.season-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.season-tabs::-webkit-scrollbar { display: none; }
+.season-tab {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+.season-tab.active {
+  background: var(--navy);
+  color: var(--on-primary);
+  border-color: var(--navy);
+}
+
+/* ===== STANDINGS TABLE ===== */
+.standings-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.standings-table {
+  width: 100%;
+  font-size: 0.72rem;
+  border-collapse: collapse;
+  min-width: 340px;
+}
+.standings-table th {
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.6rem;
+  letter-spacing: 0.3px;
+  padding: 8px 3px;
+  border-bottom: 2px solid var(--border);
+  text-align: center;
+}
+.standings-table th:nth-child(2) { text-align: left; }
+.standings-table td {
+  padding: 7px 3px;
+  text-align: center;
+  border-bottom: 1px solid var(--bg);
+  font-weight: 500;
+}
+.standings-table td:nth-child(2) { text-align: left; font-weight: 600; font-size: 0.7rem; }
+.standings-table tr.highlight { background: var(--navy-10); }
+.standings-table tr.highlight td { font-weight: 700; }
+.standings-table tr.highlight td:nth-child(2) { color: var(--navy); font-weight: 800; }
+.standings-table .pts { font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--navy); }
+.standings-table .ds-pos { color: var(--navy); }
+.standings-table .ds-neg { color: var(--card-red); }
+
+/* ===== ANALYSE / INSIGHTS ===== */
+.insight-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.insight-tag {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.insight-tag.positive { background: rgba(16,185,129,0.1); color: #059669; }
+.insight-tag.neutral { background: var(--navy-10); color: var(--navy); }
+.insight-tag.warning { background: rgba(245,158,11,0.1); color: #D97706; }
+.insight-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-bottom: 6px;
+}
+.insight-body {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.insight-body strong {
+  color: var(--text);
+  font-weight: 700;
+}
+.insight-stat {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  color: var(--navy);
+}
+.analyse-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.analyse-header h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.analyse-header p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.history-result {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bg);
+  gap: 10px;
+  font-size: 0.82rem;
+}
+.history-result:last-child { border-bottom: none; }
+.history-result .hr-date {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  min-width: 50px;
+  font-weight: 600;
+}
+.history-result .hr-opp { flex: 1; font-weight: 600; }
+.history-result .hr-ha {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.history-result .hr-score {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  min-width: 48px;
+  text-align: center;
+}
+.hr-score.win { background: var(--win-bg); color: var(--navy); }
+.hr-score.loss { background: var(--loss-bg); color: var(--card-red); }
+.hr-score.draw { background: var(--draw-bg); color: var(--text-muted); }
+
 /* ===== MISC ===== */
 .section-header {
   display: flex;
@@ -1040,6 +1192,7 @@ label {
 <div class="page" id="pageTeam"><div id="teamContent"></div></div>
 <div class="page" id="pageStats"><div id="statsContent"></div></div>
 <div class="page" id="pageSchedule"><div id="scheduleContent"></div></div>
+<div class="page" id="pageAnalyse"><div id="analyseContent"></div></div>
 
 <div class="bottomnav">
   <button class="active" data-page="pageMatch">
@@ -1053,6 +1206,9 @@ label {
   </button>
   <button data-page="pageSchedule">
     <span class="nav-icon">&#128197;</span><span>Wedstrijden</span>
+  </button>
+  <button data-page="pageAnalyse">
+    <span class="nav-icon">&#129504;</span><span>Analyse</span>
   </button>
 </div>
 
@@ -1112,6 +1268,105 @@ function loadData() {
 function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }
 function getPlayer(id) { return DB.players.find(p => p.id === id); }
 function getPlayerName(id) { const p = getPlayer(id); return p ? p.name : '?'; }
+
+const HISTORY = {
+  '2025/26': {
+    team: { played: 20, wins: 14, draws: 2, losses: 4, goalsFor: 130, goalsAgainst: 63, position: 3, points: 44 },
+    totalGoals: 155, totalAssists: 120,
+    players: [
+      { name: 'Irving', goals: 34, assists: 18, played: 16 },
+      { name: 'Lawin', goals: 30, assists: 27, played: 18 },
+      { name: 'Kenneth', goals: 25, assists: 15, played: 15 },
+      { name: 'Said', goals: 16, assists: 10, played: 21 },
+      { name: 'Rayvano', goals: 14, assists: 5, played: 9 },
+      { name: 'Lyzairo', goals: 13, assists: 14, played: 23 },
+      { name: 'Amine', goals: 13, assists: 15, played: 11 },
+      { name: 'Bobby', goals: 3, assists: 7, played: 6 },
+      { name: 'Jamal', goals: 1, assists: 4, played: 4 },
+      { name: 'Marco', goals: 0, assists: 3, played: 21 },
+      { name: 'Erfan', goals: 0, assists: 2, played: 3 },
+      { name: 'Lorenzo', goals: 0, assists: 0, played: 1 },
+    ],
+    standings: [
+      { pos: 1, team: 'AS Sport Events', g: 20, w: 15, gl: 3, v: 2, dv: 141, dt: 76, ds: 65, p: 48 },
+      { pos: 2, team: 'Mladost', g: 20, w: 15, gl: 1, v: 4, dv: 117, dt: 77, ds: 40, p: 46 },
+      { pos: 3, team: 'Joga Bonito', g: 20, w: 14, gl: 2, v: 4, dv: 130, dt: 63, ds: 67, p: 44 },
+      { pos: 4, team: 'Jai Hanuman 1', g: 20, w: 9, gl: 3, v: 8, dv: 81, dt: 73, ds: 8, p: 30 },
+      { pos: 5, team: 'Old Legends', g: 20, w: 9, gl: 3, v: 8, dv: 81, dt: 73, ds: 8, p: 30 },
+      { pos: 6, team: 'Novia Facts', g: 20, w: 7, gl: 3, v: 10, dv: 65, dt: 114, ds: -49, p: 24 },
+      { pos: 7, team: 'Weddingcars by DK', g: 20, w: 5, gl: 6, v: 9, dv: 56, dt: 81, ds: -25, p: 21 },
+      { pos: 8, team: 'Cordoba Concept', g: 20, w: 5, gl: 4, v: 11, dv: 85, dt: 94, ds: -9, p: 19 },
+      { pos: 9, team: 'Green Monday Energy', g: 20, w: 5, gl: 4, v: 11, dv: 64, dt: 94, ds: -30, p: 19 },
+      { pos: 10, team: 'CLK Engineering', g: 20, w: 4, gl: 4, v: 12, dv: 66, dt: 97, ds: -31, p: 16 },
+      { pos: 11, team: 'APS', g: 20, w: 4, gl: 3, v: 13, dv: 51, dt: 85, ds: -44, p: 12 },
+    ],
+    results: [
+      { date: '2025-09-11', opp: 'Weddingcars by DK', jb: 2, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2025-09-30', opp: 'Green Monday Energy', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' },
+      { date: '2025-10-07', opp: 'Old Legends', jb: 2, opp_s: 3, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2025-10-09', opp: 'Wonam', jb: 8, opp_s: 2, hal: 'Buiten', home: false, comp: 'BK' },
+      { date: '2025-10-30', opp: 'Novia Facts', jb: 18, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' },
+      { date: '2025-11-06', opp: 'Mladost', jb: 2, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2025-11-13', opp: 'AS Sport Events', jb: 5, opp_s: 6, hal: 'Buiten', home: true, comp: '1B' },
+      { date: '2025-11-24', opp: 'Jai Hanuman 1', jb: 3, opp_s: 3, hal: 'Haven', home: true, comp: '1B' },
+      { date: '2025-11-27', opp: 'The Woo FC', jb: 15, opp_s: 0, hal: 'Buiten', home: false, comp: 'BK' },
+      { date: '2025-12-15', opp: 'CLK Engineering', jb: 10, opp_s: 5, hal: 'Haven', home: false, comp: '1B' },
+      { date: '2026-01-05', opp: 'RK Bouw & Project', jb: 2, opp_s: 5, hal: 'Haven', home: false, comp: 'BK' },
+      { date: '2026-01-08', opp: 'APS', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' },
+      { date: '2026-01-20', opp: 'Cordoba Concept', jb: 6, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2026-02-02', opp: 'Weddingcars by DK', jb: 8, opp_s: 4, hal: 'Haven', home: false, comp: '1B' },
+      { date: '2026-02-19', opp: 'Green Monday Energy', jb: 10, opp_s: 3, hal: 'Buiten', home: true, comp: '1B' },
+      { date: '2026-03-05', opp: 'Old Legends', jb: 6, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2026-03-16', opp: 'Novia Facts', jb: 10, opp_s: 3, hal: 'Haven', home: true, comp: '1B' },
+      { date: '2026-03-23', opp: 'Mladost', jb: 8, opp_s: 6, hal: 'Haven', home: false, comp: '1B' },
+      { date: '2026-03-30', opp: 'AS Sport Events', jb: 5, opp_s: 7, hal: 'Haven', home: true, comp: '1B' },
+      { date: '2026-04-14', opp: 'Jai Hanuman 1', jb: 1, opp_s: 3, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2026-04-23', opp: 'CLK Engineering', jb: 7, opp_s: 4, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2026-05-21', opp: 'APS', jb: 5, opp_s: 0, hal: 'Waterwijk', home: true, comp: '1B' },
+      { date: '2026-06-01', opp: 'Cordoba Concept', jb: 4, opp_s: 3, hal: 'Stad', home: false, comp: '1B' },
+    ]
+  },
+  '2024/25': {
+    totalGoals: 132, totalAssists: 96,
+    players: [
+      { name: 'Kenneth', goals: 29, assists: 18, played: 20 },
+      { name: 'Irving', goals: 24, assists: 14, played: 17 },
+      { name: 'Rayvano', goals: 22, assists: 14, played: 18 },
+      { name: 'Said', goals: 10, assists: 6, played: 18 },
+      { name: 'Bobby', goals: 9, assists: 13, played: 13 },
+      { name: 'Ahmed', goals: 8, assists: 2, played: 13 },
+      { name: 'Lorenzo', goals: 7, assists: 10, played: 12 },
+      { name: 'Faissel', goals: 6, assists: 2, played: 7 },
+      { name: 'Jamal', goals: 3, assists: 3, played: 6 },
+      { name: 'Lyzairo', goals: 3, assists: 0, played: 5 },
+      { name: 'Erfan', goals: 1, assists: 12, played: 15 },
+      { name: 'Saber', goals: 1, assists: 0, played: 2 },
+      { name: 'Zakaria', goals: 0, assists: 2, played: 9 },
+      { name: 'Marco', goals: 0, assists: 0, played: 10 },
+    ]
+  },
+  'all': {
+    totalGoals: 287, totalAssists: 216,
+    players: [
+      { name: 'Irving', goals: 58, assists: 32, played: 33 },
+      { name: 'Kenneth', goals: 54, assists: 33, played: 35 },
+      { name: 'Rayvano', goals: 36, assists: 19, played: 27 },
+      { name: 'Lawin', goals: 30, assists: 27, played: 18 },
+      { name: 'Said', goals: 26, assists: 16, played: 39 },
+      { name: 'Lyzairo', goals: 16, assists: 14, played: 28 },
+      { name: 'Amine', goals: 13, assists: 15, played: 11 },
+      { name: 'Bobby', goals: 12, assists: 20, played: 19 },
+      { name: 'Ahmed', goals: 8, assists: 2, played: 13 },
+      { name: 'Lorenzo', goals: 7, assists: 10, played: 13 },
+      { name: 'Faissel', goals: 6, assists: 2, played: 7 },
+      { name: 'Jamal', goals: 4, assists: 7, played: 10 },
+      { name: 'Erfan', goals: 1, assists: 14, played: 18 },
+      { name: 'Saber', goals: 1, assists: 0, played: 2 },
+      { name: 'Marco', goals: 0, assists: 3, played: 31 },
+      { name: 'Zakaria', goals: 0, assists: 2, played: 9 },
+    ]
+  }
+};
 
 function avatarHTML(player, sizeClass) {
   const cls = sizeClass ? `avatar ${sizeClass}` : 'avatar';
@@ -1196,6 +1451,7 @@ function renderPage(id) {
     case 'pageTeam': renderTeamPage(); break;
     case 'pageStats': renderStatsPage(); break;
     case 'pageSchedule': renderSchedulePage(); break;
+    case 'pageAnalyse': renderAnalysePage(); break;
   }
 }
 function updateLiveDot() {
@@ -2119,20 +2375,44 @@ function closeMatchDetail() { document.getElementById('matchDetail').classList.r
 // =========================================================
 // STATS
 // =========================================================
+let selectedStatsSeason = 'current';
+
 function renderStatsPage() {
   const c = document.getElementById('statsContent');
-  const finished = DB.matches.filter(m => m.status === 'finished');
+  const seasons = [
+    { key: 'current', label: DB.season },
+    { key: '2025/26', label: '2025/26' },
+    { key: '2024/25', label: '2024/25' },
+    { key: 'all', label: 'All-time' }
+  ];
 
+  let h = `<div class="season-tabs">`;
+  seasons.forEach(s => {
+    h += `<button class="season-tab ${s.key===selectedStatsSeason?'active':''}" onclick="selectedStatsSeason='${s.key}';renderStatsPage()">${s.label}</button>`;
+  });
+  h += `</div>`;
+
+  if (selectedStatsSeason === 'current') {
+    h += renderCurrentSeasonStats();
+    c.innerHTML = h;
+    setupCurrentLeaderboard();
+  } else {
+    h += renderHistoricalStats(selectedStatsSeason);
+    c.innerHTML = h;
+    setupHistoricalLeaderboard(selectedStatsSeason);
+  }
+}
+
+function renderCurrentSeasonStats() {
+  const finished = DB.matches.filter(m => m.status === 'finished');
   if (!finished.length) {
-    c.innerHTML = `<div class="empty-state"><div class="empty-icon">&#128202;</div>
+    return `<div class="empty-state"><div class="empty-icon">&#128202;</div>
       <h3>Nog geen statistieken</h3><p>Speel je eerste wedstrijd</p></div>`;
-    return;
   }
 
   let totalFor=0, totalAgainst=0, wins=0, draws=0, losses=0, cleanSheets=0;
   finished.forEach(m => {
-    totalFor += m.scoreHome;
-    totalAgainst += m.scoreAway;
+    totalFor += m.scoreHome; totalAgainst += m.scoreAway;
     if (m.scoreHome > m.scoreAway) wins++;
     else if (m.scoreHome < m.scoreAway) losses++;
     else draws++;
@@ -2140,25 +2420,23 @@ function renderStatsPage() {
   });
 
   const n = finished.length;
-  let h = `<div class="section-header"><h2 class="section-title">Seizoen ${DB.season}</h2></div>
-    <div class="stat-grid">
-      <div class="stat-box"><div class="stat-value">${n}</div><div class="stat-label">Gespeeld</div></div>
-      <div class="stat-box"><div class="stat-value">${wins}</div><div class="stat-label">Gewonnen</div></div>
-      <div class="stat-box"><div class="stat-value">${draws}</div><div class="stat-label">Gelijk</div></div>
-      <div class="stat-box"><div class="stat-value">${losses}</div><div class="stat-label">Verloren</div></div>
-    </div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat-box"><div class="stat-value">${totalFor}</div><div class="stat-label">Goals voor</div></div>
-      <div class="stat-box"><div class="stat-value">${totalAgainst}</div><div class="stat-label">Goals tegen</div></div>
-      <div class="stat-box"><div class="stat-value">${cleanSheets}</div><div class="stat-label">Clean sheets</div></div>
-    </div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat-box"><div class="stat-value">${(totalFor/n).toFixed(1)}</div><div class="stat-label">Gem. voor</div></div>
-      <div class="stat-box"><div class="stat-value">${(totalAgainst/n).toFixed(1)}</div><div class="stat-label">Gem. tegen</div></div>
-      <div class="stat-box"><div class="stat-value">${((totalFor-totalAgainst)/n).toFixed(1)}</div><div class="stat-label">Doelsaldo</div></div>
-    </div>`;
+  let h = `<div class="stat-grid">
+    <div class="stat-box"><div class="stat-value">${n}</div><div class="stat-label">Gespeeld</div></div>
+    <div class="stat-box"><div class="stat-value">${wins}</div><div class="stat-label">Gewonnen</div></div>
+    <div class="stat-box"><div class="stat-value">${draws}</div><div class="stat-label">Gelijk</div></div>
+    <div class="stat-box"><div class="stat-value">${losses}</div><div class="stat-label">Verloren</div></div>
+  </div>
+  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-box"><div class="stat-value">${totalFor}</div><div class="stat-label">Goals voor</div></div>
+    <div class="stat-box"><div class="stat-value">${totalAgainst}</div><div class="stat-label">Goals tegen</div></div>
+    <div class="stat-box"><div class="stat-value">${cleanSheets}</div><div class="stat-label">Clean sheets</div></div>
+  </div>
+  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-box"><div class="stat-value">${(totalFor/n).toFixed(1)}</div><div class="stat-label">Gem. voor</div></div>
+    <div class="stat-box"><div class="stat-value">${(totalAgainst/n).toFixed(1)}</div><div class="stat-label">Gem. tegen</div></div>
+    <div class="stat-box"><div class="stat-value">${((totalFor-totalAgainst)/n).toFixed(1)}</div><div class="stat-label">Doelsaldo</div></div>
+  </div>`;
 
-  // Phase analysis
   const phaseKeys = ['0-5','5-10','10-15','15-20','20-25','25-30','30-35','35-40'];
   const phases = {};
   phaseKeys.forEach(k => { phases[k] = { for:0, against:0 }; });
@@ -2192,7 +2470,20 @@ function renderStatsPage() {
   });
   h += `</div></div>`;
 
-  // Player stats
+  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2></div>
+    <div class="tab-row" id="statTabs">
+      <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
+      <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
+      <button class="tab-btn" data-sort="motm">&#11088; MOTM</button>
+      <button class="tab-btn" data-sort="cards">Kaarten</button>
+    </div>
+    <div class="card" id="leaderboard"></div>`;
+  return h;
+}
+
+function setupCurrentLeaderboard() {
+  const finished = DB.matches.filter(m => m.status === 'finished');
+  if (!finished.length) return;
   const ps = {};
   DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0 }; });
   finished.forEach(m => {
@@ -2211,19 +2502,7 @@ function renderStatsPage() {
     if (m.motm && ps[m.motm]) ps[m.motm].motm++;
     if (m.scoreAway === 0 && m.keeper && ps[m.keeper]) ps[m.keeper].cleanSheets++;
   });
-
-  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2></div>
-    <div class="tab-row" id="statTabs">
-      <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
-      <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
-      <button class="tab-btn" data-sort="motm">&#11088; MOTM</button>
-      <button class="tab-btn" data-sort="cards">Kaarten</button>
-    </div>
-    <div class="card" id="leaderboard"></div>`;
-
-  c.innerHTML = h;
   renderLeaderboard(ps, 'goals');
-
   document.querySelectorAll('#statTabs .tab-btn').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('#statTabs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -2234,6 +2513,8 @@ function renderStatsPage() {
 }
 
 function renderLeaderboard(ps, sortBy) {
+  const el = document.getElementById('leaderboard');
+  if (!el) return;
   let sortFn;
   if (sortBy==='goals') sortFn = (a,b) => b[1].goals-a[1].goals || b[1].assists-a[1].assists;
   else if (sortBy==='assists') sortFn = (a,b) => b[1].assists-a[1].assists || b[1].goals-a[1].goals;
@@ -2246,7 +2527,7 @@ function renderLeaderboard(ps, sortBy) {
     <div class="avatar avatar-sm" style="visibility:hidden"></div>
     <span class="player-name" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);flex:1">Naam</span>
     <div class="lb-stats" style="color:var(--text-muted);font-size:0.72rem">
-      <span>⚽</span><span>🎯</span><span>⭐</span>
+      <span>&#9917;</span><span>&#127919;</span><span>&#11088;</span>
     </div>
   </div>`;
   sorted.forEach(([id, s], i) => {
@@ -2255,9 +2536,9 @@ function renderLeaderboard(ps, sortBy) {
     let stats = `<span>&#9917; ${s.goals}</span><span>&#127919; ${s.assists}</span>`;
     if (s.motm) stats += `<span>&#11088; ${s.motm}</span>`;
     if (s.cleanSheets) stats += `<span>&#129351; ${s.cleanSheets}</span>`;
-    if (s.greens) stats += `<span>🟢 ${s.greens}</span>`;
-    if (s.yellows) stats += `<span>🟡 ${s.yellows}</span>`;
-    if (s.reds) stats += `<span>🔴 ${s.reds}</span>`;
+    if (s.greens) stats += `<span>&#x1F7E2; ${s.greens}</span>`;
+    if (s.yellows) stats += `<span>&#x1F7E1; ${s.yellows}</span>`;
+    if (s.reds) stats += `<span>&#x1F534; ${s.reds}</span>`;
     h += `<div class="leaderboard-item">
       <span class="lb-rank ${i===0?'top':''}">${i+1}</span>
       ${avatarHTML(p, 'avatar-sm')}
@@ -2265,7 +2546,131 @@ function renderLeaderboard(ps, sortBy) {
       <div class="lb-stats">${stats}</div>
     </div>`;
   });
-  document.getElementById('leaderboard').innerHTML = h;
+  el.innerHTML = h;
+}
+
+function renderHistoricalStats(seasonKey) {
+  const data = HISTORY[seasonKey];
+  if (!data) return `<div class="empty-state"><p>Geen data beschikbaar</p></div>`;
+
+  const label = seasonKey === 'all' ? 'All-time' : seasonKey;
+  let h = '';
+
+  if (data.team && data.team.wins !== undefined) {
+    const t = data.team;
+    h += `<div class="stat-grid">
+      <div class="stat-box"><div class="stat-value">${t.played}</div><div class="stat-label">Gespeeld</div></div>
+      <div class="stat-box"><div class="stat-value">${t.wins}</div><div class="stat-label">Gewonnen</div></div>
+      <div class="stat-box"><div class="stat-value">${t.draws}</div><div class="stat-label">Gelijk</div></div>
+      <div class="stat-box"><div class="stat-value">${t.losses}</div><div class="stat-label">Verloren</div></div>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-box"><div class="stat-value">${t.goalsFor}</div><div class="stat-label">Goals voor</div></div>
+      <div class="stat-box"><div class="stat-value">${t.goalsAgainst}</div><div class="stat-label">Goals tegen</div></div>
+      <div class="stat-box"><div class="stat-value">${t.position}e</div><div class="stat-label">Eindstand</div></div>
+    </div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-box"><div class="stat-value">${(t.goalsFor/t.played).toFixed(1)}</div><div class="stat-label">Gem. voor</div></div>
+      <div class="stat-box"><div class="stat-value">${(t.goalsAgainst/t.played).toFixed(1)}</div><div class="stat-label">Gem. tegen</div></div>
+      <div class="stat-box"><div class="stat-value">+${t.goalsFor-t.goalsAgainst}</div><div class="stat-label">Doelsaldo</div></div>
+    </div>`;
+  } else {
+    h += `<div class="stat-grid" style="grid-template-columns:repeat(2,1fr)">
+      <div class="stat-box"><div class="stat-value">${data.totalGoals}</div><div class="stat-label">Goals</div></div>
+      <div class="stat-box"><div class="stat-value">${data.totalAssists}</div><div class="stat-label">Assists</div></div>
+    </div>`;
+  }
+
+  if (data.standings) {
+    h += `<div class="card" style="margin-top:4px">
+      <h3 style="font-size:0.88rem;margin-bottom:12px">Stand Poule 1B</h3>
+      <div class="standings-wrap"><table class="standings-table">
+        <tr><th>#</th><th>Team</th><th>G</th><th>W</th><th>GL</th><th>V</th><th>DV</th><th>DT</th><th>+/-</th><th>P</th></tr>`;
+    data.standings.forEach(r => {
+      const hl = r.team === 'Joga Bonito' ? ' class="highlight"' : '';
+      const dsClass = r.ds > 0 ? 'ds-pos' : (r.ds < 0 ? 'ds-neg' : '');
+      h += `<tr${hl}>
+        <td>${r.pos}</td><td>${r.team}</td><td>${r.g}</td><td>${r.w}</td><td>${r.gl}</td><td>${r.v}</td>
+        <td>${r.dv}</td><td>${r.dt}</td><td class="${dsClass}">${r.ds > 0 ? '+' : ''}${r.ds}</td><td class="pts">${r.p}</td>
+      </tr>`;
+    });
+    h += `</table></div></div>`;
+  }
+
+  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2></div>
+    <div class="tab-row" id="historyTabs">
+      <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
+      <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
+      <button class="tab-btn" data-sort="ratio">&#9889; Ratio</button>
+    </div>
+    <div class="card" id="historyLeaderboard"></div>`;
+
+  if (data.results && data.results.length) {
+    h += `<div class="section-header" style="margin-top:16px"><h2 class="section-title">Uitslagen</h2></div>
+      <div class="card">`;
+    data.results.forEach(r => {
+      const d = new Date(r.date);
+      const res = r.jb > r.opp_s ? 'win' : (r.jb < r.opp_s ? 'loss' : 'draw');
+      const badge = r.comp === 'BK' ? `<span style="font-size:0.55rem;background:var(--navy-10);padding:1px 5px;border-radius:8px;font-weight:700;color:var(--navy);margin-left:4px">BEKER</span>` : '';
+      h += `<div class="history-result">
+        <span class="hr-date">${d.getDate()} ${d.toLocaleDateString('nl-NL',{month:'short'})}</span>
+        <span class="hr-opp">${r.opp}${badge}</span>
+        <span class="hr-ha">${r.home ? 'T' : 'U'}</span>
+        <span class="hr-score ${res}">${r.jb} – ${r.opp_s}</span>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+  return h;
+}
+
+function setupHistoricalLeaderboard(seasonKey) {
+  const data = HISTORY[seasonKey];
+  if (!data) return;
+  renderHistoricalPlayerList(data.players, 'goals');
+  document.querySelectorAll('#historyTabs .tab-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#historyTabs .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderHistoricalPlayerList(data.players, btn.dataset.sort);
+    };
+  });
+}
+
+function renderHistoricalPlayerList(players, sortBy) {
+  const el = document.getElementById('historyLeaderboard');
+  if (!el) return;
+  const sorted = [...players].sort((a, b) => {
+    if (sortBy === 'goals') return b.goals - a.goals || b.assists - a.assists;
+    if (sortBy === 'assists') return b.assists - a.assists || b.goals - a.goals;
+    const ra = a.played ? (a.goals + a.assists) / a.played : 0;
+    const rb = b.played ? (b.goals + b.assists) / b.played : 0;
+    return rb - ra;
+  });
+
+  let h = `<div class="leaderboard-item" style="border-bottom:2px solid var(--border);padding-bottom:8px">
+    <span class="lb-rank" style="font-size:0.7rem;color:var(--text-muted)">#</span>
+    <span class="player-name" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);flex:1">Naam</span>
+    <div class="lb-stats" style="color:var(--text-muted);font-size:0.68rem">
+      <span>&#9917;</span><span>&#127919;</span><span>GP</span><span>R</span>
+    </div>
+  </div>`;
+  sorted.forEach((p, i) => {
+    const ratio = p.played ? ((p.goals + p.assists) / p.played).toFixed(1) : '–';
+    const dbPlayer = DB.players.find(dp => dp.name === p.name);
+    const avatar = dbPlayer ? avatarHTML(dbPlayer, 'avatar-sm') : `<div class="avatar avatar-sm">?</div>`;
+    h += `<div class="leaderboard-item">
+      <span class="lb-rank ${i===0?'top':''}">${i+1}</span>
+      ${avatar}
+      <span class="player-name" style="font-size:0.88rem;flex:1">${p.name}</span>
+      <div class="lb-stats">
+        <span>&#9917; ${p.goals}</span><span>&#127919; ${p.assists}</span>
+        <span style="color:var(--text-muted)">${p.played}</span>
+        <span style="color:var(--navy);font-weight:800">${ratio}</span>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = h;
 }
 
 // =========================================================
@@ -2602,6 +3007,65 @@ function saveRetroMatch() {
 
   retroState = null;
   saveData(); closeModal(); renderSchedulePage();
+}
+
+// =========================================================
+// ANALYSE
+// =========================================================
+function renderAnalysePage() {
+  const c = document.getElementById('analyseContent');
+  const insights = [
+    {
+      tag: 'positive', tagText: 'Topscorer',
+      title: 'Irving pakt de troon',
+      body: `Irving is met <span class="insight-stat">58 goals</span> de all-time topscorer, Kenneth volgt met <span class="insight-stat">54</span>. In 2025/26 vergrootte Irving de kloof: <strong>34 goals in 16 wedstrijden</strong> (ratio 3,3) tegenover Kenneth's 25 in 15 wedstrijden. Kenneth compenseert met meer assists all-time (33 vs 32).`
+    },
+    {
+      tag: 'positive', tagText: 'Impact',
+      title: 'Lawin: instant hit',
+      body: `Eerste seizoen, directe impact: <span class="insight-stat">30 goals</span> en <span class="insight-stat">27 assists</span> in 18 wedstrijden. Ratio van <strong>3,2 betrokkenheid per wedstrijd</strong> — de hoogste van het team. Lawin werd in zijn debuutjaar direct de tweede topscorer.`
+    },
+    {
+      tag: 'warning', tagText: 'Risico',
+      title: 'Big Three afhankelijkheid',
+      body: `Irving, Lawin en Kenneth scoren samen <span class="insight-stat">57%</span> van alle goals (89 van 155 in 2025/26) en leveren <span class="insight-stat">50%</span> van de assists. Als een van hen wegvalt, mist het team direct slagkracht. Geen andere speler scoort meer dan 16 goals per seizoen.`
+    },
+    {
+      tag: 'neutral', tagText: 'Analyse',
+      title: 'Beste aanval, toch derde',
+      body: `Met <span class="insight-stat">+67 doelsaldo</span> (130 voor, 63 tegen) had Joga Bonito het beste saldo van de competitie — beter dan kampioen AS Sport Events (+65). Toch eindigde het team 3e met 44 punten, 4 punten achter de koploper. De 4 verliespartijen waren het verschil.`
+    },
+    {
+      tag: 'warning', tagText: 'Zwakte',
+      title: 'Moeite met de top-2',
+      body: `Tegen AS Sport Events en Mladost: <strong>1 winst, 0 gelijk, 3 verliespartijen</strong>. Tegen de rest van de competitie: 13 winst, 2 gelijk, 1 verlies. De directe confrontaties met de top-2 kosten het kampioenschap. De enige winst was uit bij Mladost (8-6).`
+    },
+    {
+      tag: 'positive', tagText: 'X-Factor',
+      title: 'Amine: de verborgen kracht',
+      body: `<span class="insight-stat">13 goals</span> en <span class="insight-stat">15 assists</span> in slechts 11 wedstrijden — een ratio van 2,5. Wanneer Amine beschikbaar is, is hij een van de gevaarlijkste spelers. Meer beschikbaarheid zou het verschil kunnen maken in de titelstrijd.`
+    },
+    {
+      tag: 'positive', tagText: 'Groei',
+      title: 'Aanvalskracht groeit',
+      body: `Van <span class="insight-stat">132 goals</span> in 2024/25 naar <span class="insight-stat">155 goals</span> in 2025/26: een stijging van <strong>17%</strong>. De assists groeiden van 96 naar 120 (+25%). Het team wordt steeds trefzekerder en creatiever. Met Lawin erbij is de aanval compleet getransformeerd.`
+    }
+  ];
+
+  let h = `<div class="analyse-header">
+    <h2>AI Analyse</h2>
+    <p>Inzichten op basis van 2 seizoenen data</p>
+  </div>`;
+
+  insights.forEach(ins => {
+    h += `<div class="insight-card">
+      <span class="insight-tag ${ins.tag}">${ins.tagText}</span>
+      <div class="insight-title">${ins.title}</div>
+      <div class="insight-body">${ins.body}</div>
+    </div>`;
+  });
+
+  c.innerHTML = h;
 }
 
 // =========================================================
