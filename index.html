@@ -1400,8 +1400,9 @@ let srzaShowAllResults = false;
 
 function matchTypeHTML(comp) {
   if (!comp) return '';
-  if (comp === 'BK') return '<span class="match-type beker">Beker</span>';
-  if (/^\d/.test(comp)) return '<span class="match-type comp">Competitie</span>';
+  if (comp === 'comp' || /^\d/.test(comp)) return '<span class="match-type comp">Competitie</span>';
+  if (comp === 'beker' || comp === 'BK') return '<span class="match-type beker">Beker</span>';
+  if (comp === 'friendly') return '<span class="match-type friendly">Vriendschappelijk</span>';
   return '<span class="match-type friendly">' + comp + '</span>';
 }
 
@@ -2744,7 +2745,7 @@ function renderSchedulePage() {
       h += `<div class="schedule-match" onclick="openScheduleMatchOptions('${m.id}')" style="cursor:pointer">
         <div class="sched-date"><div class="sched-day">${d.getDate()}</div>${d.toLocaleDateString('nl-NL',{month:'short'})}</div>
         <div class="sched-info">
-          <div class="sched-opponent">${m.opponent||'TBD'}</div>
+          <div class="sched-opponent">${m.opponent||'TBD'} ${matchTypeHTML(m.comp)}</div>
           <div class="sched-meta">${m.sporthal||''}</div>
         </div>
         <div class="sched-result upcoming">–</div>
@@ -2789,7 +2790,7 @@ function renderSchedulePage() {
       h += `<div class="schedule-match" onclick="showMatchDetail('${m.id}')" style="cursor:pointer">
         <div class="sched-date"><div class="sched-day">${d.getDate()}</div>${d.toLocaleDateString('nl-NL',{month:'short'})}</div>
         <div class="sched-info">
-          <div class="sched-opponent">${m.opponent||'TBD'}</div>
+          <div class="sched-opponent">${m.opponent||'TBD'} ${matchTypeHTML(m.comp)}</div>
           <div class="sched-meta">${m.sporthal||''}</div>
         </div>
         <div class="sched-result ${res}">${m.scoreHome} – ${m.scoreAway}</div>
@@ -2843,6 +2844,12 @@ function openAddMatchModal() {
   openModal(`<h3>Wedstrijd Toevoegen</h3>
     <div class="form-group"><label>Tegenstander</label><input type="text" id="schedOpp" placeholder="Teamnaam"></div>
     <div class="form-group"><label>Datum</label><input type="date" id="schedDate" value="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="form-group"><label>Type</label>
+      <select id="schedType">
+        <option value="comp">Competitie</option>
+        <option value="beker">Beker</option>
+        <option value="friendly">Vriendschappelijk</option>
+      </select></div>
     <div class="form-group"><label>Sporthal</label>
       <select id="schedHall">
         <option value="">— Kies sporthal —</option>
@@ -2858,6 +2865,7 @@ function addScheduleMatch() {
   DB.matches.push({
     id:'m'+DB.nextMatchId++, date:document.getElementById('schedDate').value,
     opponent:opp, sporthal:document.getElementById('schedHall').value.trim(),
+    comp:document.getElementById('schedType').value,
     squad:[], lineup:[], keeper:null, captain:null, flyingKeeper:false,
     events:[], scoreHome:0, scoreAway:0, half:1, motm:null, status:'scheduled'
   });
@@ -2884,6 +2892,7 @@ function startLiveMatch(matchId) {
   const m = DB.matches[idx];
   DB.currentMatch = {
     id: m.id, date: m.date, opponent: m.opponent, sporthal: m.sporthal,
+    comp: m.comp || 'comp',
     squad: [], lineup: [], keeper: null, captain: null, flyingKeeper: false,
     events: [], scoreHome: 0, scoreAway: 0, half: 1, motm: null, status: 'setup'
   };
@@ -2912,7 +2921,8 @@ function openRetroModal(matchId) {
     matchId: matchId || null,
     opponent: m ? m.opponent : '',
     date: m ? m.date : new Date().toISOString().split('T')[0],
-    sporthal: m ? m.sporthal : '',
+    sporthal: m ? (m.sporthal || '') : '',
+    comp: m ? (m.comp || 'comp') : 'comp',
     scoreHome: 0,
     scoreAway: 0,
     goals: [],
@@ -2931,6 +2941,12 @@ function renderRetroModal() {
       <input type="text" id="retroOpp" value="${rs.opponent}" onchange="retroState.opponent=this.value"></div>
     <div class="form-group"><label>Datum</label>
       <input type="date" id="retroDate" value="${rs.date}" onchange="retroState.date=this.value"></div>
+    <div class="form-group"><label>Type</label>
+      <select id="retroType" onchange="retroState.comp=this.value">
+        <option value="comp" ${rs.comp==='comp'?'selected':''}>Competitie</option>
+        <option value="beker" ${rs.comp==='beker'?'selected':''}>Beker</option>
+        <option value="friendly" ${rs.comp==='friendly'?'selected':''}>Vriendschappelijk</option>
+      </select></div>
     <div class="form-group"><label>Sporthal</label>
       <select id="retroHall" onchange="retroState.sporthal=this.value">
         <option value="">— Kies sporthal —</option>
@@ -3106,11 +3122,13 @@ function saveRetroMatch() {
       m.events = events;
       m.motm = motm;
       m.status = 'finished';
+      if (rs.comp) m.comp = rs.comp;
     }
   } else {
     DB.matches.push({
       id: 'm' + DB.nextMatchId++,
       date: rs.date, opponent: rs.opponent.trim(), sporthal: rs.sporthal,
+      comp: rs.comp || 'comp',
       squad: [], lineup: [], keeper: null, captain: null, flyingKeeper: false,
       events, scoreHome, scoreAway, half: 2, motm, status: 'finished'
     });
