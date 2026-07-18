@@ -3141,58 +3141,201 @@ function saveRetroMatch() {
 // =========================================================
 // ANALYSE
 // =========================================================
+function generateInsights() {
+  const insights = [];
+  const srza = srzaData;
+  const hist = HISTORY['2025/26'];
+  const prev = HISTORY['2024/25'];
+  const all = HISTORY['all'];
+
+  const results = srza?.uitslagen || hist?.results || [];
+  const standen = srza?.standen || hist?.standings || [];
+  const players = hist?.players || [];
+  const allPlayers = all?.players || [];
+  const compResults = results.filter(r => /^\d/.test(r.comp));
+
+  const jb = standen.find(t => t.team.toUpperCase().includes('JOGA'));
+
+  // --- POSITIE ---
+  if (jb && standen.length >= 3) {
+    const leader = standen[0];
+    const gap = leader.p - jb.p;
+    if (jb.pos === 1) {
+      const second = standen[1];
+      insights.push({ tag: 'positive', tagText: 'Koploper',
+        title: 'Bovenaan de ranglijst',
+        body: `Joga Bonito staat op <span class="insight-stat">plek 1</span> met <span class="insight-stat">${jb.p} punten</span> uit ${jb.g} wedstrijden. ${jb.p - second.p} punten voorsprong op ${second.team}.`
+      });
+    } else {
+      insights.push({
+        tag: jb.pos <= 3 ? 'neutral' : 'warning', tagText: `#${jb.pos}`,
+        title: jb.pos <= 3 ? `Podiumplaats: ${jb.pos}e` : `Positie ${jb.pos} in de stand`,
+        body: `<span class="insight-stat">${jb.pos}e</span> met <span class="insight-stat">${jb.p} punten</span> uit ${jb.g} wedstrijden (${jb.w}W ${jb.gl}G ${jb.v}V). <span class="insight-stat">${gap} punten</span> achter koploper ${leader.team}. Doelsaldo: <strong>${jb.ds > 0 ? '+' : ''}${jb.ds}</strong> (${jb.dv} voor, ${jb.dt} tegen).`
+      });
+    }
+  }
+
+  // --- VORM LAATSTE 5 ---
+  if (results.length >= 5) {
+    const last5 = [...results].reverse().slice(0, 5);
+    const w = last5.filter(r => r.jb > r.opp_s).length;
+    const d = last5.filter(r => r.jb === r.opp_s).length;
+    const l = last5.filter(r => r.jb < r.opp_s).length;
+    const gf = last5.reduce((s, r) => s + r.jb, 0);
+    const form = last5.map(r => r.jb > r.opp_s ? 'W' : r.jb < r.opp_s ? 'V' : 'G').join(' ');
+    insights.push({
+      tag: w >= 4 ? 'positive' : l >= 3 ? 'warning' : 'neutral', tagText: 'Vorm',
+      title: w >= 4 ? 'Sterke reeks' : l >= 3 ? 'Vormcrisis' : 'Wisselvallig',
+      body: `Laatste 5: <span class="insight-stat">${w}W ${d}G ${l}V</span> (${form}). Gemiddeld <strong>${(gf / 5).toFixed(1)} goals</strong> per wedstrijd.${w === 5 ? ' Perfecte reeks!' : l === 0 ? ' Ongeslagen in de laatste 5.' : ''}`
+    });
+  }
+
+  // --- TOPSCORER ---
+  if (players.length >= 2) {
+    const top = [...players].sort((a, b) => b.goals - a.goals);
+    const p1 = top[0], p2 = top[1];
+    const ratio1 = (p1.goals / p1.played).toFixed(1);
+    const allTop = allPlayers.length >= 2 ? [...allPlayers].sort((a, b) => b.goals - a.goals) : [];
+    const isAllTimeTop = allTop.length && allTop[0].name === p1.name;
+    insights.push({ tag: 'positive', tagText: 'Topscorer',
+      title: `${p1.name}: ${p1.goals} goals`,
+      body: `Topscorer met <span class="insight-stat">${p1.goals} goals</span> in ${p1.played} wedstrijden (ratio ${ratio1}). ${p2.name} volgt met <span class="insight-stat">${p2.goals}</span>.${isAllTimeTop ? ` Ook all-time #1 met <strong>${allTop[0].goals} goals</strong> (${allTop[1].name}: ${allTop[1].goals}).` : ''}`
+    });
+  }
+
+  // --- TOP-3 AFHANKELIJKHEID ---
+  if (players.length >= 4 && hist?.totalGoals) {
+    const top3 = [...players].sort((a, b) => b.goals - a.goals).slice(0, 3);
+    const top3Goals = top3.reduce((s, p) => s + p.goals, 0);
+    const pct = Math.round(top3Goals / hist.totalGoals * 100);
+    if (pct >= 45) {
+      insights.push({
+        tag: pct >= 55 ? 'warning' : 'neutral', tagText: pct >= 55 ? 'Risico' : 'Focus',
+        title: `Top-3 scoort ${pct}% van alle goals`,
+        body: `${top3.map(p => p.name).join(', ')} scoren samen <span class="insight-stat">${top3Goals} van ${hist.totalGoals} goals</span> (${pct}%). ${pct >= 55 ? 'Hoge afhankelijkheid — als een van hen wegvalt, mist het team direct slagkracht.' : 'Goede concentratie, maar meer spreiding maakt het team onvoorspelbaarder.'}`
+      });
+    }
+  }
+
+  // --- DOELSALDO VS COMPETITIE ---
+  if (jb && standen.length >= 3 && jb.pos > 1) {
+    const bestDS = Math.max(...standen.map(t => t.ds));
+    const bestDV = Math.max(...standen.map(t => t.dv));
+    if (jb.ds === bestDS || jb.dv === bestDV) {
+      const leader = standen[0];
+      insights.push({ tag: 'neutral', tagText: 'Analyse',
+        title: jb.ds === bestDS ? 'Beste doelsaldo, toch geen titel' : 'Beste aanval van de competitie',
+        body: `Met <span class="insight-stat">${jb.ds > 0 ? '+' : ''}${jb.ds} doelsaldo</span> (${jb.dv} voor, ${jb.dt} tegen) ${jb.ds === bestDS ? 'het beste saldo' : 'de meeste goals'} van de competitie — ${jb.ds === bestDS ? `beter dan kampioen ${leader.team} (${leader.ds > 0 ? '+' : ''}${leader.ds})` : `meer dan nummer 1 ${leader.team} (${leader.dv})`}. Toch plek ${jb.pos}. De <strong>${jb.v} verliespartijen</strong> maakten het verschil.`
+      });
+    }
+  }
+
+  // --- THUIS VS UIT ---
+  if (results.length >= 6) {
+    const home = results.filter(r => r.home);
+    const away = results.filter(r => !r.home);
+    if (home.length >= 3 && away.length >= 3) {
+      const hw = home.filter(r => r.jb > r.opp_s).length;
+      const aw = away.filter(r => r.jb > r.opp_s).length;
+      const hgf = home.reduce((s, r) => s + r.jb, 0);
+      const agf = away.reduce((s, r) => s + r.jb, 0);
+      const hPct = Math.round(hw / home.length * 100);
+      const aPct = Math.round(aw / away.length * 100);
+      insights.push({
+        tag: Math.abs(hPct - aPct) > 25 ? 'neutral' : 'positive', tagText: 'Thuis/Uit',
+        title: hPct > aPct + 25 ? 'Thuismacht' : aPct > hPct + 25 ? 'Sterker op verplaatsing' : 'Overal gevaarlijk',
+        body: `Thuis: <span class="insight-stat">${hw}/${home.length} winst</span> (${hPct}%), ${(hgf / home.length).toFixed(1)} goals/wed. Uit: <span class="insight-stat">${aw}/${away.length} winst</span> (${aPct}%), ${(agf / away.length).toFixed(1)} goals/wed.`
+      });
+    }
+  }
+
+  // --- TEGEN DE TOP ---
+  if (jb && standen.length >= 3 && results.length >= 4) {
+    const topTeams = standen.filter(t => t.pos <= 3 && !t.team.toUpperCase().includes('JOGA')).map(t => t.team.toUpperCase());
+    const vsTop = results.filter(r => topTeams.some(t => t.includes(r.opp.toUpperCase()) || r.opp.toUpperCase().includes(t)));
+    if (vsTop.length >= 2) {
+      const tw = vsTop.filter(r => r.jb > r.opp_s).length;
+      const td = vsTop.filter(r => r.jb === r.opp_s).length;
+      const tl = vsTop.filter(r => r.jb < r.opp_s).length;
+      const topNames = [...new Set(vsTop.map(r => r.opp))].join(' en ');
+      insights.push({
+        tag: tw > tl ? 'positive' : 'warning', tagText: tw > tl ? 'Sterk' : 'Zwakte',
+        title: tw > tl ? 'Dominant tegen de top' : 'Moeite met de top',
+        body: `Tegen ${topNames}: <span class="insight-stat">${tw}W ${td}G ${tl}V</span>. ${tw > tl ? 'Joga Bonito kan meespelen met de besten.' : `De directe confrontaties kosten punten.${tl > tw + td ? ' Dit is het verschil met de titelkandidaten.' : ''}`}`
+      });
+    }
+  }
+
+  // --- X-FACTOR ---
+  if (players.length >= 4) {
+    const topScorer = [...players].sort((a, b) => b.goals - a.goals)[0];
+    const xFactor = players
+      .filter(p => p.played >= 5 && p.name !== topScorer.name && (p.goals + p.assists) / p.played >= 2)
+      .sort((a, b) => (b.goals + b.assists) / b.played - (a.goals + a.assists) / a.played)[0];
+    if (xFactor) {
+      const ratio = ((xFactor.goals + xFactor.assists) / xFactor.played).toFixed(1);
+      insights.push({ tag: 'positive', tagText: 'X-Factor',
+        title: `${xFactor.name}: verborgen kracht`,
+        body: `<span class="insight-stat">${xFactor.goals} goals</span> en <span class="insight-stat">${xFactor.assists} assists</span> in ${xFactor.played} wedstrijden — ratio <strong>${ratio} per wedstrijd</strong>.${xFactor.played < 15 ? ' Meer beschikbaarheid zou het verschil kunnen maken.' : ''}`
+      });
+    }
+  }
+
+  // --- SEIZOENSGROEI ---
+  if (hist?.totalGoals && prev?.totalGoals) {
+    const gGrowth = Math.round((hist.totalGoals - prev.totalGoals) / prev.totalGoals * 100);
+    const aGrowth = hist.totalAssists && prev.totalAssists ? Math.round((hist.totalAssists - prev.totalAssists) / prev.totalAssists * 100) : null;
+    if (Math.abs(gGrowth) >= 5) {
+      insights.push({
+        tag: gGrowth > 0 ? 'positive' : 'warning', tagText: 'Groei',
+        title: gGrowth > 0 ? 'Aanvalskracht groeit' : 'Minder productief',
+        body: `Van <span class="insight-stat">${prev.totalGoals} goals</span> (2024/25) naar <span class="insight-stat">${hist.totalGoals} goals</span> (2025/26): <strong>${gGrowth > 0 ? '+' : ''}${gGrowth}%</strong>.${aGrowth !== null ? ` Assists: ${prev.totalAssists} → ${hist.totalAssists} (${aGrowth > 0 ? '+' : ''}${aGrowth}%).` : ''}`
+      });
+    }
+  }
+
+  // --- BEKER ---
+  const bekerResults = results.filter(r => r.comp === 'BK' || r.comp === 'beker');
+  if (bekerResults.length >= 2) {
+    const bw = bekerResults.filter(r => r.jb > r.opp_s).length;
+    const bl = bekerResults.filter(r => r.jb < r.opp_s).length;
+    const bgf = bekerResults.reduce((s, r) => s + r.jb, 0);
+    const bga = bekerResults.reduce((s, r) => s + r.opp_s, 0);
+    insights.push({
+      tag: bw > bl ? 'positive' : 'neutral', tagText: 'Beker',
+      title: `Beker: ${bw} winst in ${bekerResults.length} duels`,
+      body: `Bekerprestaties: <span class="insight-stat">${bw}W ${bl}V</span>, <strong>${bgf} goals voor, ${bga} tegen</strong>.${bgf / bekerResults.length > 5 ? ' Grote scores in de beker — het team schakelt moeiteloos een tandje bij.' : ''}`
+    });
+  }
+
+  return insights;
+}
+
 function renderAnalysePage() {
   const c = document.getElementById('analyseContent');
-  const insights = [
-    {
-      tag: 'positive', tagText: 'Topscorer',
-      title: 'Irving pakt de troon',
-      body: `Irving is met <span class="insight-stat">58 goals</span> de all-time topscorer, Kenneth volgt met <span class="insight-stat">54</span>. In 2025/26 vergrootte Irving de kloof: <strong>34 goals in 16 wedstrijden</strong> (ratio 3,3) tegenover Kenneth's 25 in 15 wedstrijden. Kenneth compenseert met meer assists all-time (33 vs 32).`
-    },
-    {
-      tag: 'positive', tagText: 'Impact',
-      title: 'Lawin: instant hit',
-      body: `Eerste seizoen, directe impact: <span class="insight-stat">30 goals</span> en <span class="insight-stat">27 assists</span> in 18 wedstrijden. Ratio van <strong>3,2 betrokkenheid per wedstrijd</strong> — de hoogste van het team. Lawin werd in zijn debuutjaar direct de tweede topscorer.`
-    },
-    {
-      tag: 'warning', tagText: 'Risico',
-      title: 'Big Three afhankelijkheid',
-      body: `Irving, Lawin en Kenneth scoren samen <span class="insight-stat">57%</span> van alle goals (89 van 155 in 2025/26) en leveren <span class="insight-stat">50%</span> van de assists. Als een van hen wegvalt, mist het team direct slagkracht. Geen andere speler scoort meer dan 16 goals per seizoen.`
-    },
-    {
-      tag: 'neutral', tagText: 'Analyse',
-      title: 'Beste aanval, toch derde',
-      body: `Met <span class="insight-stat">+67 doelsaldo</span> (130 voor, 63 tegen) had Joga Bonito het beste saldo van de competitie — beter dan kampioen AS Sport Events (+65). Toch eindigde het team 3e met 44 punten, 4 punten achter de koploper. De 4 verliespartijen waren het verschil.`
-    },
-    {
-      tag: 'warning', tagText: 'Zwakte',
-      title: 'Moeite met de top-2',
-      body: `Tegen AS Sport Events en Mladost: <strong>1 winst, 0 gelijk, 3 verliespartijen</strong>. Tegen de rest van de competitie: 13 winst, 2 gelijk, 1 verlies. De directe confrontaties met de top-2 kosten het kampioenschap. De enige winst was uit bij Mladost (8-6).`
-    },
-    {
-      tag: 'positive', tagText: 'X-Factor',
-      title: 'Amine: de verborgen kracht',
-      body: `<span class="insight-stat">13 goals</span> en <span class="insight-stat">15 assists</span> in slechts 11 wedstrijden — een ratio van 2,5. Wanneer Amine beschikbaar is, is hij een van de gevaarlijkste spelers. Meer beschikbaarheid zou het verschil kunnen maken in de titelstrijd.`
-    },
-    {
-      tag: 'positive', tagText: 'Groei',
-      title: 'Aanvalskracht groeit',
-      body: `Van <span class="insight-stat">132 goals</span> in 2024/25 naar <span class="insight-stat">155 goals</span> in 2025/26: een stijging van <strong>17%</strong>. De assists groeiden van 96 naar 120 (+25%). Het team wordt steeds trefzekerder en creatiever. Met Lawin erbij is de aanval compleet getransformeerd.`
-    }
-  ];
+  const insights = generateInsights();
+
+  const sources = [];
+  if (srzaData) sources.push('SRZA competitiedata');
+  if (HISTORY['2025/26']) sources.push('2025/26');
+  if (HISTORY['2024/25']) sources.push('2024/25');
 
   let h = `<div class="analyse-header">
     <h2>AI Analyse</h2>
-    <p>Inzichten op basis van 2 seizoenen data</p>
+    <p>Inzichten op basis van ${sources.length ? sources.join(' + ') : 'beschikbare data'}</p>
   </div>`;
 
-  insights.forEach(ins => {
-    h += `<div class="insight-card">
-      <span class="insight-tag ${ins.tag}">${ins.tagText}</span>
-      <div class="insight-title">${ins.title}</div>
-      <div class="insight-body">${ins.body}</div>
-    </div>`;
-  });
+  if (insights.length === 0) {
+    h += `<div class="empty-state" style="padding:30px 0"><p style="color:var(--text-muted)">Nog niet genoeg data voor analyse</p></div>`;
+  } else {
+    insights.forEach(ins => {
+      h += `<div class="insight-card">
+        <span class="insight-tag ${ins.tag}">${ins.tagText}</span>
+        <div class="insight-title">${ins.title}</div>
+        <div class="insight-body">${ins.body}</div>
+      </div>`;
+    });
+  }
 
   c.innerHTML = h;
 }
