@@ -69,8 +69,6 @@ Foto's worden opgeslagen als base64 JPEG (200x200 crop) in het player object.
 
 ## Openstaande punten
 
-- [ ] **Power Play shirt icon** — huidige SVG (`ppIconHTML()`) ziet er niet genoeg uit als een echt shirt. Moet een herkenbaar t-shirt/jersey silhouet worden met mouwen en het cijfer 5.
-- [ ] **Tab "Programma" hernoemen** naar "Wedstrijden" met twee secties: "Programma" (gepland) en "Uitslagen" (gespeeld).
 - [ ] **PWA / native wrapper** — app installeerbaar maken op telefoon.
 - [ ] **Firebase migratie** — data sync tussen devices, multi-user (teamgenoten).
 - [ ] **AI analyse** — wedstrijdpatronen, spelerstatistieken insights.
