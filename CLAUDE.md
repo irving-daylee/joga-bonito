@@ -71,7 +71,7 @@ Foto's worden opgeslagen als base64 JPEG (200x200 crop) in het player object.
 
 - [ ] **PWA / native wrapper** — manifest.json + service worker, app installeerbaar op telefoon.
 - [ ] **Share-functie** — wedstrijdsamenvatting/stats delen via WhatsApp na een wedstrijd.
-- [ ] **Dynamische AI analyse** — Analyse tab laten merekenen met huidig seizoen (2026/27) data ipv alleen hardcoded insights.
+- [x] **Dynamische AI analyse** — `generateInsights()` berekent 10 insights uit SRZA + HISTORY data: positie, vorm, topscorer, afhankelijkheid, doelsaldo, thuis/uit, top-tegenstanders, x-factor, groei, beker.
 - [ ] **Formatie-visualisatie** — bij lineup een veldje tonen met spelers op positie (1-2-2, 1-3-1, etc).
 - [x] **srza.nl integratie** — `scripts/scrape-srza.js` (Node.js + cheerio), `.github/workflows/srza.yml` (daily cron 07:00 CET, sep–jun). Output `data/srza.json`. Config bovenaan scraper: `TEAM_ID=358`, `COMP_NR=3`. Update config bij start nieuw seizoen. App laadt srza.json async en toont SRZA programma + data footer op Wedstrijden page.
 - [ ] **Firebase migratie** — data sync tussen devices, multi-user (teamgenoten).
