@@ -55,7 +55,7 @@ Timer start NIET automatisch — gebruiker drukt zelf op play.
 
 ## Spelers (pre-loaded)
 
-Marco (#1, keeper), Irving (#7, aanvoerder), Lyzairo (#8), Rayvano (#9), Bobby (#10), Gregory (#11), Lawin (#20), Erfan (#12, keeper), Kenneth (#14), Said (#24), Amine (#59), Fouad (#99).
+Marco (#1, keeper), Irving (#7, aanvoerder), Lyzairo (#8), Rayvano (#9), Bobby (#10), Gregory (#11), Lawin (#5), Erfan (#12, keeper), Kenneth (#14), Said (#24), Amine (#59), Fouad (#99).
 
 Foto's worden opgeslagen als base64 JPEG (200x200 crop) in het player object.
 
@@ -70,7 +70,7 @@ Foto's worden opgeslagen als base64 JPEG (200x200 crop) in het player object.
 ## Openstaande punten
 
 - [ ] **PWA / native wrapper** — manifest.json + service worker, app installeerbaar op telefoon.
-- [ ] **Share-functie** — wedstrijdsamenvatting/stats delen via WhatsApp na een wedstrijd.
+- [x] **Share-functie** — wedstrijdsamenvatting/stats delen via WhatsApp na een wedstrijd. Canvas-based match card, Web Share API op mobiel, download fallback op desktop.
 - [x] **Dynamische AI analyse** — `generateInsights()` berekent 10 insights uit SRZA + HISTORY data: positie, vorm, topscorer, afhankelijkheid, doelsaldo, thuis/uit, top-tegenstanders, x-factor, groei, beker.
 - [ ] **Formatie-visualisatie** — bij lineup een veldje tonen met spelers op positie (1-2-2, 1-3-1, etc).
 - [x] **srza.nl integratie** — `scripts/scrape-srza.js` (Node.js + cheerio), `.github/workflows/srza.yml` (daily cron 07:00 CET, sep–jun). Output `data/srza.json`. Config bovenaan scraper: `TEAM_ID=358`, `COMP_NR=3`. Update config bij start nieuw seizoen. App laadt srza.json async en toont SRZA programma + data footer op Wedstrijden page.
