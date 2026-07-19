@@ -1071,6 +1071,80 @@ label {
 .pp-season-stat strong { color: var(--navy); font-weight: 800; }
 .pp-season-row.total .pp-season-stat strong { color: #fff; }
 
+/* ===== FORMATION PITCH ===== */
+.pitch {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 16px auto;
+  aspect-ratio: 3 / 4;
+  background: #1a7a3a;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+.pitch::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: rgba(255,255,255,0.25);
+}
+.pitch::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.pitch-goal {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 8%;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+.pitch-player {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+}
+.pitch-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  color: #1B2A4A;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.pitch-dot.keeper { background: #F59E0B; color: #fff; }
+.pitch-label {
+  margin-top: 3px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+
 /* ===== PHASE OVERLAY ===== */
 .phase-overlay {
   display: none;
@@ -1334,18 +1408,18 @@ label {
 const STORAGE_KEY = 'jogaBonito_v2';
 
 const DEFAULT_PLAYERS = [
-  { id:'p1',  name:'Marco',   number:1,  isKeeper:true,  isCaptain:false, photo:null },
-  { id:'p2',  name:'Irving',  number:7,  isKeeper:false, isCaptain:true,  photo:null },
-  { id:'p3',  name:'Lyzairo', number:8,  isKeeper:false, isCaptain:false, photo:null },
-  { id:'p4',  name:'Rayvano', number:9,  isKeeper:false, isCaptain:false, photo:null },
-  { id:'p5',  name:'Bobby',   number:10, isKeeper:false, isCaptain:false, photo:null },
-  { id:'p6',  name:'Gregory', number:11, isKeeper:false, isCaptain:false, photo:null },
-  { id:'p7',  name:'Lawin',   number:5,  isKeeper:false, isCaptain:false, photo:null },
-  { id:'p8',  name:'Erfan',   number:12, isKeeper:true,  isCaptain:false, photo:null },
-  { id:'p9',  name:'Kenneth', number:14, isKeeper:false, isCaptain:false, photo:null },
-  { id:'p10', name:'Said',    number:24, isKeeper:false, isCaptain:false, photo:null },
-  { id:'p11', name:'Amine',   number:59, isKeeper:false, isCaptain:false, photo:null },
-  { id:'p12', name:'Fouad',   number:99, isKeeper:false, isCaptain:false, photo:null },
+  { id:'p1',  name:'Marco',   number:1,  isKeeper:true,  isCaptain:false, foot:'R', photo:null },
+  { id:'p2',  name:'Irving',  number:7,  isKeeper:false, isCaptain:true,  foot:'R', photo:null },
+  { id:'p3',  name:'Lyzairo', number:8,  isKeeper:false, isCaptain:false, foot:'R', photo:null },
+  { id:'p4',  name:'Rayvano', number:9,  isKeeper:false, isCaptain:false, foot:'R', photo:null },
+  { id:'p5',  name:'Bobby',   number:10, isKeeper:false, isCaptain:false, foot:'R', photo:null },
+  { id:'p6',  name:'Gregory', number:11, isKeeper:false, isCaptain:false, foot:'L', photo:null },
+  { id:'p7',  name:'Lawin',   number:5,  isKeeper:false, isCaptain:false, foot:'R', photo:null },
+  { id:'p8',  name:'Erfan',   number:12, isKeeper:true,  isCaptain:false, foot:'R', photo:null },
+  { id:'p9',  name:'Kenneth', number:14, isKeeper:false, isCaptain:false, foot:'L', photo:null },
+  { id:'p10', name:'Said',    number:24, isKeeper:false, isCaptain:false, foot:'R', photo:null },
+  { id:'p11', name:'Amine',   number:59, isKeeper:false, isCaptain:false, foot:'R', photo:null },
+  { id:'p12', name:'Fouad',   number:99, isKeeper:false, isCaptain:false, foot:'L', photo:null },
 ];
 
 const defaultData = () => ({
@@ -1858,9 +1932,11 @@ function showPlayerProfile(id) {
   if (!p) return;
   const career = getPlayerCareerStats(p.name, id);
 
+  const foot = p.foot || (DEFAULT_PLAYERS.find(dp => dp.id === id) || {}).foot || 'R';
   const badges = [];
   if (p.isKeeper) badges.push('Keeper');
   if (p.isCaptain) badges.push('Aanvoerder');
+  badges.push(foot === 'L' ? '🦶 Links' : '🦶 Rechts');
 
   let h = `<div style="display:flex;justify-content:space-between;align-items:center">
     <button class="detail-back" onclick="closePlayerProfile()">&#8592; Terug</button>
@@ -2128,6 +2204,33 @@ function renderMatchLineup(c) {
   h += `</div>`;
 
   const ready = cm.keeper && cm.captain && fieldLineup.length === 4;
+
+  if (ready) {
+    const kp = getPlayer(cm.keeper);
+    const fl = fieldLineup.map(id => getPlayer(id)).filter(Boolean);
+    const positions = [
+      { left: '28%', top: '22%' },
+      { left: '72%', top: '22%' },
+      { left: '38%', top: '52%' },
+      { left: '62%', top: '52%' },
+    ];
+    h += `<div class="pitch"><div class="pitch-goal"></div>`;
+    if (kp) {
+      h += `<div class="pitch-player" style="left:50%;top:85%">
+        <div class="pitch-dot keeper">${kp.number}</div>
+        <div class="pitch-label">${kp.name}</div>
+      </div>`;
+    }
+    fl.forEach((p, i) => {
+      const pos = positions[i] || positions[0];
+      h += `<div class="pitch-player" style="left:${pos.left};top:${pos.top}">
+        <div class="pitch-dot">${p.number}</div>
+        <div class="pitch-label">${p.name}</div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
   h += `<button class="btn btn-primary btn-block btn-lg" onclick="startMatch()" ${ready?'':'disabled'}>
     &#9917; Start Wedstrijd</button>`;
   c.innerHTML = h;
