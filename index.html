@@ -2595,14 +2595,11 @@ function renderStatsPage() {
     { key: 'all', label: 'All-time' }
   ];
 
-  let h = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div class="season-tabs" style="margin-bottom:0">`;
+  let h = `<div class="season-tabs">`;
   seasons.forEach(s => {
     h += `<button class="season-tab ${s.key===selectedStatsSeason?'active':''}" onclick="selectedStatsSeason='${s.key}';renderStatsPage()">${s.label}</button>`;
   });
-  h += `</div><button class="share-btn-sm" onclick="shareStatsCard()">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-    Delen</button></div>`;
+  h += `</div>`;
 
   if (selectedStatsSeason === 'current') {
     h += renderCurrentSeasonStats();
@@ -2682,7 +2679,10 @@ function renderCurrentSeasonStats() {
   });
   h += `</div></div>`;
 
-  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2></div>
+  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2>
+    <button class="share-btn-sm" onclick="shareStatsCard()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Delen</button></div>
     <div class="tab-row" id="statTabs">
       <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
       <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
@@ -2809,7 +2809,10 @@ function renderHistoricalStats(seasonKey) {
     h += `</table></div></div>`;
   }
 
-  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2></div>
+  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2>
+    <button class="share-btn-sm" onclick="shareStatsCard()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Delen</button></div>
     <div class="tab-row" id="historyTabs">
       <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
       <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
@@ -2943,7 +2946,12 @@ function renderSchedulePage() {
   }
 
   h += `<div class="section-header" style="margin-top:16px"><h2 class="section-title">Uitslagen</h2>
-    <button class="btn btn-outline btn-sm" onclick="openRetroModal()">Achteraf invoeren</button></div>`;
+    <div style="display:flex;gap:6px">
+      <button class="share-btn-sm" onclick="event.stopPropagation();shareUitslagenCard()" title="Delen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="openRetroModal()">Achteraf invoeren</button>
+    </div></div>`;
 
   if (finished.length) {
     h += `<div class="card">`;
@@ -3948,10 +3956,23 @@ function wrapText(text, maxWidth, font) {
 }
 
 async function shareStatsCard() {
-  const finished = DB.matches.filter(m => m.status === 'finished');
-  const stats = getPlayerStats(finished);
-  const scorers = Object.values(stats).filter(s => s.goals > 0 || s.assists > 0 || s.played > 0)
-    .sort((a, b) => b.goals - a.goals || b.assists - a.assists);
+  let scorers = [];
+  let subtitle = 'Statistieken ' + DB.season;
+
+  if (selectedStatsSeason === 'current') {
+    const finished = DB.matches.filter(m => m.status === 'finished');
+    const stats = getPlayerStats(finished);
+    scorers = Object.values(stats).filter(s => s.goals > 0 || s.assists > 0 || s.played > 0)
+      .sort((a, b) => b.goals - a.goals || b.assists - a.assists)
+      .map(s => ({ name: getPlayerName(s.id), played: s.played, goals: s.goals, assists: s.assists }));
+  } else {
+    const key = selectedStatsSeason === 'all' ? 'all' : selectedStatsSeason;
+    const hist = HISTORY[key];
+    if (hist?.players) {
+      scorers = hist.players.map(p => ({ name: p.name, played: p.played, goals: p.goals, assists: p.assists }));
+    }
+    subtitle = key === 'all' ? 'All-time statistieken' : 'Statistieken ' + key;
+  }
   if (!scorers.length) return showToast('Geen stats om te delen');
 
   const W = 720, PAD = 40, rowH = 32;
@@ -3960,7 +3981,7 @@ async function shareStatsCard() {
   canvas.height = H;
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, W, H);
-  drawCardHeader(ctx, W, 'Statistieken ' + DB.season);
+  drawCardHeader(ctx, W, subtitle);
 
   let y = 120;
   ctx.font = '700 11px "Montserrat", sans-serif';
@@ -3988,7 +4009,7 @@ async function shareStatsCard() {
     ctx.textAlign = 'left';
     ctx.fillText((i + 1) + '.', PAD + 10, y + 16);
     ctx.font = '600 13px "Nunito", sans-serif';
-    ctx.fillText(getPlayerName(s.id), PAD + 40, y + 16);
+    ctx.fillText(s.name, PAD + 40, y + 16);
     ctx.textAlign = 'center';
     ctx.font = '400 13px "Nunito", sans-serif';
     ctx.fillStyle = '#6B7280';
@@ -4071,6 +4092,48 @@ async function shareScheduleCard() {
 
   drawCardFooter(ctx, W, H);
   await doShare(canvas, 'joga-bonito-programma');
+}
+
+async function shareUitslagenCard() {
+  const finished = DB.matches.filter(m => m.status === 'finished').sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+  const srzaRes = (srzaData?.uitslagen || []).slice(-5).reverse();
+  const allResults = [...finished.map(m => ({ opp: m.opponent, date: m.date, jb: m.scoreHome, opp_s: m.scoreAway })), ...srzaRes.map(r => ({ opp: r.opp, date: r.date, jb: r.jb, opp_s: r.opp_s }))].slice(0, 5);
+
+  if (!allResults.length) { showToast('Geen uitslagen om te delen'); return; }
+
+  const W = 720, PAD = 40, rowH = 36;
+  const H = 130 + 30 + allResults.length * rowH + 60;
+  const { canvas, ctx } = createShareCanvas(W);
+  canvas.height = H;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, H);
+  drawCardHeader(ctx, W, 'Laatste uitslagen');
+
+  let y = 118;
+  ctx.font = '800 12px "Montserrat", sans-serif';
+  ctx.fillStyle = '#1B2A4A';
+  ctx.textAlign = 'left';
+  ctx.fillText('UITSLAGEN', PAD, y);
+  y += 10;
+  allResults.forEach(m => {
+    ctx.font = '400 12px "Nunito", sans-serif';
+    ctx.fillStyle = '#9CA3AF';
+    ctx.textAlign = 'left';
+    ctx.fillText(formatDate(m.date), PAD + 10, y + 22);
+    ctx.font = '600 13px "Nunito", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.fillText(m.opp, PAD + 130, y + 22);
+    const score = `${m.jb} – ${m.opp_s}`;
+    const col = m.jb > m.opp_s ? '#059669' : m.jb < m.opp_s ? '#EF4444' : '#F59E0B';
+    ctx.font = '800 14px "Montserrat", sans-serif';
+    ctx.fillStyle = col;
+    ctx.textAlign = 'right';
+    ctx.fillText(score, W - PAD - 10, y + 22);
+    y += rowH;
+  });
+
+  drawCardFooter(ctx, W, H);
+  await doShare(canvas, 'joga-bonito-uitslagen');
 }
 
 // =========================================================
