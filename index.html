@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; }
 }
 
 /* ===== PAGES ===== */
-.page { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
+.page { display: none; padding: 16px 16px 80px; max-width: 600px; margin: 0 auto; }
 .page.active { display: block; }
 
 /* ===== CARD ===== */
@@ -666,14 +666,15 @@ label {
 }
 .leaderboard-item:last-child { border-bottom: none; }
 .lb-rank {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  width: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 0.72rem;
+  color: #9CA3AF;
+  width: 16px;
   text-align: center;
+  flex-shrink: 0;
 }
-.lb-rank.top { color: var(--navy); }
+.lb-rank.top { color: #9CA3AF; }
 .lb-stats {
   display: flex;
   gap: 12px;
@@ -1796,11 +1797,11 @@ function openAddPlayerModal() {
   openModal(`<h3>Speler Toevoegen</h3>
     <div class="form-group"><label>Naam</label><input type="text" id="npName" placeholder="Voornaam"></div>
     <div class="form-group"><label>Rugnummer</label><input type="number" id="npNum" placeholder="0" min="0" max="99"></div>
-    <div class="form-group" style="display:flex;gap:16px">
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="npKeeper"> Keeper</label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="npCaptain"> Aanvoerder</label>
+    <div class="form-group" style="display:flex;gap:16px;flex-wrap:wrap">
+      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap">
+        <input type="checkbox" id="npKeeper" style="flex-shrink:0"> Keeper</label>
+      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap">
+        <input type="checkbox" id="npCaptain" style="flex-shrink:0"> Aanvoerder</label>
     </div>
     <button class="btn btn-primary btn-block" onclick="addPlayer()">Toevoegen</button>
     <button class="modal-cancel" onclick="closeModal()">Annuleren</button>`);
@@ -1834,11 +1835,11 @@ function openEditPlayerModal(id) {
     </div>
     <div class="form-group"><label>Naam</label><input type="text" id="epName" value="${p.name}"></div>
     <div class="form-group"><label>Rugnummer</label><input type="number" id="epNum" value="${p.number}" min="0" max="99"></div>
-    <div class="form-group" style="display:flex;gap:16px">
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="epKeeper" ${p.isKeeper?'checked':''}> Keeper</label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="epCaptain" ${p.isCaptain?'checked':''}> Aanvoerder</label>
+    <div class="form-group" style="display:flex;gap:16px;flex-wrap:wrap">
+      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap">
+        <input type="checkbox" id="epKeeper" ${p.isKeeper?'checked':''} style="flex-shrink:0"> Keeper</label>
+      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap">
+        <input type="checkbox" id="epCaptain" ${p.isCaptain?'checked':''} style="flex-shrink:0"> Aanvoerder</label>
     </div>
     <button class="btn btn-primary btn-block" onclick="saveEditPlayer('${id}')">Opslaan</button>
     <button class="modal-cancel" onclick="closeModal()">Annuleren</button>`);
@@ -1965,7 +1966,7 @@ function showPlayerProfile(id) {
 
   if (career.totalPlayed > 0) {
     if (p.isKeeper) {
-      const cleanSheets = DB.matches.filter(m => m.status === 'finished' && (m.squad || []).includes(id) && m.scoreAway === 0).length;
+      const cleanSheets = DB.matches.filter(m => m.status === 'finished' && m.keeper === id && m.scoreAway === 0).length;
       h += `<div class="pp-stats" style="margin-top:1px">
         <div class="pp-stat"><div class="pp-stat-val">${cleanSheets}</div><div class="pp-stat-label">Clean sheets</div></div>
         <div class="pp-stat"><div class="pp-stat-val">${career.totalAssists}</div><div class="pp-stat-label">Assists</div></div>
@@ -2092,6 +2093,7 @@ function startNewMatch() {
     keeper: null,
     captain: null,
     flyingKeeper: false,
+    comp: 'comp',
     events: [],
     scoreHome: 0,
     scoreAway: 0,
@@ -2115,6 +2117,12 @@ function renderMatchSetup(c) {
           <option value="">— Kies sporthal —</option>
           ${['Stedenwijk','Waterwijk','Haven','Buiten'].map(s => `<option value="${s}" ${cm.sporthal===s?'selected':''}>${s}</option>`).join('')}
         </select></div>
+      <div class="form-group"><label>Type</label>
+        <select id="compInput">
+          <option value="comp" ${cm.comp==='comp'?'selected':''}>Competitie</option>
+          <option value="beker" ${cm.comp==='beker'?'selected':''}>Beker</option>
+          <option value="friendly" ${cm.comp==='friendly'?'selected':''}>Vriendschappelijk</option>
+        </select></div>
       <div class="form-group"><label>Datum</label>
         <input type="date" id="dateInput" value="${cm.date}"></div>
       <button class="btn btn-primary btn-block btn-lg" onclick="proceedToSquad()">Volgende: Selectie &#10145;</button>
@@ -2126,6 +2134,7 @@ function proceedToSquad() {
   if (!opp) { document.getElementById('oppInput').focus(); return; }
   DB.currentMatch.opponent = opp;
   DB.currentMatch.sporthal = document.getElementById('hallInput').value.trim();
+  DB.currentMatch.comp = document.getElementById('compInput').value;
   DB.currentMatch.date = document.getElementById('dateInput').value;
   DB.currentMatch.status = 'squad';
   saveData(); renderMatchView();
@@ -2443,8 +2452,8 @@ function renderGoalModal() {
 
   if (goalState.team === 'home') {
     h += `<div style="margin-bottom:14px">
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 12px;border:2px solid ${goalState.ownGoal?'var(--card-red)':'var(--border)'};border-radius:var(--radius-sm);background:${goalState.ownGoal?'var(--card-red-bg)':'var(--surface)'}">
-        <input type="checkbox" ${goalState.ownGoal?'checked':''} onchange="toggleOwnGoal()">
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:10px 12px;border:2px solid ${goalState.ownGoal?'var(--card-red)':'var(--border)'};border-radius:var(--radius-sm);background:${goalState.ownGoal?'var(--card-red-bg)':'var(--surface)'};max-width:100%;box-sizing:border-box">
+        <input type="checkbox" ${goalState.ownGoal?'checked':''} onchange="toggleOwnGoal()" style="flex-shrink:0">
         <span style="font-weight:700;color:${goalState.ownGoal?'var(--card-red)':'var(--text)'}">Eigen goal</span>
       </label></div>`;
 
@@ -2755,17 +2764,29 @@ function showMatchDetail(matchId) {
       if (m.keeper === p.id) roles.push('Keeper');
       if (m.lineup && m.lineup.includes(p.id) && m.keeper !== p.id) roles.push('Basis');
       if (m.captain === p.id) roles.push('Aanvoerder');
-      h += `<div class="player-item">${avatarHTML(p, 'avatar-sm')}
+      h += `<div class="player-item" onclick="closeMatchDetail();showPlayerProfile('${p.id}')" style="cursor:pointer">${avatarHTML(p, 'avatar-sm')}
         <div class="player-info"><div class="player-name">${p.name}</div>
         ${roles.length?`<div class="player-badges">${roles.map(r=>`<span class="player-badge">${r}</span>`).join('')}</div>`:''}</div></div>`;
     });
     h += `</div>`;
   }
+  h += `<button class="btn btn-danger-outline btn-block" style="margin-top:24px" onclick="deleteFinishedMatch('${matchId}')">Wedstrijd verwijderen</button>`;
   h += `</div>`;
   document.getElementById('matchDetailContent').innerHTML = h;
   document.getElementById('matchDetail').classList.add('open');
 }
 function closeMatchDetail() { document.getElementById('matchDetail').classList.remove('open'); }
+function deleteFinishedMatch(matchId) {
+  const m = DB.matches.find(x => x.id === matchId);
+  if (!m) return;
+  openModal(`<h3>Wedstrijd Verwijderen</h3>
+    <p style="text-align:center;margin-bottom:4px"><strong>${DB.teamName} ${m.scoreHome} – ${m.scoreAway} ${m.opponent}</strong></p>
+    <p style="text-align:center;color:var(--text-muted);margin-bottom:20px">Dit kan niet ongedaan worden gemaakt.</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-block" onclick="closeModal()">Annuleren</button>
+      <button class="btn btn-danger-outline btn-block" onclick="DB.matches=DB.matches.filter(x=>x.id!=='${matchId}');saveData();closeModal();closeMatchDetail();renderPage(document.querySelector('.bottomnav .active')?.dataset.page||'pageMatch')">Verwijderen</button>
+    </div>`);
+}
 
 // =========================================================
 // STATS
@@ -2870,12 +2891,27 @@ function renderCurrentSeasonStats() {
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       Delen</button></div>
     <div class="tab-row" id="statTabs">
-      <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
-      <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
-      <button class="tab-btn" data-sort="motm">&#11088; MOTM</button>
+      <button class="tab-btn active" data-sort="goals">Goals</button>
+      <button class="tab-btn" data-sort="assists">Assists</button>
+      <button class="tab-btn" data-sort="motm">MotM</button>
       <button class="tab-btn" data-sort="cards">Kaarten</button>
     </div>
     <div class="card" id="leaderboard"></div>`;
+
+  const sorted = [...finished].sort((a,b) => new Date(b.date) - new Date(a.date));
+  h += `<div class="section-header" style="margin-top:16px"><h2 class="section-title">Uitslagen</h2></div>
+    <div class="card">`;
+  sorted.forEach(m => {
+    const d = new Date(m.date);
+    const res = getMatchResult(m);
+    const badge = matchTypeHTML(m.comp);
+    h += `<div class="history-result" onclick="showMatchDetail('${m.id}')" style="cursor:pointer">
+      <span class="hr-date">${d.getDate()} ${d.toLocaleDateString('nl-NL',{month:'short'})}</span>
+      <span class="hr-opp">${m.opponent}${badge}</span>
+      <span class="hr-score ${res}">${m.scoreHome} – ${m.scoreAway}</span>
+    </div>`;
+  });
+  h += `</div>`;
   return h;
 }
 
@@ -2921,19 +2957,19 @@ function renderLeaderboard(ps, sortBy) {
 
   const sorted = Object.entries(ps).filter(([id]) => getPlayer(id)).sort(sortFn);
   let h = `<div class="leaderboard-item" style="border-bottom:2px solid var(--border);padding-bottom:8px">
-    <span class="lb-rank" style="font-size:0.7rem;color:var(--text-muted)">#</span>
+    <span class="lb-rank" style="font-size:0.65rem">#</span>
     <div class="avatar avatar-sm" style="visibility:hidden"></div>
     <span class="player-name" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);flex:1">Naam</span>
     <div class="lb-stats" style="color:var(--text-muted);font-size:0.72rem">
-      <span>&#9917;</span><span>&#127919;</span><span>&#11088;</span>
+      <span>G</span><span>A</span><span>MotM</span>
     </div>
   </div>`;
   sorted.forEach(([id, s], i) => {
     const p = getPlayer(id);
     if (!p) return;
-    let stats = `<span>&#9917; ${s.goals}</span><span>&#127919; ${s.assists}</span>`;
-    if (s.motm) stats += `<span>&#11088; ${s.motm}</span>`;
-    if (s.cleanSheets) stats += `<span>&#129351; ${s.cleanSheets}</span>`;
+    let stats = `<span>${s.goals}</span><span>${s.assists}</span>`;
+    if (s.motm) stats += `<span>${s.motm}</span>`;
+    if (s.cleanSheets) stats += `<span>🧤 ${s.cleanSheets}</span>`;
     if (s.greens) stats += `<span>&#x1F7E2; ${s.greens}</span>`;
     if (s.yellows) stats += `<span>&#x1F7E1; ${s.yellows}</span>`;
     if (s.reds) stats += `<span>&#x1F534; ${s.reds}</span>`;
@@ -3000,9 +3036,9 @@ function renderHistoricalStats(seasonKey) {
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       Delen</button></div>
     <div class="tab-row" id="historyTabs">
-      <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
-      <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
-      <button class="tab-btn" data-sort="ratio">&#9889; Ratio</button>
+      <button class="tab-btn active" data-sort="goals">Goals</button>
+      <button class="tab-btn" data-sort="assists">Assists</button>
+      <button class="tab-btn" data-sort="ratio">G+A Ratio</button>
     </div>
     <div class="card" id="historyLeaderboard"></div>`;
 
@@ -3050,10 +3086,10 @@ function renderHistoricalPlayerList(players, sortBy) {
   });
 
   let h = `<div class="leaderboard-item" style="border-bottom:2px solid var(--border);padding-bottom:8px">
-    <span class="lb-rank" style="font-size:0.7rem;color:var(--text-muted)">#</span>
+    <span class="lb-rank" style="font-size:0.65rem">#</span>
     <span class="player-name" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);flex:1">Naam</span>
     <div class="lb-stats" style="color:var(--text-muted);font-size:0.68rem">
-      <span>&#9917;</span><span>&#127919;</span><span>GP</span><span>R</span>
+      <span>G</span><span>A</span><span>GP</span><span>G+A/w</span>
     </div>
   </div>`;
   sorted.forEach((p, i) => {
@@ -3065,7 +3101,7 @@ function renderHistoricalPlayerList(players, sortBy) {
       ${avatar}
       <span class="player-name" style="font-size:0.88rem;flex:1">${p.name}</span>
       <div class="lb-stats">
-        <span>&#9917; ${p.goals}</span><span>&#127919; ${p.assists}</span>
+        <span>${p.goals}</span><span>${p.assists}</span>
         <span style="color:var(--text-muted)">${p.played}</span>
         <span style="color:var(--navy);font-weight:800">${ratio}</span>
       </div>
@@ -3875,7 +3911,7 @@ async function shareMatchCard(matchId) {
   const m = DB.matches.find(x => x.id === matchId);
   if (!m) return;
 
-  const W = 720, PAD = 40;
+  const W = 390, PAD = 24;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -3887,10 +3923,16 @@ async function shareMatchCard(matchId) {
     return t;
   }).filter(Boolean);
 
-  const lineH = 28;
-  const goalsH = goalLines.length ? goalLines.length * lineH + 40 : 0;
-  const motmH = m.motm ? 50 : 0;
-  const H = 280 + goalsH + motmH + 60;
+  const lineupPlayers = (m.lineup || []).map(id => getPlayer(id)).filter(Boolean);
+  const keeperPlayer = m.keeper ? getPlayer(m.keeper) : null;
+  const fieldLineup = lineupPlayers.filter(p => p.id !== m.keeper);
+  const hasLineup = keeperPlayer && fieldLineup.length > 0;
+
+  const lineH = 24;
+  const goalsH = goalLines.length ? goalLines.length * lineH + 36 : 0;
+  const motmH = m.motm ? 44 : 0;
+  const lineupH = hasLineup ? 50 : 0;
+  const H = 240 + goalsH + motmH + lineupH + 50;
   canvas.width = W;
   canvas.height = H;
 
@@ -3899,55 +3941,55 @@ async function shareMatchCard(matchId) {
   ctx.fillRect(0, 0, W, H);
 
   // Header gradient
-  const grad = ctx.createLinearGradient(0, 0, W, 120);
+  const grad = ctx.createLinearGradient(0, 0, W, 90);
   grad.addColorStop(0, '#1B2A4A');
   grad.addColorStop(1, '#2C3E6B');
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, 120);
+  ctx.fillRect(0, 0, W, 90);
 
   // Logo text
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '700 32px "Pirata One", serif';
+  ctx.font = '700 24px "Pirata One", serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Joga Bonito', W / 2, 50);
+  ctx.fillText('Joga Bonito', W / 2, 38);
 
   // Date + location
-  ctx.font = '400 14px "Nunito", sans-serif';
+  ctx.font = '400 11px "Nunito", sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.7)';
   const dateTxt = formatDate(m.date) + (m.sporthal ? ' · ' + m.sporthal : '');
-  ctx.fillText(dateTxt, W / 2, 75);
+  ctx.fillText(dateTxt, W / 2, 58);
 
   // Match type
   if (m.comp) {
     const typeMap = { comp: 'Competitie', beker: 'Beker', friendly: 'Vriendschappelijk' };
-    ctx.font = '600 12px "Montserrat", sans-serif';
+    ctx.font = '600 10px "Montserrat", sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.fillText(typeMap[m.comp] || m.comp, W / 2, 100);
+    ctx.fillText(typeMap[m.comp] || m.comp, W / 2, 78);
   }
 
   // Score section
-  let y = 165;
+  let y = 135;
   ctx.fillStyle = '#1B2A4A';
-  ctx.font = '800 56px "Montserrat", sans-serif';
+  ctx.font = '800 44px "Montserrat", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(`${m.scoreHome} – ${m.scoreAway}`, W / 2, y);
 
   // Team names
-  y += 35;
-  ctx.font = '600 16px "Montserrat", sans-serif';
+  y += 28;
+  ctx.font = '600 13px "Montserrat", sans-serif';
   ctx.fillStyle = '#1B2A4A';
   ctx.textAlign = 'right';
-  ctx.fillText(DB.teamName, W / 2 - 50, y);
+  ctx.fillText(DB.teamName, W / 2 - 40, y);
   ctx.fillStyle = '#6B7280';
   ctx.textAlign = 'left';
-  ctx.fillText(m.opponent || 'Tegenstander', W / 2 + 50, y);
+  ctx.fillText(m.opponent || 'Tegenstander', W / 2 + 40, y);
   ctx.textAlign = 'center';
   ctx.fillStyle = '#9CA3AF';
-  ctx.font = '400 13px "Nunito", sans-serif';
+  ctx.font = '400 11px "Nunito", sans-serif';
   ctx.fillText('vs', W / 2, y);
 
   // Divider
-  y += 25;
+  y += 20;
   if (goalLines.length > 0) {
     ctx.strokeStyle = '#E5E7EB';
     ctx.lineWidth = 1;
@@ -3956,37 +3998,58 @@ async function shareMatchCard(matchId) {
     ctx.lineTo(W - PAD, y);
     ctx.stroke();
 
-    // Goals
-    y += 30;
-    ctx.font = '600 14px "Nunito", sans-serif';
+    y += 24;
+    ctx.font = '600 12px "Nunito", sans-serif';
     ctx.fillStyle = '#1B2A4A';
     ctx.textAlign = 'left';
     goalLines.forEach(line => {
-      ctx.fillText('⚽  ' + line, PAD + 10, y);
+      ctx.fillText('⚽  ' + line, PAD + 8, y);
       y += lineH;
     });
   }
 
-  // MOTM
-  if (m.motm) {
-    y += 5;
+  // Starting lineup
+  if (hasLineup) {
+    y += 4;
     ctx.strokeStyle = '#E5E7EB';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(PAD, y);
     ctx.lineTo(W - PAD, y);
     ctx.stroke();
+    y += 20;
+    ctx.textAlign = 'left';
+    ctx.font = '700 10px "Montserrat", sans-serif';
+    ctx.fillStyle = '#9CA3AF';
+    ctx.fillText('OPSTELLING', PAD + 8, y);
+    y += 18;
+    ctx.font = '500 11px "Nunito", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    const lineupStr = (keeperPlayer ? keeperPlayer.name + ' (GK)' : '') +
+      (fieldLineup.length ? ' · ' + fieldLineup.map(p => p.name).join(' · ') : '');
+    ctx.fillText(lineupStr, PAD + 8, y);
+  }
+
+  // MOTM
+  if (m.motm) {
+    y += 4;
+    ctx.strokeStyle = '#E5E7EB';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PAD, y + 8);
+    ctx.lineTo(W - PAD, y + 8);
+    ctx.stroke();
 
     y += 30;
     ctx.textAlign = 'center';
-    ctx.font = '600 14px "Nunito", sans-serif';
+    ctx.font = '600 12px "Nunito", sans-serif';
     ctx.fillStyle = '#F59E0B';
     ctx.fillText('⭐ Man of the Match: ' + getPlayerName(m.motm), W / 2, y);
   }
 
   // Footer
-  y = H - 25;
-  ctx.font = '400 12px "Nunito", sans-serif';
+  y = H - 20;
+  ctx.font = '400 10px "Nunito", sans-serif';
   ctx.fillStyle = '#9CA3AF';
   ctx.textAlign = 'center';
   ctx.fillText('Joga Bonito · ' + DB.season, W / 2, y);
@@ -4076,14 +4139,14 @@ async function shareInsights(key) {
   else { insights = generateCompetitieInsights(); title = 'Competitie & All-time'; }
   if (!insights.length) return;
 
-  const W = 720, PAD = 40, lineH = 22;
+  const W = 390, PAD = 24, lineH = 20;
   const items = insights.map(ins => ({
     tag: ins.tagText, title: ins.title,
-    lines: wrapText(stripHTML(ins.body), W - PAD * 2 - 20, '400 13px "Nunito", sans-serif')
+    lines: wrapText(stripHTML(ins.body), W - PAD * 2 - 20, '400 11px "Nunito", sans-serif')
   }));
-  let totalH = 140;
-  items.forEach(it => { totalH += 50 + it.lines.length * lineH + 20; });
-  totalH += 40;
+  let totalH = 110;
+  items.forEach(it => { totalH += 44 + it.lines.length * lineH + 16; });
+  totalH += 30;
 
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = totalH;
@@ -4091,27 +4154,27 @@ async function shareInsights(key) {
   ctx.fillRect(0, 0, W, totalH);
   drawCardHeader(ctx, W, title);
 
-  let y = 120;
+  let y = 95;
   items.forEach(it => {
     ctx.fillStyle = '#F0F2F5';
-    const cardH = 40 + it.lines.length * lineH + 16;
+    const cardH = 36 + it.lines.length * lineH + 12;
     ctx.beginPath();
-    ctx.roundRect(PAD, y, W - PAD * 2, cardH, 10);
+    ctx.roundRect(PAD, y, W - PAD * 2, cardH, 8);
     ctx.fill();
 
-    ctx.font = '700 10px "Montserrat", sans-serif';
+    ctx.font = '700 9px "Montserrat", sans-serif';
     ctx.fillStyle = '#059669';
     ctx.textAlign = 'left';
-    ctx.fillText(it.tag.toUpperCase(), PAD + 14, y + 20);
+    ctx.fillText(it.tag.toUpperCase(), PAD + 12, y + 16);
 
-    ctx.font = '700 14px "Montserrat", sans-serif';
+    ctx.font = '700 12px "Montserrat", sans-serif';
     ctx.fillStyle = '#1B2A4A';
-    ctx.fillText(it.title, PAD + 14, y + 38);
+    ctx.fillText(it.title, PAD + 12, y + 32);
 
-    ctx.font = '400 13px "Nunito", sans-serif';
+    ctx.font = '400 11px "Nunito", sans-serif';
     ctx.fillStyle = '#6B7280';
     it.lines.forEach((line, i) => {
-      ctx.fillText(line, PAD + 14, y + 56 + i * lineH);
+      ctx.fillText(line, PAD + 12, y + 48 + i * lineH);
     });
 
     y += cardH + 10;
@@ -4161,51 +4224,52 @@ async function shareStatsCard() {
   }
   if (!scorers.length) return showToast('Geen stats om te delen');
 
-  const W = 720, PAD = 40, rowH = 32;
-  const H = 160 + scorers.length * rowH + 60;
+  const W = 390, PAD = 24, rowH = 26;
+  const H = 130 + scorers.length * rowH + 40;
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, W, H);
   drawCardHeader(ctx, W, subtitle);
 
-  let y = 120;
-  ctx.font = '700 11px "Montserrat", sans-serif';
+  let y = 100;
+  ctx.font = '700 9px "Montserrat", sans-serif';
   ctx.fillStyle = '#9CA3AF';
   ctx.textAlign = 'left';
-  ctx.fillText('SPELER', PAD + 40, y);
+  ctx.fillText('SPELER', PAD + 30, y);
   ctx.textAlign = 'center';
-  ctx.fillText('WED', W - 240, y);
-  ctx.fillText('GOALS', W - 170, y);
-  ctx.fillText('ASSISTS', W - 95, y);
-  ctx.fillText('G/A', W - PAD - 10, y);
+  ctx.fillText('W', W - 130, y);
+  ctx.fillText('G', W - 95, y);
+  ctx.fillText('A', W - 65, y);
+  ctx.fillText('G+A', W - PAD - 10, y);
   y += 8;
   ctx.strokeStyle = '#E5E7EB';
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
-  y += 6;
+  y += 4;
 
   scorers.forEach((s, i) => {
     if (i % 2 === 0) {
       ctx.fillStyle = '#F9FAFB';
-      ctx.fillRect(PAD, y - 4, W - PAD * 2, rowH);
+      ctx.fillRect(PAD, y - 2, W - PAD * 2, rowH);
     }
-    ctx.font = '700 13px "Montserrat", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.font = '700 10px "Montserrat", sans-serif';
+    ctx.fillStyle = '#9CA3AF';
     ctx.textAlign = 'left';
-    ctx.fillText((i + 1) + '.', PAD + 10, y + 16);
-    ctx.font = '600 13px "Nunito", sans-serif';
-    ctx.fillText(s.name, PAD + 40, y + 16);
-    ctx.textAlign = 'center';
-    ctx.font = '400 13px "Nunito", sans-serif';
-    ctx.fillStyle = '#6B7280';
-    ctx.fillText(s.played.toString(), W - 240, y + 16);
-    ctx.font = '700 13px "Montserrat", sans-serif';
+    ctx.fillText((i + 1) + '.', PAD + 8, y + 14);
+    ctx.font = '600 11px "Nunito", sans-serif';
     ctx.fillStyle = '#1B2A4A';
-    ctx.fillText(s.goals.toString(), W - 170, y + 16);
-    ctx.fillText(s.assists.toString(), W - 95, y + 16);
+    ctx.fillText(s.name, PAD + 30, y + 14);
+    ctx.textAlign = 'center';
+    ctx.font = '400 11px "Nunito", sans-serif';
+    ctx.fillStyle = '#6B7280';
+    ctx.fillText(s.played.toString(), W - 130, y + 14);
+    ctx.font = '700 11px "Montserrat", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.fillText(s.goals.toString(), W - 95, y + 14);
+    ctx.fillText(s.assists.toString(), W - 65, y + 14);
     ctx.fillStyle = '#059669';
-    ctx.fillText((s.goals + s.assists).toString(), W - PAD - 10, y + 16);
+    ctx.fillText((s.goals + s.assists).toString(), W - PAD - 10, y + 14);
     y += rowH;
   });
 
@@ -4222,56 +4286,56 @@ async function shareScheduleCard() {
   const allUpcoming = [...upcoming.map(m => ({ opp: m.opponent, date: m.date, src: 'app' })), ...srzaProg.map(p => ({ opp: p.opp, date: p.date, src: 'srza' }))].slice(0, 5);
   const allResults = [...finished.map(m => ({ opp: m.opponent, date: m.date, jb: m.scoreHome, opp_s: m.scoreAway, src: 'app' })), ...srzaRes.map(r => ({ opp: r.opp, date: r.date, jb: r.jb, opp_s: r.opp_s, src: 'srza' }))].slice(0, 5);
 
-  const W = 720, PAD = 40, rowH = 36;
-  const progH = allUpcoming.length ? 30 + allUpcoming.length * rowH : 0;
-  const resH = allResults.length ? 30 + allResults.length * rowH : 0;
-  const H = 130 + progH + resH + 60 + (progH && resH ? 20 : 0);
+  const W = 390, PAD = 24, rowH = 30;
+  const progH = allUpcoming.length ? 26 + allUpcoming.length * rowH : 0;
+  const resH = allResults.length ? 26 + allResults.length * rowH : 0;
+  const H = 105 + progH + resH + 40 + (progH && resH ? 14 : 0);
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, W, H);
   drawCardHeader(ctx, W, 'Programma & Uitslagen');
 
-  let y = 118;
+  let y = 96;
   if (allUpcoming.length) {
-    ctx.font = '800 12px "Montserrat", sans-serif';
+    ctx.font = '800 10px "Montserrat", sans-serif';
     ctx.fillStyle = '#1B2A4A';
     ctx.textAlign = 'left';
     ctx.fillText('PROGRAMMA', PAD, y);
-    y += 10;
+    y += 8;
     allUpcoming.forEach(m => {
-      ctx.font = '400 12px "Nunito", sans-serif';
+      ctx.font = '400 10px "Nunito", sans-serif';
       ctx.fillStyle = '#9CA3AF';
       ctx.textAlign = 'left';
-      ctx.fillText(formatDate(m.date), PAD + 10, y + 22);
-      ctx.font = '600 13px "Nunito", sans-serif';
+      ctx.fillText(formatDate(m.date), PAD + 8, y + 18);
+      ctx.font = '600 11px "Nunito", sans-serif';
       ctx.fillStyle = '#1B2A4A';
-      ctx.fillText(m.opp, PAD + 130, y + 22);
+      ctx.fillText(m.opp, PAD + 100, y + 18);
       y += rowH;
     });
-    y += 10;
+    y += 8;
   }
 
   if (allResults.length) {
-    ctx.font = '800 12px "Montserrat", sans-serif';
+    ctx.font = '800 10px "Montserrat", sans-serif';
     ctx.fillStyle = '#1B2A4A';
     ctx.textAlign = 'left';
     ctx.fillText('UITSLAGEN', PAD, y);
-    y += 10;
+    y += 8;
     allResults.forEach(m => {
-      ctx.font = '400 12px "Nunito", sans-serif';
+      ctx.font = '400 10px "Nunito", sans-serif';
       ctx.fillStyle = '#9CA3AF';
       ctx.textAlign = 'left';
-      ctx.fillText(formatDate(m.date), PAD + 10, y + 22);
-      ctx.font = '600 13px "Nunito", sans-serif';
+      ctx.fillText(formatDate(m.date), PAD + 8, y + 18);
+      ctx.font = '600 11px "Nunito", sans-serif';
       ctx.fillStyle = '#1B2A4A';
-      ctx.fillText(m.opp, PAD + 130, y + 22);
+      ctx.fillText(m.opp, PAD + 100, y + 18);
       const score = `${m.jb} – ${m.opp_s}`;
       const col = m.jb > m.opp_s ? '#059669' : m.jb < m.opp_s ? '#EF4444' : '#F59E0B';
-      ctx.font = '800 14px "Montserrat", sans-serif';
+      ctx.font = '800 12px "Montserrat", sans-serif';
       ctx.fillStyle = col;
       ctx.textAlign = 'right';
-      ctx.fillText(score, W - PAD - 10, y + 22);
+      ctx.fillText(score, W - PAD - 8, y + 18);
       y += rowH;
     });
   }
@@ -4287,34 +4351,34 @@ async function shareUitslagenCard() {
 
   if (!allResults.length) { showToast('Geen uitslagen om te delen'); return; }
 
-  const W = 720, PAD = 40, rowH = 36;
-  const H = 130 + 30 + allResults.length * rowH + 60;
+  const W = 390, PAD = 24, rowH = 30;
+  const H = 105 + 26 + allResults.length * rowH + 40;
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, W, H);
   drawCardHeader(ctx, W, 'Laatste uitslagen');
 
-  let y = 118;
-  ctx.font = '800 12px "Montserrat", sans-serif';
+  let y = 96;
+  ctx.font = '800 10px "Montserrat", sans-serif';
   ctx.fillStyle = '#1B2A4A';
   ctx.textAlign = 'left';
   ctx.fillText('UITSLAGEN', PAD, y);
-  y += 10;
+  y += 8;
   allResults.forEach(m => {
-    ctx.font = '400 12px "Nunito", sans-serif';
+    ctx.font = '400 10px "Nunito", sans-serif';
     ctx.fillStyle = '#9CA3AF';
     ctx.textAlign = 'left';
-    ctx.fillText(formatDate(m.date), PAD + 10, y + 22);
-    ctx.font = '600 13px "Nunito", sans-serif';
+    ctx.fillText(formatDate(m.date), PAD + 8, y + 18);
+    ctx.font = '600 11px "Nunito", sans-serif';
     ctx.fillStyle = '#1B2A4A';
-    ctx.fillText(m.opp, PAD + 130, y + 22);
+    ctx.fillText(m.opp, PAD + 100, y + 18);
     const score = `${m.jb} – ${m.opp_s}`;
     const col = m.jb > m.opp_s ? '#059669' : m.jb < m.opp_s ? '#EF4444' : '#F59E0B';
-    ctx.font = '800 14px "Montserrat", sans-serif';
+    ctx.font = '800 12px "Montserrat", sans-serif';
     ctx.fillStyle = col;
     ctx.textAlign = 'right';
-    ctx.fillText(score, W - PAD - 10, y + 22);
+    ctx.fillText(score, W - PAD - 8, y + 18);
     y += rowH;
   });
 
@@ -4328,50 +4392,48 @@ async function sharePlayerCard(id) {
   const career = getPlayerCareerStats(p.name, id);
   if (!career.totalPlayed) { showToast('Geen stats om te delen'); return; }
 
-  const W = 720, PAD = 40, rowH = 32;
+  const W = 390, PAD = 24, rowH = 26;
   const seasonRows = career.seasons.length;
   const hasTotal = career.seasons.length > 1;
-  const careerH = seasonRows * rowH + (hasTotal ? rowH + 8 : 0) + 30;
-  const H = 260 + careerH + 60;
+  const careerH = seasonRows * rowH + (hasTotal ? rowH + 8 : 0) + 26;
+  const H = 210 + careerH + 40;
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, W, H);
 
-  ctx.fillStyle = '#1B2A4A';
-  ctx.fillRect(0, 0, W, 140);
-  const grd = ctx.createLinearGradient(0, 0, W, 140);
+  const grd = ctx.createLinearGradient(0, 0, W, 100);
   grd.addColorStop(0, '#1B2A4A');
   grd.addColorStop(1, '#2C3E6B');
   ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, W, 140);
+  ctx.fillRect(0, 0, W, 100);
 
   ctx.fillStyle = 'rgba(255,255,255,0.15)';
-  ctx.beginPath(); ctx.arc(W - 60, 70, 50, 0, Math.PI * 2); ctx.fill();
-  ctx.font = '800 48px "Montserrat", sans-serif';
+  ctx.beginPath(); ctx.arc(W - 40, 50, 32, 0, Math.PI * 2); ctx.fill();
+  ctx.font = '800 30px "Montserrat", sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.textAlign = 'center';
-  ctx.fillText(`#${p.number}`, W - 60, 88);
+  ctx.fillText(`#${p.number}`, W - 40, 62);
 
   ctx.textAlign = 'left';
-  ctx.font = '800 28px "Montserrat", sans-serif';
+  ctx.font = '800 20px "Montserrat", sans-serif';
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillText(p.name, PAD, 55);
+  ctx.fillText(p.name, PAD, 40);
 
   const badges = [];
   if (p.isKeeper) badges.push('Keeper');
   if (p.isCaptain) badges.push('Aanvoerder');
   if (badges.length) {
-    ctx.font = '600 11px "Nunito", sans-serif';
+    ctx.font = '600 10px "Nunito", sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.fillText(badges.join(' · '), PAD, 78);
+    ctx.fillText(badges.join(' · '), PAD, 58);
   }
 
-  ctx.font = '22px "Pirata One", cursive';
+  ctx.font = '18px "Pirata One", cursive';
   ctx.fillStyle = 'rgba(255,255,255,0.5)';
-  ctx.fillText('Joga Bonito', PAD, 120);
+  ctx.fillText('Joga Bonito', PAD, 85);
 
-  let y = 160;
+  let y = 112;
   const statW = (W - PAD * 2) / 3;
   const statsData = [
     { val: career.totalPlayed, label: 'Wedstrijden' },
@@ -4380,13 +4442,13 @@ async function sharePlayerCard(id) {
   ];
   statsData.forEach((s, i) => {
     const x = PAD + i * statW + statW / 2;
-    ctx.font = '800 28px "Montserrat", sans-serif';
+    ctx.font = '800 22px "Montserrat", sans-serif';
     ctx.fillStyle = '#1B2A4A';
     ctx.textAlign = 'center';
-    ctx.fillText(String(s.val), x, y + 30);
-    ctx.font = '400 10px "Nunito", sans-serif';
+    ctx.fillText(String(s.val), x, y + 24);
+    ctx.font = '400 9px "Nunito", sans-serif';
     ctx.fillStyle = '#9CA3AF';
-    ctx.fillText(s.label, x, y + 46);
+    ctx.fillText(s.label, x, y + 38);
   });
 
   if (career.totalPlayed > 0) {
@@ -4399,34 +4461,34 @@ async function sharePlayerCard(id) {
     ];
     extra.forEach((s, i) => {
       const x = PAD + i * statW + statW / 2;
-      ctx.font = '800 20px "Montserrat", sans-serif';
+      ctx.font = '800 16px "Montserrat", sans-serif';
       ctx.fillStyle = '#1B2A4A';
       ctx.textAlign = 'center';
-      ctx.fillText(String(s.val), x, y + 78);
-      ctx.font = '400 10px "Nunito", sans-serif';
+      ctx.fillText(String(s.val), x, y + 66);
+      ctx.font = '400 9px "Nunito", sans-serif';
       ctx.fillStyle = '#9CA3AF';
-      ctx.fillText(s.label, x, y + 94);
+      ctx.fillText(s.label, x, y + 80);
     });
-    y += 110;
+    y += 94;
   } else {
-    y += 60;
+    y += 50;
   }
 
-  ctx.font = '800 11px "Montserrat", sans-serif';
+  ctx.font = '800 10px "Montserrat", sans-serif';
   ctx.fillStyle = '#1B2A4A';
   ctx.textAlign = 'left';
   ctx.fillText('CARRIÈRE', PAD, y);
-  y += 14;
+  y += 12;
 
   career.seasons.forEach(s => {
-    ctx.font = '600 12px "Nunito", sans-serif';
+    ctx.font = '600 10px "Nunito", sans-serif';
     ctx.fillStyle = '#1B2A4A';
     ctx.textAlign = 'left';
-    ctx.fillText(s.season, PAD + 10, y + 20);
-    ctx.font = '400 11px "Nunito", sans-serif';
+    ctx.fillText(s.season, PAD + 8, y + 16);
+    ctx.font = '400 10px "Nunito", sans-serif';
     ctx.fillStyle = '#6B7280';
     ctx.textAlign = 'right';
-    ctx.fillText(`${s.played} wed   ${s.goals} G   ${s.assists} A`, W - PAD - 10, y + 20);
+    ctx.fillText(`${s.played} wed   ${s.goals} G   ${s.assists} A`, W - PAD - 8, y + 16);
     y += rowH;
   });
 
@@ -4436,12 +4498,12 @@ async function sharePlayerCard(id) {
     ctx.beginPath();
     ctx.roundRect(PAD, y, W - PAD * 2, rowH, 6);
     ctx.fill();
-    ctx.font = '700 12px "Nunito", sans-serif';
+    ctx.font = '700 10px "Nunito", sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.textAlign = 'left';
-    ctx.fillText('All-time', PAD + 10, y + 20);
+    ctx.fillText('All-time', PAD + 8, y + 16);
     ctx.textAlign = 'right';
-    ctx.fillText(`${career.totalPlayed} wed   ${career.totalGoals} G   ${career.totalAssists} A`, W - PAD - 10, y + 20);
+    ctx.fillText(`${career.totalPlayed} wed   ${career.totalGoals} G   ${career.totalAssists} A`, W - PAD - 8, y + 16);
   }
 
   drawCardFooter(ctx, W, H);
