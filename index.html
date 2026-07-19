@@ -858,6 +858,21 @@ label {
   font-size: 0.78rem;
   color: var(--text-muted);
 }
+.insight-section {
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+.insight-section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--navy);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--navy);
+  margin-bottom: 12px;
+}
 .history-result {
   display: flex;
   align-items: center;
@@ -1006,6 +1021,45 @@ label {
   margin-right: 16px;
   cursor: pointer;
 }
+.share-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--navy-10);
+  color: var(--navy);
+  border: none;
+  border-radius: 6px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.pp-header {
+  text-align: center;
+  padding: 30px 20px 20px;
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: #fff;
+}
+.pp-avatar {
+  width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
+  background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 800; color: #fff; overflow: hidden;
+}
+.pp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.pp-name { font-family: 'Montserrat', sans-serif; font-size: 1.3rem; font-weight: 800; }
+.pp-number { font-size: 0.85rem; opacity: 0.7; margin-top: 4px; }
+.pp-badges { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
+.pp-badge { font-size: 0.65rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #e5e7eb; margin: 0 16px; border-radius: 12px; overflow: hidden; }
+.pp-stat { background: var(--surface); text-align: center; padding: 14px 8px; }
+.pp-stat-val { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--navy); }
+.pp-stat-label { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+.pp-matches { margin: 16px; }
+.pp-match { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-size: 0.82rem; }
+.pp-match:last-child { border-bottom: none; }
+.pp-match-opp { font-weight: 600; }
+.pp-match-contrib { color: var(--navy); font-weight: 700; font-size: 0.78rem; }
 
 /* ===== PHASE OVERLAY ===== */
 .phase-overlay {
@@ -1260,6 +1314,7 @@ label {
 
 <div class="phase-overlay" id="phaseOverlay"></div>
 <div class="match-detail-overlay" id="matchDetail"><div id="matchDetailContent"></div></div>
+<div class="match-detail-overlay" id="playerProfile"><div id="playerProfileContent"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1594,8 +1649,8 @@ function renderTeamPage() {
       const badges = [];
       if (p.isKeeper) badges.push('Keeper');
       if (p.isCaptain) badges.push('Aanvoerder');
-      h += `<div class="player-item">
-        <div class="photo-upload" onclick="triggerPhotoUpload('${p.id}')">
+      h += `<div class="player-item" onclick="showPlayerProfile('${p.id}')" style="cursor:pointer">
+        <div class="photo-upload" onclick="event.stopPropagation();triggerPhotoUpload('${p.id}')">
           ${avatarHTML(p)}
           <input type="file" accept="image/*" id="photo_${p.id}" onchange="handlePhotoUpload('${p.id}', this)">
         </div>
@@ -1604,8 +1659,8 @@ function renderTeamPage() {
           ${badges.length ? `<div class="player-badges">${badges.map(b=>`<span class="player-badge">${b}</span>`).join('')}</div>` : ''}
         </div>
         <div class="player-actions">
-          <button onclick="openEditPlayerModal('${p.id}')">&#9998;</button>
-          <button onclick="confirmDeletePlayer('${p.id}')">&#128465;</button>
+          <button onclick="event.stopPropagation();openEditPlayerModal('${p.id}')">&#9998;</button>
+          <button onclick="event.stopPropagation();confirmDeletePlayer('${p.id}')">&#128465;</button>
         </div>
       </div>`;
     });
@@ -1744,6 +1799,78 @@ function deletePlayer(id) {
   DB.players = DB.players.filter(p => p.id !== id);
   saveData(); closeModal(); renderTeamPage();
 }
+
+// =========================================================
+// PLAYER PROFILE
+// =========================================================
+function showPlayerProfile(id) {
+  const p = getPlayer(id);
+  if (!p) return;
+  const finished = DB.matches.filter(m => m.status === 'finished');
+  const played = finished.filter(m => (m.squad || []).includes(id));
+  let goals = 0, assists = 0;
+  const matchDetails = [];
+  played.forEach(m => {
+    let mg = 0, ma = 0;
+    (m.events || []).forEach(ev => {
+      if (ev.type !== 'goal') return;
+      if (ev.team === 'home' && !ev.ownGoal && ev.scorerId === id) { goals++; mg++; }
+      if (ev.assistId === id) { assists++; ma++; }
+    });
+    matchDetails.push({ m, goals: mg, assists: ma });
+  });
+
+  const badges = [];
+  if (p.isKeeper) badges.push('Keeper');
+  if (p.isCaptain) badges.push('Aanvoerder');
+
+  let h = `<div style="display:flex;justify-content:space-between;align-items:center">
+    <button class="detail-back" onclick="closePlayerProfile()">&#8592; Terug</button>
+  </div>
+  <div class="pp-header">
+    <div class="pp-avatar">${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : p.name.charAt(0)}</div>
+    <div class="pp-name">${p.name}</div>
+    <div class="pp-number">#${p.number}</div>
+    ${badges.length ? `<div class="pp-badges">${badges.map(b => `<span class="pp-badge">${b}</span>`).join('')}</div>` : ''}
+  </div>
+  <div style="margin-top:16px">
+    <div class="pp-stats">
+      <div class="pp-stat"><div class="pp-stat-val">${played.length}</div><div class="pp-stat-label">Wedstrijden</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${goals}</div><div class="pp-stat-label">Goals</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${assists}</div><div class="pp-stat-label">Assists</div></div>
+    </div>`;
+
+  if (played.length > 0) {
+    const ratio = played.length ? ((goals + assists) / played.length).toFixed(1) : '0';
+    h += `<div class="pp-stats" style="margin-top:1px">
+      <div class="pp-stat"><div class="pp-stat-val">${ratio}</div><div class="pp-stat-label">G/A ratio</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${goals ? (goals / played.length).toFixed(1) : '0'}</div><div class="pp-stat-label">Goals / wed.</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${finished.filter(m => m.motm === id).length}</div><div class="pp-stat-label">MOTM</div></div>
+    </div>`;
+  }
+
+  if (matchDetails.length > 0) {
+    h += `<div class="pp-matches"><h3 style="font-size:0.88rem;font-weight:700;margin-bottom:8px">Wedstrijden</h3>`;
+    [...matchDetails].reverse().forEach(({ m, goals: mg, assists: ma }) => {
+      const contribs = [];
+      if (mg) contribs.push(`${mg}G`);
+      if (ma) contribs.push(`${ma}A`);
+      h += `<div class="pp-match">
+        <div><span class="pp-match-opp">${m.opponent}</span> <span style="color:var(--text-muted);font-size:0.75rem">${formatDate(m.date)}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${contribs.length ? `<span class="pp-match-contrib">${contribs.join(' ')}</span>` : ''}
+          <span style="font-weight:700">${m.scoreHome}-${m.scoreAway}</span>
+        </div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
+  h += `</div>`;
+  document.getElementById('playerProfileContent').innerHTML = h;
+  document.getElementById('playerProfile').classList.add('open');
+}
+function closePlayerProfile() { document.getElementById('playerProfile').classList.remove('open'); }
 
 // =========================================================
 // MATCH PAGE
@@ -2552,7 +2679,10 @@ function renderCurrentSeasonStats() {
   });
   h += `</div></div>`;
 
-  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2></div>
+  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2>
+    <button class="share-btn-sm" onclick="shareStatsCard()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Delen</button></div>
     <div class="tab-row" id="statTabs">
       <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
       <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
@@ -2679,7 +2809,10 @@ function renderHistoricalStats(seasonKey) {
     h += `</table></div></div>`;
   }
 
-  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2></div>
+  h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2>
+    <button class="share-btn-sm" onclick="shareStatsCard()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Delen</button></div>
     <div class="tab-row" id="historyTabs">
       <button class="tab-btn active" data-sort="goals">&#9917; Goals</button>
       <button class="tab-btn" data-sort="assists">&#127919; Assists</button>
@@ -2764,7 +2897,12 @@ function renderSchedulePage() {
   const finished = DB.matches.filter(m => m.status === 'finished').sort((a,b) => new Date(b.date)-new Date(a.date));
 
   let h = `<div class="section-header"><h2 class="section-title">Programma</h2>
-    <button class="btn btn-primary btn-sm" onclick="openAddMatchModal()">+ Wedstrijd</button></div>`;
+    <div style="display:flex;gap:8px">
+      <button class="share-btn-sm" onclick="shareScheduleCard()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Delen</button>
+      <button class="btn btn-primary btn-sm" onclick="openAddMatchModal()">+ Wedstrijd</button>
+    </div></div>`;
 
   if (upcoming.length) {
     h += `<div class="card">`;
@@ -2808,7 +2946,12 @@ function renderSchedulePage() {
   }
 
   h += `<div class="section-header" style="margin-top:16px"><h2 class="section-title">Uitslagen</h2>
-    <button class="btn btn-outline btn-sm" onclick="openRetroModal()">Achteraf invoeren</button></div>`;
+    <div style="display:flex;gap:6px">
+      <button class="share-btn-sm" onclick="event.stopPropagation();shareUitslagenCard()" title="Delen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="openRetroModal()">Achteraf invoeren</button>
+    </div></div>`;
 
   if (finished.length) {
     h += `<div class="card">`;
@@ -3169,8 +3312,218 @@ function saveRetroMatch() {
 // =========================================================
 // ANALYSE
 // =========================================================
-function generateInsights() {
-  const insights = [];
+function getPlayerStats(matches) {
+  const stats = {};
+  matches.forEach(m => {
+    const inSquad = new Set(m.squad || []);
+    inSquad.forEach(id => {
+      if (!stats[id]) stats[id] = { id, goals: 0, assists: 0, played: 0, matches: [] };
+      stats[id].played++;
+    });
+    (m.events || []).forEach(ev => {
+      if (ev.type !== 'goal') return;
+      if (ev.team === 'home' && !ev.ownGoal && ev.scorerId) {
+        if (!stats[ev.scorerId]) stats[ev.scorerId] = { id: ev.scorerId, goals: 0, assists: 0, played: 0, matches: [] };
+        stats[ev.scorerId].goals++;
+        stats[ev.scorerId].matches.push(m.id);
+      }
+      if (ev.assistId) {
+        if (!stats[ev.assistId]) stats[ev.assistId] = { id: ev.assistId, goals: 0, assists: 0, played: 0, matches: [] };
+        stats[ev.assistId].assists++;
+      }
+    });
+  });
+  return stats;
+}
+
+function generateLastMatchInsights(matches) {
+  const ins = [];
+  if (!matches.length) return ins;
+  const last = matches[matches.length - 1];
+  const isWin = last.scoreHome > last.scoreAway;
+  const isDraw = last.scoreHome === last.scoreAway;
+  const isLoss = last.scoreHome < last.scoreAway;
+
+  // --- Winning/losing/unbeaten streak ---
+  let streak = 0, streakType = isWin ? 'win' : isDraw ? 'draw' : 'loss';
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const m = matches[i];
+    const w = m.scoreHome > m.scoreAway, d = m.scoreHome === m.scoreAway;
+    if (streakType === 'win' && w) streak++;
+    else if (streakType === 'loss' && !w && !d) streak++;
+    else break;
+  }
+  let unbeatStreak = 0;
+  for (let i = matches.length - 1; i >= 0; i--) {
+    if (matches[i].scoreHome >= matches[i].scoreAway) unbeatStreak++;
+    else break;
+  }
+
+  if (streak >= 2 && streakType === 'win') {
+    ins.push({ tag: 'positive', tagText: 'Reeks',
+      title: `${streak} wedstrijden op rij gewonnen`,
+      body: `Joga Bonito is on fire! <span class="insight-stat">${streak} zeges</span> op rij.${streak >= 5 ? ' Wat een reeks!' : ''}`
+    });
+  } else if (streak >= 2 && streakType === 'loss') {
+    ins.push({ tag: 'warning', tagText: 'Reeks',
+      title: `${streak} nederlagen op rij`,
+      body: `<span class="insight-stat">${streak} verliespartijen</span> achter elkaar. Tijd om het tij te keren.`
+    });
+  } else if (unbeatStreak >= 3) {
+    ins.push({ tag: 'positive', tagText: 'Reeks',
+      title: `${unbeatStreak} duels ongeslagen`,
+      body: `Al <span class="insight-stat">${unbeatStreak} wedstrijden</span> geen nederlaag.`
+    });
+  }
+
+  // --- Individual performances last match ---
+  const homeGoals = (last.events || []).filter(e => e.type === 'goal' && e.team === 'home' && !e.ownGoal && e.scorerId);
+  const scorerCount = {};
+  const assistCount = {};
+  homeGoals.forEach(e => {
+    scorerCount[e.scorerId] = (scorerCount[e.scorerId] || 0) + 1;
+    if (e.assistId) assistCount[e.assistId] = (assistCount[e.assistId] || 0) + 1;
+  });
+
+  Object.entries(scorerCount).sort((a,b) => b[1] - a[1]).forEach(([id, cnt]) => {
+    if (cnt >= 3) {
+      ins.push({ tag: 'positive', tagText: 'Hattrick',
+        title: `${getPlayerName(id)}: ${cnt} goals tegen ${last.opponent}`,
+        body: `<span class="insight-stat">${cnt} goals</span> in één wedstrijd! ${cnt >= 4 ? 'Niet te stoppen.' : 'Sterke prestatie.'}`
+      });
+    } else if (cnt === 2) {
+      ins.push({ tag: 'positive', tagText: 'Dubbelslag',
+        title: `${getPlayerName(id)}: 2 goals tegen ${last.opponent}`,
+        body: `<span class="insight-stat">Twee treffers</span> in de ${isWin ? 'overwinning' : isDraw ? 'gelijkspel' : 'wedstrijd'} tegen ${last.opponent}.`
+      });
+    }
+  });
+
+  // --- Player scoring in consecutive matches ---
+  if (matches.length >= 2) {
+    const playerGoalsByMatch = {};
+    matches.forEach(m => {
+      (m.events || []).filter(e => e.type === 'goal' && e.team === 'home' && !e.ownGoal && e.scorerId).forEach(e => {
+        if (!playerGoalsByMatch[e.scorerId]) playerGoalsByMatch[e.scorerId] = new Set();
+        playerGoalsByMatch[e.scorerId].add(m.id);
+      });
+    });
+
+    Object.entries(playerGoalsByMatch).forEach(([id, matchSet]) => {
+      let consec = 0;
+      for (let i = matches.length - 1; i >= 0; i--) {
+        if (matchSet.has(matches[i].id)) consec++;
+        else break;
+      }
+      if (consec >= 3) {
+        ins.push({ tag: 'positive', tagText: 'Vorm',
+          title: `${getPlayerName(id)} scoort in ${consec} duels op rij`,
+          body: `Niet te stoppen: <span class="insight-stat">${consec} wedstrijden</span> achter elkaar raak.`
+        });
+      }
+    });
+  }
+
+  // --- Clean sheet ---
+  if (last.scoreAway === 0) {
+    let csStreak = 0;
+    for (let i = matches.length - 1; i >= 0; i--) {
+      if (matches[i].scoreAway === 0) csStreak++;
+      else break;
+    }
+    ins.push({ tag: 'positive', tagText: 'Clean sheet',
+      title: csStreak > 1 ? `${csStreak} clean sheets op rij` : 'De nul gehouden',
+      body: `Geen tegengoal tegen ${last.opponent} (${last.scoreHome}-0).${csStreak > 1 ? ` Al <span class="insight-stat">${csStreak} wedstrijden</span> de nul gehouden.` : ''}`
+    });
+  }
+
+  // --- Big win ---
+  const diff = last.scoreHome - last.scoreAway;
+  if (diff >= 5) {
+    ins.push({ tag: 'positive', tagText: 'Ruime zege',
+      title: `${last.scoreHome}-${last.scoreAway} tegen ${last.opponent}`,
+      body: `Overtuigende overwinning met <span class="insight-stat">${diff} goals verschil</span>.`
+    });
+  }
+
+  return ins;
+}
+
+function generateSeasonInsights(matches) {
+  const ins = [];
+  if (matches.length < 2) return ins;
+
+  const wins = matches.filter(m => m.scoreHome > m.scoreAway).length;
+  const draws = matches.filter(m => m.scoreHome === m.scoreAway).length;
+  const losses = matches.filter(m => m.scoreHome < m.scoreAway).length;
+  const gf = matches.reduce((s, m) => s + m.scoreHome, 0);
+  const ga = matches.reduce((s, m) => s + m.scoreAway, 0);
+  const winPct = Math.round(wins / matches.length * 100);
+
+  // --- Season record ---
+  ins.push({
+    tag: winPct >= 60 ? 'positive' : winPct <= 35 ? 'warning' : 'neutral', tagText: 'Seizoen',
+    title: `${wins}W ${draws}G ${losses}V in ${matches.length} duels`,
+    body: `Winstpercentage: <span class="insight-stat">${winPct}%</span>. Doelsaldo: <strong>${gf > ga ? '+' : ''}${gf - ga}</strong> (${gf} voor, ${ga} tegen). Gemiddeld <span class="insight-stat">${(gf / matches.length).toFixed(1)} goals</span> per wedstrijd.`
+  });
+
+  // --- Top scorers ---
+  const stats = getPlayerStats(matches);
+  const scorers = Object.values(stats).filter(s => s.goals > 0).sort((a, b) => b.goals - a.goals);
+  if (scorers.length >= 2) {
+    const p1 = scorers[0], p2 = scorers[1];
+    ins.push({ tag: 'positive', tagText: 'Topscorer',
+      title: `${getPlayerName(p1.id)}: ${p1.goals} goals`,
+      body: `Topscorer dit seizoen met <span class="insight-stat">${p1.goals} goals</span> en <span class="insight-stat">${p1.assists} assists</span> in ${p1.played} wedstrijden. ${getPlayerName(p2.id)} volgt met <strong>${p2.goals} goals</strong>.`
+    });
+  }
+
+  // --- Hot player: best last 5 matches ---
+  if (matches.length >= 3) {
+    const recentN = Math.min(5, matches.length);
+    const recent = matches.slice(-recentN);
+    const recentStats = getPlayerStats(recent);
+    const hot = Object.values(recentStats)
+      .filter(s => s.goals + s.assists >= 3 && s.played >= 2)
+      .sort((a, b) => (b.goals + b.assists) - (a.goals + a.assists));
+    if (hot.length > 0) {
+      const p = hot[0];
+      ins.push({ tag: 'positive', tagText: 'On fire',
+        title: `${getPlayerName(p.id)}: ${p.goals}G ${p.assists}A in laatste ${recentN}`,
+        body: `<span class="insight-stat">${p.goals} goals</span> en <span class="insight-stat">${p.assists} assists</span> in de laatste ${recentN} wedstrijden. Niet te stoppen.`
+      });
+    }
+  }
+
+  // --- Top-3 afhankelijkheid ---
+  if (scorers.length >= 3 && gf > 0) {
+    const top3 = scorers.slice(0, 3);
+    const top3Goals = top3.reduce((s, p) => s + p.goals, 0);
+    const pct = Math.round(top3Goals / gf * 100);
+    if (pct >= 50) {
+      ins.push({
+        tag: 'positive', tagText: 'Kernspelers',
+        title: `Top-3 scoort ${pct}% van alle goals`,
+        body: `${top3.map(p => getPlayerName(p.id)).join(', ')} scoren samen <span class="insight-stat">${top3Goals} van ${gf} goals</span>. Sterke kern die het team draagt.`
+      });
+    }
+  }
+
+  // --- Biggest win ---
+  const biggestWin = [...matches].filter(m => m.scoreHome > m.scoreAway)
+    .sort((a, b) => (b.scoreHome - b.scoreAway) - (a.scoreHome - a.scoreAway))[0];
+  if (biggestWin && (biggestWin.scoreHome - biggestWin.scoreAway) >= 4) {
+    ins.push({ tag: 'positive', tagText: 'Record',
+      title: `Grootste zege: ${biggestWin.scoreHome}-${biggestWin.scoreAway}`,
+      body: `Tegen ${biggestWin.opponent} op ${formatDate(biggestWin.date)}. <span class="insight-stat">${biggestWin.scoreHome - biggestWin.scoreAway} goals verschil</span>.`
+    });
+  }
+
+  return ins;
+}
+
+function generateCompetitieInsights() {
+  const ins = [];
   const srza = srzaData;
   const hist = HISTORY['2025/26'];
   const prev = HISTORY['2024/25'];
@@ -3180,22 +3533,20 @@ function generateInsights() {
   const standen = srza?.standen || hist?.standings || [];
   const players = hist?.players || [];
   const allPlayers = all?.players || [];
-  const compResults = results.filter(r => /^\d/.test(r.comp));
 
   const jb = standen.find(t => t.team.toUpperCase().includes('JOGA'));
 
-  // --- POSITIE ---
   if (jb && standen.length >= 3) {
     const leader = standen[0];
     const gap = leader.p - jb.p;
     if (jb.pos === 1) {
       const second = standen[1];
-      insights.push({ tag: 'positive', tagText: 'Koploper',
+      ins.push({ tag: 'positive', tagText: 'Koploper',
         title: 'Bovenaan de ranglijst',
         body: `Joga Bonito staat op <span class="insight-stat">plek 1</span> met <span class="insight-stat">${jb.p} punten</span> uit ${jb.g} wedstrijden. ${jb.p - second.p} punten voorsprong op ${second.team}.`
       });
     } else {
-      insights.push({
+      ins.push({
         tag: jb.pos <= 3 ? 'neutral' : 'warning', tagText: `#${jb.pos}`,
         title: jb.pos <= 3 ? `Podiumplaats: ${jb.pos}e` : `Positie ${jb.pos} in de stand`,
         body: `<span class="insight-stat">${jb.pos}e</span> met <span class="insight-stat">${jb.p} punten</span> uit ${jb.g} wedstrijden (${jb.w}W ${jb.gl}G ${jb.v}V). <span class="insight-stat">${gap} punten</span> achter koploper ${leader.team}. Doelsaldo: <strong>${jb.ds > 0 ? '+' : ''}${jb.ds}</strong> (${jb.dv} voor, ${jb.dt} tegen).`
@@ -3203,62 +3554,6 @@ function generateInsights() {
     }
   }
 
-  // --- VORM LAATSTE 5 ---
-  if (results.length >= 5) {
-    const last5 = [...results].reverse().slice(0, 5);
-    const w = last5.filter(r => r.jb > r.opp_s).length;
-    const d = last5.filter(r => r.jb === r.opp_s).length;
-    const l = last5.filter(r => r.jb < r.opp_s).length;
-    const gf = last5.reduce((s, r) => s + r.jb, 0);
-    const form = last5.map(r => r.jb > r.opp_s ? 'W' : r.jb < r.opp_s ? 'V' : 'G').join(' ');
-    insights.push({
-      tag: w >= 4 ? 'positive' : l >= 3 ? 'warning' : 'neutral', tagText: 'Vorm',
-      title: w >= 4 ? 'Sterke reeks' : l >= 3 ? 'Vormcrisis' : 'Wisselvallig',
-      body: `Laatste 5: <span class="insight-stat">${w}W ${d}G ${l}V</span> (${form}). Gemiddeld <strong>${(gf / 5).toFixed(1)} goals</strong> per wedstrijd.${w === 5 ? ' Perfecte reeks!' : l === 0 ? ' Ongeslagen in de laatste 5.' : ''}`
-    });
-  }
-
-  // --- TOPSCORER ---
-  if (players.length >= 2) {
-    const top = [...players].sort((a, b) => b.goals - a.goals);
-    const p1 = top[0], p2 = top[1];
-    const ratio1 = (p1.goals / p1.played).toFixed(1);
-    const allTop = allPlayers.length >= 2 ? [...allPlayers].sort((a, b) => b.goals - a.goals) : [];
-    const isAllTimeTop = allTop.length && allTop[0].name === p1.name;
-    insights.push({ tag: 'positive', tagText: 'Topscorer',
-      title: `${p1.name}: ${p1.goals} goals`,
-      body: `Topscorer met <span class="insight-stat">${p1.goals} goals</span> in ${p1.played} wedstrijden (ratio ${ratio1}). ${p2.name} volgt met <span class="insight-stat">${p2.goals}</span>.${isAllTimeTop ? ` Ook all-time #1 met <strong>${allTop[0].goals} goals</strong> (${allTop[1].name}: ${allTop[1].goals}).` : ''}`
-    });
-  }
-
-  // --- TOP-3 AFHANKELIJKHEID ---
-  if (players.length >= 4 && hist?.totalGoals) {
-    const top3 = [...players].sort((a, b) => b.goals - a.goals).slice(0, 3);
-    const top3Goals = top3.reduce((s, p) => s + p.goals, 0);
-    const pct = Math.round(top3Goals / hist.totalGoals * 100);
-    if (pct >= 45) {
-      insights.push({
-        tag: pct >= 55 ? 'warning' : 'neutral', tagText: pct >= 55 ? 'Risico' : 'Focus',
-        title: `Top-3 scoort ${pct}% van alle goals`,
-        body: `${top3.map(p => p.name).join(', ')} scoren samen <span class="insight-stat">${top3Goals} van ${hist.totalGoals} goals</span> (${pct}%). ${pct >= 55 ? 'Hoge afhankelijkheid — als een van hen wegvalt, mist het team direct slagkracht.' : 'Goede concentratie, maar meer spreiding maakt het team onvoorspelbaarder.'}`
-      });
-    }
-  }
-
-  // --- DOELSALDO VS COMPETITIE ---
-  if (jb && standen.length >= 3 && jb.pos > 1) {
-    const bestDS = Math.max(...standen.map(t => t.ds));
-    const bestDV = Math.max(...standen.map(t => t.dv));
-    if (jb.ds === bestDS || jb.dv === bestDV) {
-      const leader = standen[0];
-      insights.push({ tag: 'neutral', tagText: 'Analyse',
-        title: jb.ds === bestDS ? 'Beste doelsaldo, toch geen titel' : 'Beste aanval van de competitie',
-        body: `Met <span class="insight-stat">${jb.ds > 0 ? '+' : ''}${jb.ds} doelsaldo</span> (${jb.dv} voor, ${jb.dt} tegen) ${jb.ds === bestDS ? 'het beste saldo' : 'de meeste goals'} van de competitie — ${jb.ds === bestDS ? `beter dan kampioen ${leader.team} (${leader.ds > 0 ? '+' : ''}${leader.ds})` : `meer dan nummer 1 ${leader.team} (${leader.dv})`}. Toch plek ${jb.pos}. De <strong>${jb.v} verliespartijen</strong> maakten het verschil.`
-      });
-    }
-  }
-
-  // --- THUIS VS UIT ---
   if (results.length >= 6) {
     const home = results.filter(r => r.home);
     const away = results.filter(r => !r.home);
@@ -3269,7 +3564,7 @@ function generateInsights() {
       const agf = away.reduce((s, r) => s + r.jb, 0);
       const hPct = Math.round(hw / home.length * 100);
       const aPct = Math.round(aw / away.length * 100);
-      insights.push({
+      ins.push({
         tag: Math.abs(hPct - aPct) > 25 ? 'neutral' : 'positive', tagText: 'Thuis/Uit',
         title: hPct > aPct + 25 ? 'Thuismacht' : aPct > hPct + 25 ? 'Sterker op verplaatsing' : 'Overal gevaarlijk',
         body: `Thuis: <span class="insight-stat">${hw}/${home.length} winst</span> (${hPct}%), ${(hgf / home.length).toFixed(1)} goals/wed. Uit: <span class="insight-stat">${aw}/${away.length} winst</span> (${aPct}%), ${(agf / away.length).toFixed(1)} goals/wed.`
@@ -3277,7 +3572,6 @@ function generateInsights() {
     }
   }
 
-  // --- TEGEN DE TOP ---
   if (jb && standen.length >= 3 && results.length >= 4) {
     const topTeams = standen.filter(t => t.pos <= 3 && !t.team.toUpperCase().includes('JOGA')).map(t => t.team.toUpperCase());
     const vsTop = results.filter(r => topTeams.some(t => t.includes(r.opp.toUpperCase()) || r.opp.toUpperCase().includes(t)));
@@ -3286,7 +3580,7 @@ function generateInsights() {
       const td = vsTop.filter(r => r.jb === r.opp_s).length;
       const tl = vsTop.filter(r => r.jb < r.opp_s).length;
       const topNames = [...new Set(vsTop.map(r => r.opp))].join(' en ');
-      insights.push({
+      ins.push({
         tag: tw > tl ? 'positive' : 'warning', tagText: tw > tl ? 'Sterk' : 'Zwakte',
         title: tw > tl ? 'Dominant tegen de top' : 'Moeite met de top',
         body: `Tegen ${topNames}: <span class="insight-stat">${tw}W ${td}G ${tl}V</span>. ${tw > tl ? 'Joga Bonito kan meespelen met de besten.' : `De directe confrontaties kosten punten.${tl > tw + td ? ' Dit is het verschil met de titelkandidaten.' : ''}`}`
@@ -3294,7 +3588,6 @@ function generateInsights() {
     }
   }
 
-  // --- X-FACTOR ---
   if (players.length >= 4) {
     const topScorer = [...players].sort((a, b) => b.goals - a.goals)[0];
     const xFactor = players
@@ -3302,19 +3595,18 @@ function generateInsights() {
       .sort((a, b) => (b.goals + b.assists) / b.played - (a.goals + a.assists) / a.played)[0];
     if (xFactor) {
       const ratio = ((xFactor.goals + xFactor.assists) / xFactor.played).toFixed(1);
-      insights.push({ tag: 'positive', tagText: 'X-Factor',
+      ins.push({ tag: 'positive', tagText: 'X-Factor',
         title: `${xFactor.name}: verborgen kracht`,
-        body: `<span class="insight-stat">${xFactor.goals} goals</span> en <span class="insight-stat">${xFactor.assists} assists</span> in ${xFactor.played} wedstrijden — ratio <strong>${ratio} per wedstrijd</strong>.${xFactor.played < 15 ? ' Meer beschikbaarheid zou het verschil kunnen maken.' : ''}`
+        body: `<span class="insight-stat">${xFactor.goals} goals</span> en <span class="insight-stat">${xFactor.assists} assists</span> in ${xFactor.played} wedstrijden — ratio <strong>${ratio} per wedstrijd</strong>.`
       });
     }
   }
 
-  // --- SEIZOENSGROEI ---
   if (hist?.totalGoals && prev?.totalGoals) {
     const gGrowth = Math.round((hist.totalGoals - prev.totalGoals) / prev.totalGoals * 100);
     const aGrowth = hist.totalAssists && prev.totalAssists ? Math.round((hist.totalAssists - prev.totalAssists) / prev.totalAssists * 100) : null;
     if (Math.abs(gGrowth) >= 5) {
-      insights.push({
+      ins.push({
         tag: gGrowth > 0 ? 'positive' : 'warning', tagText: 'Groei',
         title: gGrowth > 0 ? 'Aanvalskracht groeit' : 'Minder productief',
         body: `Van <span class="insight-stat">${prev.totalGoals} goals</span> (2024/25) naar <span class="insight-stat">${hist.totalGoals} goals</span> (2025/26): <strong>${gGrowth > 0 ? '+' : ''}${gGrowth}%</strong>.${aGrowth !== null ? ` Assists: ${prev.totalAssists} → ${hist.totalAssists} (${aGrowth > 0 ? '+' : ''}${aGrowth}%).` : ''}`
@@ -3322,47 +3614,69 @@ function generateInsights() {
     }
   }
 
-  // --- BEKER ---
   const bekerResults = results.filter(r => r.comp === 'BK' || r.comp === 'beker');
   if (bekerResults.length >= 2) {
     const bw = bekerResults.filter(r => r.jb > r.opp_s).length;
     const bl = bekerResults.filter(r => r.jb < r.opp_s).length;
     const bgf = bekerResults.reduce((s, r) => s + r.jb, 0);
     const bga = bekerResults.reduce((s, r) => s + r.opp_s, 0);
-    insights.push({
+    ins.push({
       tag: bw > bl ? 'positive' : 'neutral', tagText: 'Beker',
       title: `Beker: ${bw} winst in ${bekerResults.length} duels`,
-      body: `Bekerprestaties: <span class="insight-stat">${bw}W ${bl}V</span>, <strong>${bgf} goals voor, ${bga} tegen</strong>.${bgf / bekerResults.length > 5 ? ' Grote scores in de beker — het team schakelt moeiteloos een tandje bij.' : ''}`
+      body: `Bekerprestaties: <span class="insight-stat">${bw}W ${bl}V</span>, <strong>${bgf} goals voor, ${bga} tegen</strong>.${bgf / bekerResults.length > 5 ? ' Grote scores in de beker.' : ''}`
     });
   }
 
-  return insights;
+  // --- All-time top scorers ---
+  if (allPlayers.length >= 3) {
+    const top = [...allPlayers].sort((a, b) => b.goals - a.goals).slice(0, 3);
+    ins.push({ tag: 'neutral', tagText: 'All-time',
+      title: `All-time topscorers`,
+      body: top.map((p, i) => `${i + 1}. ${p.name}: <span class="insight-stat">${p.goals} goals</span>, ${p.assists} assists (${p.played} wed.)`).join('<br>')
+    });
+  }
+
+  return ins;
+}
+
+function renderInsightSection(h, title, insights, shareKey) {
+  if (!insights.length) return h;
+  h += `<div class="insight-section"><div class="insight-section-title" style="display:flex;justify-content:space-between;align-items:center">${title}
+    <button class="share-btn-sm" onclick="shareInsights('${shareKey}')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      Delen</button>
+  </div></div>`;
+  insights.forEach(ins => {
+    h += `<div class="insight-card">
+      <span class="insight-tag ${ins.tag}">${ins.tagText}</span>
+      <div class="insight-title">${ins.title}</div>
+      <div class="insight-body">${ins.body}</div>
+    </div>`;
+  });
+  return h;
 }
 
 function renderAnalysePage() {
   const c = document.getElementById('analyseContent');
-  const insights = generateInsights();
+  const finished = DB.matches.filter(m => m.status === 'finished').sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  const sources = [];
-  if (srzaData) sources.push('SRZA competitiedata');
-  if (HISTORY['2025/26']) sources.push('2025/26');
-  if (HISTORY['2024/25']) sources.push('2024/25');
+  const lastMatch = generateLastMatchInsights(finished);
+  const season = generateSeasonInsights(finished);
+  const comp = generateCompetitieInsights();
+
+  const hasAny = lastMatch.length || season.length || comp.length;
 
   let h = `<div class="analyse-header">
     <h2>AI Analyse</h2>
-    <p>Inzichten op basis van ${sources.length ? sources.join(' + ') : 'beschikbare data'}</p>
+    <p>${finished.length ? finished.length + ' wedstrijden geanalyseerd' : 'Inzichten verschijnen na je eerste wedstrijd'}</p>
   </div>`;
 
-  if (insights.length === 0) {
-    h += `<div class="empty-state" style="padding:30px 0"><p style="color:var(--text-muted)">Nog niet genoeg data voor analyse</p></div>`;
+  if (!hasAny) {
+    h += `<div class="empty-state" style="padding:30px 0"><p style="color:var(--text-muted)">Nog niet genoeg data voor analyse. Speel je eerste wedstrijd!</p></div>`;
   } else {
-    insights.forEach(ins => {
-      h += `<div class="insight-card">
-        <span class="insight-tag ${ins.tag}">${ins.tagText}</span>
-        <div class="insight-title">${ins.title}</div>
-        <div class="insight-body">${ins.body}</div>
-      </div>`;
-    });
+    h = renderInsightSection(h, 'Laatste wedstrijd', lastMatch, 'last');
+    h = renderInsightSection(h, `Seizoen ${DB.season}`, season, 'season');
+    h = renderInsightSection(h, 'Competitie & All-time', comp, 'comp');
   }
 
   c.innerHTML = h;
@@ -3512,6 +3826,314 @@ async function shareMatchCard(matchId) {
   } catch (e) {
     if (e.name !== 'AbortError') showToast('Delen niet gelukt');
   }
+}
+
+function createShareCanvas(W) {
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  const ctx = canvas.getContext('2d');
+  return { canvas, ctx };
+}
+
+function drawCardHeader(ctx, W, subtitle) {
+  const grad = ctx.createLinearGradient(0, 0, W, 100);
+  grad.addColorStop(0, '#1B2A4A');
+  grad.addColorStop(1, '#2C3E6B');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, 100);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '700 28px "Pirata One", serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Joga Bonito', W / 2, 42);
+  ctx.font = '400 12px "Nunito", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.fillText(subtitle, W / 2, 70);
+}
+
+function drawCardFooter(ctx, W, H) {
+  ctx.font = '400 11px "Nunito", sans-serif';
+  ctx.fillStyle = '#9CA3AF';
+  ctx.textAlign = 'center';
+  ctx.fillText('Joga Bonito · ' + DB.season, W / 2, H - 18);
+}
+
+function stripHTML(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent;
+}
+
+async function doShare(canvas, filename) {
+  try {
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const file = new File([blob], filename + '.png', { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ title: 'Joga Bonito', files: [file] });
+    } else {
+      const link = document.createElement('a');
+      link.download = file.name;
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+      showToast('Afbeelding gedownload');
+    }
+  } catch (e) {
+    if (e.name !== 'AbortError') showToast('Delen niet gelukt');
+  }
+}
+
+async function shareInsights(key) {
+  const finished = DB.matches.filter(m => m.status === 'finished').sort((a, b) => new Date(a.date) - new Date(b.date));
+  let insights, title;
+  if (key === 'last') { insights = generateLastMatchInsights(finished); title = 'Laatste wedstrijd'; }
+  else if (key === 'season') { insights = generateSeasonInsights(finished); title = 'Seizoen ' + DB.season; }
+  else { insights = generateCompetitieInsights(); title = 'Competitie & All-time'; }
+  if (!insights.length) return;
+
+  const W = 720, PAD = 40, lineH = 22;
+  const items = insights.map(ins => ({
+    tag: ins.tagText, title: ins.title,
+    lines: wrapText(stripHTML(ins.body), W - PAD * 2 - 20, '400 13px "Nunito", sans-serif')
+  }));
+  let totalH = 140;
+  items.forEach(it => { totalH += 50 + it.lines.length * lineH + 20; });
+  totalH += 40;
+
+  const { canvas, ctx } = createShareCanvas(W);
+  canvas.height = totalH;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, totalH);
+  drawCardHeader(ctx, W, title);
+
+  let y = 120;
+  items.forEach(it => {
+    ctx.fillStyle = '#F0F2F5';
+    const cardH = 40 + it.lines.length * lineH + 16;
+    ctx.beginPath();
+    ctx.roundRect(PAD, y, W - PAD * 2, cardH, 10);
+    ctx.fill();
+
+    ctx.font = '700 10px "Montserrat", sans-serif';
+    ctx.fillStyle = '#059669';
+    ctx.textAlign = 'left';
+    ctx.fillText(it.tag.toUpperCase(), PAD + 14, y + 20);
+
+    ctx.font = '700 14px "Montserrat", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.fillText(it.title, PAD + 14, y + 38);
+
+    ctx.font = '400 13px "Nunito", sans-serif';
+    ctx.fillStyle = '#6B7280';
+    it.lines.forEach((line, i) => {
+      ctx.fillText(line, PAD + 14, y + 56 + i * lineH);
+    });
+
+    y += cardH + 10;
+  });
+
+  drawCardFooter(ctx, W, totalH);
+  await doShare(canvas, 'joga-bonito-analyse-' + key);
+}
+
+function wrapText(text, maxWidth, font) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.font = font;
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+
+async function shareStatsCard() {
+  let scorers = [];
+  let subtitle = 'Statistieken ' + DB.season;
+
+  if (selectedStatsSeason === 'current') {
+    const finished = DB.matches.filter(m => m.status === 'finished');
+    const stats = getPlayerStats(finished);
+    scorers = Object.values(stats).filter(s => s.goals > 0 || s.assists > 0 || s.played > 0)
+      .sort((a, b) => b.goals - a.goals || b.assists - a.assists)
+      .map(s => ({ name: getPlayerName(s.id), played: s.played, goals: s.goals, assists: s.assists }));
+  } else {
+    const key = selectedStatsSeason === 'all' ? 'all' : selectedStatsSeason;
+    const hist = HISTORY[key];
+    if (hist?.players) {
+      scorers = hist.players.map(p => ({ name: p.name, played: p.played, goals: p.goals, assists: p.assists }));
+    }
+    subtitle = key === 'all' ? 'All-time statistieken' : 'Statistieken ' + key;
+  }
+  if (!scorers.length) return showToast('Geen stats om te delen');
+
+  const W = 720, PAD = 40, rowH = 32;
+  const H = 160 + scorers.length * rowH + 60;
+  const { canvas, ctx } = createShareCanvas(W);
+  canvas.height = H;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, H);
+  drawCardHeader(ctx, W, subtitle);
+
+  let y = 120;
+  ctx.font = '700 11px "Montserrat", sans-serif';
+  ctx.fillStyle = '#9CA3AF';
+  ctx.textAlign = 'left';
+  ctx.fillText('SPELER', PAD + 40, y);
+  ctx.textAlign = 'center';
+  ctx.fillText('WED', W - 240, y);
+  ctx.fillText('GOALS', W - 170, y);
+  ctx.fillText('ASSISTS', W - 95, y);
+  ctx.fillText('G/A', W - PAD - 10, y);
+  y += 8;
+  ctx.strokeStyle = '#E5E7EB';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
+  y += 6;
+
+  scorers.forEach((s, i) => {
+    if (i % 2 === 0) {
+      ctx.fillStyle = '#F9FAFB';
+      ctx.fillRect(PAD, y - 4, W - PAD * 2, rowH);
+    }
+    ctx.font = '700 13px "Montserrat", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.textAlign = 'left';
+    ctx.fillText((i + 1) + '.', PAD + 10, y + 16);
+    ctx.font = '600 13px "Nunito", sans-serif';
+    ctx.fillText(s.name, PAD + 40, y + 16);
+    ctx.textAlign = 'center';
+    ctx.font = '400 13px "Nunito", sans-serif';
+    ctx.fillStyle = '#6B7280';
+    ctx.fillText(s.played.toString(), W - 240, y + 16);
+    ctx.font = '700 13px "Montserrat", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.fillText(s.goals.toString(), W - 170, y + 16);
+    ctx.fillText(s.assists.toString(), W - 95, y + 16);
+    ctx.fillStyle = '#059669';
+    ctx.fillText((s.goals + s.assists).toString(), W - PAD - 10, y + 16);
+    y += rowH;
+  });
+
+  drawCardFooter(ctx, W, H);
+  await doShare(canvas, 'joga-bonito-stats');
+}
+
+async function shareScheduleCard() {
+  const finished = DB.matches.filter(m => m.status === 'finished').sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+  const upcoming = DB.matches.filter(m => m.status !== 'finished').sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 5);
+  const srzaProg = (srzaData?.programma || []).slice(0, 5);
+  const srzaRes = (srzaData?.uitslagen || []).slice(-5).reverse();
+
+  const allUpcoming = [...upcoming.map(m => ({ opp: m.opponent, date: m.date, src: 'app' })), ...srzaProg.map(p => ({ opp: p.opp, date: p.date, src: 'srza' }))].slice(0, 5);
+  const allResults = [...finished.map(m => ({ opp: m.opponent, date: m.date, jb: m.scoreHome, opp_s: m.scoreAway, src: 'app' })), ...srzaRes.map(r => ({ opp: r.opp, date: r.date, jb: r.jb, opp_s: r.opp_s, src: 'srza' }))].slice(0, 5);
+
+  const W = 720, PAD = 40, rowH = 36;
+  const progH = allUpcoming.length ? 30 + allUpcoming.length * rowH : 0;
+  const resH = allResults.length ? 30 + allResults.length * rowH : 0;
+  const H = 130 + progH + resH + 60 + (progH && resH ? 20 : 0);
+  const { canvas, ctx } = createShareCanvas(W);
+  canvas.height = H;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, H);
+  drawCardHeader(ctx, W, 'Programma & Uitslagen');
+
+  let y = 118;
+  if (allUpcoming.length) {
+    ctx.font = '800 12px "Montserrat", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.textAlign = 'left';
+    ctx.fillText('PROGRAMMA', PAD, y);
+    y += 10;
+    allUpcoming.forEach(m => {
+      ctx.font = '400 12px "Nunito", sans-serif';
+      ctx.fillStyle = '#9CA3AF';
+      ctx.textAlign = 'left';
+      ctx.fillText(formatDate(m.date), PAD + 10, y + 22);
+      ctx.font = '600 13px "Nunito", sans-serif';
+      ctx.fillStyle = '#1B2A4A';
+      ctx.fillText(m.opp, PAD + 130, y + 22);
+      y += rowH;
+    });
+    y += 10;
+  }
+
+  if (allResults.length) {
+    ctx.font = '800 12px "Montserrat", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.textAlign = 'left';
+    ctx.fillText('UITSLAGEN', PAD, y);
+    y += 10;
+    allResults.forEach(m => {
+      ctx.font = '400 12px "Nunito", sans-serif';
+      ctx.fillStyle = '#9CA3AF';
+      ctx.textAlign = 'left';
+      ctx.fillText(formatDate(m.date), PAD + 10, y + 22);
+      ctx.font = '600 13px "Nunito", sans-serif';
+      ctx.fillStyle = '#1B2A4A';
+      ctx.fillText(m.opp, PAD + 130, y + 22);
+      const score = `${m.jb} – ${m.opp_s}`;
+      const col = m.jb > m.opp_s ? '#059669' : m.jb < m.opp_s ? '#EF4444' : '#F59E0B';
+      ctx.font = '800 14px "Montserrat", sans-serif';
+      ctx.fillStyle = col;
+      ctx.textAlign = 'right';
+      ctx.fillText(score, W - PAD - 10, y + 22);
+      y += rowH;
+    });
+  }
+
+  drawCardFooter(ctx, W, H);
+  await doShare(canvas, 'joga-bonito-programma');
+}
+
+async function shareUitslagenCard() {
+  const finished = DB.matches.filter(m => m.status === 'finished').sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+  const srzaRes = (srzaData?.uitslagen || []).slice(-5).reverse();
+  const allResults = [...finished.map(m => ({ opp: m.opponent, date: m.date, jb: m.scoreHome, opp_s: m.scoreAway })), ...srzaRes.map(r => ({ opp: r.opp, date: r.date, jb: r.jb, opp_s: r.opp_s }))].slice(0, 5);
+
+  if (!allResults.length) { showToast('Geen uitslagen om te delen'); return; }
+
+  const W = 720, PAD = 40, rowH = 36;
+  const H = 130 + 30 + allResults.length * rowH + 60;
+  const { canvas, ctx } = createShareCanvas(W);
+  canvas.height = H;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, H);
+  drawCardHeader(ctx, W, 'Laatste uitslagen');
+
+  let y = 118;
+  ctx.font = '800 12px "Montserrat", sans-serif';
+  ctx.fillStyle = '#1B2A4A';
+  ctx.textAlign = 'left';
+  ctx.fillText('UITSLAGEN', PAD, y);
+  y += 10;
+  allResults.forEach(m => {
+    ctx.font = '400 12px "Nunito", sans-serif';
+    ctx.fillStyle = '#9CA3AF';
+    ctx.textAlign = 'left';
+    ctx.fillText(formatDate(m.date), PAD + 10, y + 22);
+    ctx.font = '600 13px "Nunito", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.fillText(m.opp, PAD + 130, y + 22);
+    const score = `${m.jb} – ${m.opp_s}`;
+    const col = m.jb > m.opp_s ? '#059669' : m.jb < m.opp_s ? '#EF4444' : '#F59E0B';
+    ctx.font = '800 14px "Montserrat", sans-serif';
+    ctx.fillStyle = col;
+    ctx.textAlign = 'right';
+    ctx.fillText(score, W - PAD - 10, y + 22);
+    y += rowH;
+  });
+
+  drawCardFooter(ctx, W, H);
+  await doShare(canvas, 'joga-bonito-uitslagen');
 }
 
 // =========================================================
