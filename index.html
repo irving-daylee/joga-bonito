@@ -1060,6 +1060,16 @@ label {
 .pp-match:last-child { border-bottom: none; }
 .pp-match-opp { font-weight: 600; }
 .pp-match-contrib { color: var(--navy); font-weight: 700; font-size: 0.78rem; }
+.pp-season { margin: 16px; }
+.pp-season-header { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pp-season-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--surface); border-radius: 8px; margin-bottom: 4px; font-size: 0.82rem; }
+.pp-season-row.total { background: var(--navy); color: #fff; font-weight: 700; border-radius: 10px; margin-top: 8px; }
+.pp-season-row.total .pp-season-stat { color: rgba(255,255,255,0.7); }
+.pp-season-label { font-weight: 600; }
+.pp-season-stats { display: flex; gap: 12px; }
+.pp-season-stat { font-size: 0.75rem; color: var(--text-muted); }
+.pp-season-stat strong { color: var(--navy); font-weight: 800; }
+.pp-season-row.total .pp-season-stat strong { color: #fff; }
 
 /* ===== PHASE OVERLAY ===== */
 .phase-overlay {
@@ -1803,22 +1813,50 @@ function deletePlayer(id) {
 // =========================================================
 // PLAYER PROFILE
 // =========================================================
+function getPlayerCareerStats(name, id) {
+  const seasons = [];
+  let totalGoals = 0, totalAssists = 0, totalPlayed = 0;
+
+  ['2024/25', '2025/26'].forEach(key => {
+    const hist = HISTORY[key];
+    if (!hist) return;
+    const hp = hist.players.find(p => p.name === name);
+    if (hp && hp.played > 0) {
+      seasons.push({ season: key, goals: hp.goals, assists: hp.assists, played: hp.played });
+      totalGoals += hp.goals;
+      totalAssists += hp.assists;
+      totalPlayed += hp.played;
+    }
+  });
+
+  const finished = DB.matches.filter(m => m.status === 'finished');
+  const played = finished.filter(m => (m.squad || []).includes(id));
+  if (played.length > 0) {
+    let cg = 0, ca = 0;
+    const matchDetails = [];
+    played.forEach(m => {
+      let mg = 0, ma = 0;
+      (m.events || []).forEach(ev => {
+        if (ev.type !== 'goal') return;
+        if (ev.team === 'home' && !ev.ownGoal && ev.scorerId === id) { cg++; mg++; }
+        if (ev.assistId === id) { ca++; ma++; }
+      });
+      matchDetails.push({ m, goals: mg, assists: ma });
+    });
+    seasons.push({ season: DB.season, goals: cg, assists: ca, played: played.length, matchDetails });
+    totalGoals += cg;
+    totalAssists += ca;
+    totalPlayed += played.length;
+  }
+
+  const motm = finished.filter(m => m.motm === id).length;
+  return { seasons, totalGoals, totalAssists, totalPlayed, motm };
+}
+
 function showPlayerProfile(id) {
   const p = getPlayer(id);
   if (!p) return;
-  const finished = DB.matches.filter(m => m.status === 'finished');
-  const played = finished.filter(m => (m.squad || []).includes(id));
-  let goals = 0, assists = 0;
-  const matchDetails = [];
-  played.forEach(m => {
-    let mg = 0, ma = 0;
-    (m.events || []).forEach(ev => {
-      if (ev.type !== 'goal') return;
-      if (ev.team === 'home' && !ev.ownGoal && ev.scorerId === id) { goals++; mg++; }
-      if (ev.assistId === id) { assists++; ma++; }
-    });
-    matchDetails.push({ m, goals: mg, assists: ma });
-  });
+  const career = getPlayerCareerStats(p.name, id);
 
   const badges = [];
   if (p.isKeeper) badges.push('Keeper');
@@ -1826,6 +1864,9 @@ function showPlayerProfile(id) {
 
   let h = `<div style="display:flex;justify-content:space-between;align-items:center">
     <button class="detail-back" onclick="closePlayerProfile()">&#8592; Terug</button>
+    <button class="share-btn-sm" onclick="sharePlayerCard('${id}')" title="Delen">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+    </button>
   </div>
   <div class="pp-header">
     <div class="pp-avatar">${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : p.name.charAt(0)}</div>
@@ -1835,23 +1876,50 @@ function showPlayerProfile(id) {
   </div>
   <div style="margin-top:16px">
     <div class="pp-stats">
-      <div class="pp-stat"><div class="pp-stat-val">${played.length}</div><div class="pp-stat-label">Wedstrijden</div></div>
-      <div class="pp-stat"><div class="pp-stat-val">${goals}</div><div class="pp-stat-label">Goals</div></div>
-      <div class="pp-stat"><div class="pp-stat-val">${assists}</div><div class="pp-stat-label">Assists</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${career.totalPlayed}</div><div class="pp-stat-label">Wedstrijden</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${career.totalGoals}</div><div class="pp-stat-label">Goals</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${career.totalAssists}</div><div class="pp-stat-label">Assists</div></div>
     </div>`;
 
-  if (played.length > 0) {
-    const ratio = played.length ? ((goals + assists) / played.length).toFixed(1) : '0';
+  if (career.totalPlayed > 0) {
+    const ratio = ((career.totalGoals + career.totalAssists) / career.totalPlayed).toFixed(1);
+    const gpw = career.totalGoals ? (career.totalGoals / career.totalPlayed).toFixed(1) : '0';
     h += `<div class="pp-stats" style="margin-top:1px">
       <div class="pp-stat"><div class="pp-stat-val">${ratio}</div><div class="pp-stat-label">G/A ratio</div></div>
-      <div class="pp-stat"><div class="pp-stat-val">${goals ? (goals / played.length).toFixed(1) : '0'}</div><div class="pp-stat-label">Goals / wed.</div></div>
-      <div class="pp-stat"><div class="pp-stat-val">${finished.filter(m => m.motm === id).length}</div><div class="pp-stat-label">MOTM</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${gpw}</div><div class="pp-stat-label">Goals / wed.</div></div>
+      <div class="pp-stat"><div class="pp-stat-val">${career.motm}</div><div class="pp-stat-label">MOTM</div></div>
     </div>`;
   }
 
-  if (matchDetails.length > 0) {
-    h += `<div class="pp-matches"><h3 style="font-size:0.88rem;font-weight:700;margin-bottom:8px">Wedstrijden</h3>`;
-    [...matchDetails].reverse().forEach(({ m, goals: mg, assists: ma }) => {
+  if (career.seasons.length > 0) {
+    h += `<div class="pp-season"><div class="pp-season-header">Carrière</div>`;
+    career.seasons.forEach(s => {
+      h += `<div class="pp-season-row">
+        <span class="pp-season-label">${s.season}</span>
+        <div class="pp-season-stats">
+          <span class="pp-season-stat"><strong>${s.played}</strong> wed</span>
+          <span class="pp-season-stat"><strong>${s.goals}</strong> G</span>
+          <span class="pp-season-stat"><strong>${s.assists}</strong> A</span>
+        </div>
+      </div>`;
+    });
+    if (career.seasons.length > 1) {
+      h += `<div class="pp-season-row total">
+        <span class="pp-season-label">All-time</span>
+        <div class="pp-season-stats">
+          <span class="pp-season-stat"><strong>${career.totalPlayed}</strong> wed</span>
+          <span class="pp-season-stat"><strong>${career.totalGoals}</strong> G</span>
+          <span class="pp-season-stat"><strong>${career.totalAssists}</strong> A</span>
+        </div>
+      </div>`;
+    }
+    h += `</div>`;
+  }
+
+  const currentSeason = career.seasons.find(s => s.matchDetails);
+  if (currentSeason && currentSeason.matchDetails.length > 0) {
+    h += `<div class="pp-matches"><h3 style="font-size:0.88rem;font-weight:700;margin-bottom:8px">Wedstrijden ${DB.season}</h3>`;
+    [...currentSeason.matchDetails].reverse().forEach(({ m, goals: mg, assists: ma }) => {
       const contribs = [];
       if (mg) contribs.push(`${mg}G`);
       if (ma) contribs.push(`${ma}A`);
@@ -4134,6 +4202,132 @@ async function shareUitslagenCard() {
 
   drawCardFooter(ctx, W, H);
   await doShare(canvas, 'joga-bonito-uitslagen');
+}
+
+async function sharePlayerCard(id) {
+  const p = getPlayer(id);
+  if (!p) return;
+  const career = getPlayerCareerStats(p.name, id);
+  if (!career.totalPlayed) { showToast('Geen stats om te delen'); return; }
+
+  const W = 720, PAD = 40, rowH = 32;
+  const seasonRows = career.seasons.length;
+  const hasTotal = career.seasons.length > 1;
+  const careerH = seasonRows * rowH + (hasTotal ? rowH + 8 : 0) + 30;
+  const H = 260 + careerH + 60;
+  const { canvas, ctx } = createShareCanvas(W);
+  canvas.height = H;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = '#1B2A4A';
+  ctx.fillRect(0, 0, W, 140);
+  const grd = ctx.createLinearGradient(0, 0, W, 140);
+  grd.addColorStop(0, '#1B2A4A');
+  grd.addColorStop(1, '#2C3E6B');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, 140);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath(); ctx.arc(W - 60, 70, 50, 0, Math.PI * 2); ctx.fill();
+  ctx.font = '800 48px "Montserrat", sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.textAlign = 'center';
+  ctx.fillText(`#${p.number}`, W - 60, 88);
+
+  ctx.textAlign = 'left';
+  ctx.font = '800 28px "Montserrat", sans-serif';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(p.name, PAD, 55);
+
+  const badges = [];
+  if (p.isKeeper) badges.push('Keeper');
+  if (p.isCaptain) badges.push('Aanvoerder');
+  if (badges.length) {
+    ctx.font = '600 11px "Nunito", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.fillText(badges.join(' · '), PAD, 78);
+  }
+
+  ctx.font = '22px "Pirata One", cursive';
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillText('Joga Bonito', PAD, 120);
+
+  let y = 160;
+  const statW = (W - PAD * 2) / 3;
+  const statsData = [
+    { val: career.totalPlayed, label: 'Wedstrijden' },
+    { val: career.totalGoals, label: 'Goals' },
+    { val: career.totalAssists, label: 'Assists' },
+  ];
+  statsData.forEach((s, i) => {
+    const x = PAD + i * statW + statW / 2;
+    ctx.font = '800 28px "Montserrat", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(s.val), x, y + 30);
+    ctx.font = '400 10px "Nunito", sans-serif';
+    ctx.fillStyle = '#9CA3AF';
+    ctx.fillText(s.label, x, y + 46);
+  });
+
+  if (career.totalPlayed > 0) {
+    const ratio = ((career.totalGoals + career.totalAssists) / career.totalPlayed).toFixed(1);
+    const gpw = career.totalGoals ? (career.totalGoals / career.totalPlayed).toFixed(1) : '0';
+    const extra = [
+      { val: ratio, label: 'G/A ratio' },
+      { val: gpw, label: 'Goals / wed.' },
+      { val: String(career.motm), label: 'MOTM' },
+    ];
+    extra.forEach((s, i) => {
+      const x = PAD + i * statW + statW / 2;
+      ctx.font = '800 20px "Montserrat", sans-serif';
+      ctx.fillStyle = '#1B2A4A';
+      ctx.textAlign = 'center';
+      ctx.fillText(String(s.val), x, y + 78);
+      ctx.font = '400 10px "Nunito", sans-serif';
+      ctx.fillStyle = '#9CA3AF';
+      ctx.fillText(s.label, x, y + 94);
+    });
+    y += 110;
+  } else {
+    y += 60;
+  }
+
+  ctx.font = '800 11px "Montserrat", sans-serif';
+  ctx.fillStyle = '#1B2A4A';
+  ctx.textAlign = 'left';
+  ctx.fillText('CARRIÈRE', PAD, y);
+  y += 14;
+
+  career.seasons.forEach(s => {
+    ctx.font = '600 12px "Nunito", sans-serif';
+    ctx.fillStyle = '#1B2A4A';
+    ctx.textAlign = 'left';
+    ctx.fillText(s.season, PAD + 10, y + 20);
+    ctx.font = '400 11px "Nunito", sans-serif';
+    ctx.fillStyle = '#6B7280';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${s.played} wed   ${s.goals} G   ${s.assists} A`, W - PAD - 10, y + 20);
+    y += rowH;
+  });
+
+  if (hasTotal) {
+    y += 4;
+    ctx.fillStyle = '#1B2A4A';
+    ctx.beginPath();
+    ctx.roundRect(PAD, y, W - PAD * 2, rowH, 6);
+    ctx.fill();
+    ctx.font = '700 12px "Nunito", sans-serif';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textAlign = 'left';
+    ctx.fillText('All-time', PAD + 10, y + 20);
+    ctx.textAlign = 'right';
+    ctx.fillText(`${career.totalPlayed} wed   ${career.totalGoals} G   ${career.totalAssists} A`, W - PAD - 10, y + 20);
+  }
+
+  drawCardFooter(ctx, W, H);
+  await doShare(canvas, `joga-bonito-${p.name.toLowerCase()}`);
 }
 
 // =========================================================
