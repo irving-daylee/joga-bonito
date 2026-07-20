@@ -993,7 +993,11 @@ label {
 .match-detail-overlay {
   display: none;
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -100px;
+  padding-bottom: 100px;
   background: var(--bg);
   z-index: 150;
   overflow-y: auto;
