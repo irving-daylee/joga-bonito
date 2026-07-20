@@ -997,8 +997,10 @@ label {
   background: var(--bg);
   z-index: 150;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .match-detail-overlay.open { display: block; }
+body.overlay-open { overflow: hidden; }
 .detail-back {
   display: flex;
   align-items: center;
@@ -1945,7 +1947,8 @@ function showPlayerProfile(id) {
   if (p.isCaptain) badges.push('Aanvoerder');
   badges.push(foot === 'L' ? '<span style="display:inline-block;transform:scaleX(-1)">🦶</span> Links' : '🦶 Rechts');
 
-  let h = `<div style="display:flex;justify-content:space-between;align-items:center">
+  let h = `<div style="max-width:600px;margin:0 auto;padding:0 0 80px">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px">
     <button class="detail-back" onclick="closePlayerProfile()">&#8592; Terug</button>
     <button class="share-btn-sm" onclick="sharePlayerCard('${id}')" title="Delen">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
@@ -2029,8 +2032,13 @@ function showPlayerProfile(id) {
   h += `</div>`;
   document.getElementById('playerProfileContent').innerHTML = h;
   document.getElementById('playerProfile').classList.add('open');
+  document.body.classList.add('overlay-open');
+  document.getElementById('playerProfile').scrollTop = 0;
 }
-function closePlayerProfile() { document.getElementById('playerProfile').classList.remove('open'); }
+function closePlayerProfile() {
+  document.getElementById('playerProfile').classList.remove('open');
+  if (!document.getElementById('matchDetail').classList.contains('open')) document.body.classList.remove('overlay-open');
+}
 
 // =========================================================
 // MATCH PAGE
@@ -2774,8 +2782,13 @@ function showMatchDetail(matchId) {
   h += `</div>`;
   document.getElementById('matchDetailContent').innerHTML = h;
   document.getElementById('matchDetail').classList.add('open');
+  document.body.classList.add('overlay-open');
+  document.getElementById('matchDetail').scrollTop = 0;
 }
-function closeMatchDetail() { document.getElementById('matchDetail').classList.remove('open'); }
+function closeMatchDetail() {
+  document.getElementById('matchDetail').classList.remove('open');
+  if (!document.getElementById('playerProfile').classList.contains('open')) document.body.classList.remove('overlay-open');
+}
 function deleteFinishedMatch(matchId) {
   const m = DB.matches.find(x => x.id === matchId);
   if (!m) return;
