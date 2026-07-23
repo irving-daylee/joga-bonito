@@ -1,4 +1,4 @@
-const CACHE_NAME = 'joga-bonito-v2';
+const CACHE_NAME = 'joga-bonito-v3';
 const ASSETS = [
   '/',
   '/index.html',

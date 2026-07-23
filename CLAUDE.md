@@ -24,20 +24,22 @@ Single-file HTML app (`index.html`, ~2600 regels). Alle CSS + JS inline, geen bu
 - Regels 2351–2600: Retroactive match entry (achteraf invoeren)
 - Regels 2607–2627: Helpers + init
 
-## Brand guide
+## Brand guide (zwart/goud dark-mode)
 
 | Element | Waarde |
 |---|---|
 | Logo font | Pirata One (title case, nooit all-caps) |
 | Headings | Montserrat 600–800 |
 | Body | Nunito 400–700 |
-| Primary | `#1B2A4A` (navy) |
-| Secondary | `#2C3E6B` (navy-light) |
-| Surface | `#FFFFFF` |
-| Background | `#F0F2F5` |
+| Accent (goud) | `#C4922E` (--navy), hover `#A07824`, light `#D4A843` |
+| Surface | `#1A1A1A` (donkere cards/modals) |
+| Background | `#111111` (pagina-achtergrond) |
+| Border | `#2A2A2A` |
+| Text | `#E8E4DE` (primair), `#888888` (muted) |
+| Topbar | `#0A0A0A` (zwart) met goud logo |
 | Cards | Groen `#10B981` (2 min), Geel `#F59E0B` (5 min), Rood `#EF4444` (uit) |
 
-Gradient header: `linear-gradient(135deg, navy, navy-light)`. Goal-knop gebruikt navy-light. Altijd witte achtergrond voor visuals.
+Topbar is zwart met goud logo. Knoppen: goud achtergrond, zwart tekst. Share cards: donkere achtergrond met goud gradient header.
 
 ## Futsal-specifiek
 

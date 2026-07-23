@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Joga Bonito</title>
-<meta name="theme-color" content="#1B2A4A">
+<meta name="theme-color" content="#0A0A0A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
@@ -20,57 +20,58 @@
  *   Headings: Montserrat 600–800
  *   Body:     Nunito 400–700
  *
- * Palette
- *   --navy         #1B2A4A   primair (headers, knoppen, accenten)
- *   --navy-dark    #0F1B32   hover / pressed state
- *   --navy-light   #2C3E6B   secondary actions, subtiel accent
- *   --surface      #FFFFFF   cards, modals
- *   --bg           #F0F2F5   pagina-achtergrond
- *   --border       #E2E8F0   scheidslijnen
- *   --text         #1A1A2E   primaire tekst op licht
- *   --text-muted   #64748B   secundaire tekst
- *   --on-primary   #FFFFFF   tekst/iconen op navy
+ * Palette (zwart/goud dark-mode)
+ *   --navy         #C4922E   goud — primair accent (knoppen, accenten, tekst-highlights)
+ *   --navy-dark    #A07824   donker goud — hover / pressed state
+ *   --navy-light   #D4A843   licht goud — secondary accent
+ *   --surface      #1A1A1A   cards, modals (donker)
+ *   --bg           #111111   pagina-achtergrond (donker)
+ *   --border       #2A2A2A   scheidslijnen (donker)
+ *   --text         #E8E4DE   primaire tekst op donker
+ *   --text-muted   #888888   secundaire tekst
+ *   --on-primary   #FFFFFF   tekst/iconen op donkere achtergronden
  *
  * Functionele kleuren (alleen sport-specifiek)
  *   --card-green   #10B981   groene kaart (2 min straftijd)
  *   --card-yellow  #F59E0B   gele kaart (5 min straftijd)
  *   --card-red     #EF4444   rode kaart (uitsluiting)
  *
- * Resultaat-indicatoren (subtiel, op surface)
- *   Win:  navy 8% opacity
- *   Loss: red  8% opacity
- *   Draw: muted 8% opacity
+ * Resultaat-indicatoren (subtiel, op dark surface)
+ *   Win:  goud 12% opacity
+ *   Loss: red  12% opacity
+ *   Draw: muted 12% opacity
  *
- * Alle interactieve elementen gebruiken navy/on-primary.
- * Geen groen voor "succes", geen rood voor "gevaar" buiten sportcontext.
+ * Alle interactieve elementen gebruiken goud als accent.
+ * Topbar is zwart (#0A0A0A) met goud logo.
+ * Knoppen: goud achtergrond, zwart tekst.
  * Kaart-kleuren zijn de officiële sportkleuren, geen UI-semantiek.
  */
 
 :root {
-  --navy: #1B2A4A;
-  --navy-dark: #0F1B32;
-  --navy-light: #2C3E6B;
-  --navy-10: rgba(27,42,74,0.08);
-  --navy-20: rgba(27,42,74,0.15);
-  --surface: #FFFFFF;
-  --bg: #F0F2F5;
-  --border: #E2E8F0;
-  --text: #1A1A2E;
-  --text-muted: #64748B;
+  --navy: #C4922E;
+  --navy-dark: #A07824;
+  --navy-light: #D4A843;
+  --navy-10: rgba(196,146,46,0.10);
+  --navy-20: rgba(196,146,46,0.15);
+  --surface: #1A1A1A;
+  --bg: #111111;
+  --border: #2A2A2A;
+  --text: #E8E4DE;
+  --text-muted: #888888;
   --on-primary: #FFFFFF;
   --card-green: #10B981;
-  --card-green-bg: #D1FAE5;
+  --card-green-bg: rgba(16,185,129,0.15);
   --card-yellow: #F59E0B;
-  --card-yellow-bg: #FEF3C7;
+  --card-yellow-bg: rgba(245,158,11,0.15);
   --card-red: #EF4444;
-  --card-red-bg: #FEE2E2;
-  --win-bg: rgba(27,42,74,0.06);
-  --loss-bg: rgba(239,68,68,0.06);
-  --draw-bg: rgba(100,116,139,0.06);
+  --card-red-bg: rgba(239,68,68,0.15);
+  --win-bg: rgba(196,146,46,0.12);
+  --loss-bg: rgba(239,68,68,0.12);
+  --draw-bg: rgba(136,136,136,0.12);
   --radius: 12px;
   --radius-sm: 8px;
-  --shadow: 0 2px 8px rgba(27,42,74,0.07);
-  --shadow-lg: 0 8px 24px rgba(27,42,74,0.12);
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
   --transition: 0.2s ease;
 }
 
@@ -88,8 +89,8 @@ h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; }
 
 /* ===== TOP BAR ===== */
 .topbar {
-  background: var(--navy);
-  color: var(--on-primary);
+  background: #0A0A0A;
+  color: var(--navy);
   padding: 14px 20px;
   display: flex;
   align-items: center;
@@ -199,8 +200,8 @@ h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; }
   transition: all var(--transition);
   letter-spacing: 0.3px;
 }
-.btn-primary { background: var(--navy); color: var(--on-primary); }
-.btn-primary:hover { background: var(--navy-dark); }
+.btn-primary { background: var(--navy); color: #0A0A0A; }
+.btn-primary:hover { background: var(--navy-dark); color: #0A0A0A; }
 .btn-secondary { background: var(--navy-10); color: var(--navy); }
 .btn-secondary:hover { background: var(--navy-20); }
 .btn-outline { background: transparent; color: var(--navy); border: 2px solid var(--navy); }
@@ -224,6 +225,7 @@ input, select {
   transition: border-color var(--transition);
 }
 input:focus, select:focus { outline: none; border-color: var(--navy); }
+select option { background: var(--surface); color: var(--text); }
 label {
   display: block;
   font-weight: 600;
@@ -292,10 +294,11 @@ label {
   bottom: 80px;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: var(--navy);
-  color: var(--on-primary);
+  background: #1A1A1A;
+  color: var(--text);
   padding: 12px 20px;
   border-radius: var(--radius);
+  border: 1px solid var(--border);
   font-family: 'Nunito', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
@@ -311,8 +314,8 @@ label {
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .toast.hiding { transform: translateX(-50%) translateY(0); opacity: 0; }
 .toast button {
-  background: var(--on-primary);
-  color: var(--navy);
+  background: var(--navy);
+  color: #0A0A0A;
   border: none;
   padding: 4px 12px;
   border-radius: 4px;
@@ -355,14 +358,14 @@ label {
   height: 16px;
   padding: 0 3px;
   background: var(--navy);
-  color: white;
+  color: #0A0A0A;
   border-radius: 8px;
   font-size: 0.5rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid white;
+  border: 1.5px solid var(--surface);
   z-index: 1;
   line-height: 1;
 }
@@ -466,8 +469,9 @@ label {
 
 /* ===== MATCH LIVE ===== */
 .match-header {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
   color: var(--on-primary);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
   text-align: center;
@@ -559,10 +563,10 @@ label {
 }
 .action-btn.goal-btn {
   background: var(--navy-light);
-  color: var(--on-primary);
+  color: #0A0A0A;
   flex: 2;
 }
-.action-btn.goal-btn:hover { background: var(--navy); }
+.action-btn.goal-btn:hover { background: var(--navy); color: #0A0A0A; }
 .action-btn.card-btn {
   background: var(--surface);
   color: var(--text);
@@ -669,12 +673,12 @@ label {
   font-family: 'Nunito', sans-serif;
   font-weight: 600;
   font-size: 0.72rem;
-  color: #9CA3AF;
+  color: #888888;
   width: 16px;
   text-align: center;
   flex-shrink: 0;
 }
-.lb-rank.top { color: #9CA3AF; }
+.lb-rank.top { color: #888888; }
 .lb-stats {
   display: flex;
   gap: 12px;
@@ -732,8 +736,8 @@ label {
   vertical-align: middle;
 }
 .match-type.comp { background: var(--navy-10); color: var(--navy); }
-.match-type.beker { background: #FEF3C7; color: #92400E; }
-.match-type.friendly { background: #E5E7EB; color: #6B7280; }
+.match-type.beker { background: rgba(196,146,46,0.15); color: var(--navy); }
+.match-type.friendly { background: rgba(136,136,136,0.15); color: #888888; }
 .srza-show-all {
   display: block;
   width: 100%;
@@ -773,7 +777,7 @@ label {
 }
 .season-tab.active {
   background: var(--navy);
-  color: var(--on-primary);
+  color: #0A0A0A;
   border-color: var(--navy);
 }
 
@@ -1023,7 +1027,7 @@ body.overlay-open { overflow: hidden; }
   align-items: center;
   gap: 6px;
   background: var(--navy);
-  color: #fff;
+  color: #0A0A0A;
   border: none;
   border-radius: 8px;
   font-family: 'Nunito', sans-serif;
@@ -1050,7 +1054,7 @@ body.overlay-open { overflow: hidden; }
 .pp-header {
   text-align: center;
   padding: 30px 20px 20px;
-  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  background: linear-gradient(135deg, #0A0A0A, #1A1A1A);
   color: #fff;
 }
 .pp-avatar {
@@ -1063,25 +1067,25 @@ body.overlay-open { overflow: hidden; }
 .pp-number { font-size: 0.85rem; opacity: 0.7; margin-top: 4px; }
 .pp-badges { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
 .pp-badge { font-size: 0.65rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-.pp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #e5e7eb; margin: 0 16px; border-radius: 12px; overflow: hidden; }
+.pp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); margin: 0 16px; border-radius: 12px; overflow: hidden; }
 .pp-stat { background: var(--surface); text-align: center; padding: 14px 8px; }
 .pp-stat-val { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--navy); }
 .pp-stat-label { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
 .pp-matches { margin: 16px; }
-.pp-match { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f2f5; font-size: 0.82rem; }
+.pp-match { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
 .pp-match:last-child { border-bottom: none; }
 .pp-match-opp { font-weight: 600; }
 .pp-match-contrib { color: var(--navy); font-weight: 700; font-size: 0.78rem; }
 .pp-season { margin: 16px; }
 .pp-season-header { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
 .pp-season-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--surface); border-radius: 8px; margin-bottom: 4px; font-size: 0.82rem; }
-.pp-season-row.total { background: var(--navy); color: #fff; font-weight: 700; border-radius: 10px; margin-top: 8px; }
-.pp-season-row.total .pp-season-stat { color: rgba(255,255,255,0.7); }
+.pp-season-row.total { background: var(--navy); color: #0A0A0A; font-weight: 700; border-radius: 10px; margin-top: 8px; }
+.pp-season-row.total .pp-season-stat { color: rgba(10,10,10,0.6); }
 .pp-season-label { font-weight: 600; }
 .pp-season-stats { display: flex; gap: 12px; }
 .pp-season-stat { font-size: 0.75rem; color: var(--text-muted); }
 .pp-season-stat strong { color: var(--navy); font-weight: 800; }
-.pp-season-row.total .pp-season-stat strong { color: #fff; }
+.pp-season-row.total .pp-season-stat strong { color: #0A0A0A; }
 
 /* ===== FORMATION PITCH ===== */
 .pitch {
@@ -1090,7 +1094,7 @@ body.overlay-open { overflow: hidden; }
   max-width: 340px;
   margin: 16px auto;
   aspect-ratio: 4 / 3;
-  background: linear-gradient(180deg, #2C3E6B, #1B2A4A);
+  background: linear-gradient(180deg, #1A1A1A, #0A0A0A);
   border-radius: 14px;
   overflow: hidden;
   border: 2px solid rgba(255,255,255,0.15);
@@ -1139,7 +1143,7 @@ body.overlay-open { overflow: hidden; }
   height: 36px;
   border-radius: 50%;
   background: rgba(255,255,255,0.9);
-  color: #1B2A4A;
+  color: #0A0A0A;
   font-family: 'Montserrat', sans-serif;
   font-weight: 800;
   font-size: 0.7rem;
@@ -1163,7 +1167,7 @@ body.overlay-open { overflow: hidden; }
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(27,42,74,0.95);
+  background: rgba(10,10,10,0.95);
   z-index: 180;
   flex-direction: column;
   align-items: center;
@@ -1285,7 +1289,7 @@ body.overlay-open { overflow: hidden; }
 .goal-celebration {
   position: fixed;
   inset: 0;
-  background: rgba(27,42,74,0.95);
+  background: rgba(10,10,10,0.95);
   z-index: 500;
   display: flex;
   flex-direction: column;
@@ -3954,25 +3958,25 @@ async function shareMatchCard(matchId) {
   canvas.height = H;
 
   // Background
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.fillRect(0, 0, W, H);
 
   // Header gradient
   const grad = ctx.createLinearGradient(0, 0, W, 90);
-  grad.addColorStop(0, '#1B2A4A');
-  grad.addColorStop(1, '#2C3E6B');
+  grad.addColorStop(0, '#C4922E');
+  grad.addColorStop(1, '#D4A843');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, 90);
 
   // Logo text
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.font = '700 24px "Pirata One", serif';
   ctx.textAlign = 'center';
   ctx.fillText('Joga Bonito', W / 2, 38);
 
   // Date + location
   ctx.font = '400 11px "Nunito", sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.fillStyle = 'rgba(10,10,10,0.5)';
   const dateTxt = formatDate(m.date) + (m.sporthal ? ' · ' + m.sporthal : '');
   ctx.fillText(dateTxt, W / 2, 58);
 
@@ -3980,13 +3984,13 @@ async function shareMatchCard(matchId) {
   if (m.comp) {
     const typeMap = { comp: 'Competitie', beker: 'Beker', friendly: 'Vriendschappelijk' };
     ctx.font = '600 10px "Montserrat", sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillStyle = 'rgba(10,10,10,0.4)';
     ctx.fillText(typeMap[m.comp] || m.comp, W / 2, 78);
   }
 
   // Score section
   let y = 135;
-  ctx.fillStyle = '#1B2A4A';
+  ctx.fillStyle = '#E8E4DE';
   ctx.font = '800 44px "Montserrat", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(`${m.scoreHome} – ${m.scoreAway}`, W / 2, y);
@@ -3994,21 +3998,21 @@ async function shareMatchCard(matchId) {
   // Team names
   y += 28;
   ctx.font = '600 13px "Montserrat", sans-serif';
-  ctx.fillStyle = '#1B2A4A';
+  ctx.fillStyle = '#E8E4DE';
   ctx.textAlign = 'right';
   ctx.fillText(DB.teamName, W / 2 - 40, y);
-  ctx.fillStyle = '#6B7280';
+  ctx.fillStyle = '#888888';
   ctx.textAlign = 'left';
   ctx.fillText(m.opponent || 'Tegenstander', W / 2 + 40, y);
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#9CA3AF';
+  ctx.fillStyle = '#888888';
   ctx.font = '400 11px "Nunito", sans-serif';
   ctx.fillText('vs', W / 2, y);
 
   // Divider
   y += 20;
   if (goalLines.length > 0) {
-    ctx.strokeStyle = '#E5E7EB';
+    ctx.strokeStyle = '#2A2A2A';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(PAD, y);
@@ -4017,7 +4021,7 @@ async function shareMatchCard(matchId) {
 
     y += 24;
     ctx.font = '600 12px "Nunito", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#E8E4DE';
     ctx.textAlign = 'left';
     goalLines.forEach(line => {
       ctx.fillText('⚽  ' + line, PAD + 8, y);
@@ -4028,7 +4032,7 @@ async function shareMatchCard(matchId) {
   // Starting lineup
   if (hasLineup) {
     y += 4;
-    ctx.strokeStyle = '#E5E7EB';
+    ctx.strokeStyle = '#2A2A2A';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(PAD, y);
@@ -4037,11 +4041,11 @@ async function shareMatchCard(matchId) {
     y += 20;
     ctx.textAlign = 'left';
     ctx.font = '700 10px "Montserrat", sans-serif';
-    ctx.fillStyle = '#9CA3AF';
+    ctx.fillStyle = '#888888';
     ctx.fillText('OPSTELLING', PAD + 8, y);
     y += 18;
     ctx.font = '500 11px "Nunito", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#E8E4DE';
     const lineupStr = (keeperPlayer ? keeperPlayer.name + ' (GK)' : '') +
       (fieldLineup.length ? ' · ' + fieldLineup.map(p => p.name).join(' · ') : '');
     ctx.fillText(lineupStr, PAD + 8, y);
@@ -4050,7 +4054,7 @@ async function shareMatchCard(matchId) {
   // MOTM
   if (m.motm) {
     y += 4;
-    ctx.strokeStyle = '#E5E7EB';
+    ctx.strokeStyle = '#2A2A2A';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(PAD, y + 8);
@@ -4067,7 +4071,7 @@ async function shareMatchCard(matchId) {
   // Footer
   y = H - 20;
   ctx.font = '400 10px "Nunito", sans-serif';
-  ctx.fillStyle = '#9CA3AF';
+  ctx.fillStyle = '#888888';
   ctx.textAlign = 'center';
   ctx.fillText('Joga Bonito · ' + DB.season, W / 2, y);
 
@@ -4103,22 +4107,22 @@ function createShareCanvas(W) {
 
 function drawCardHeader(ctx, W, subtitle) {
   const grad = ctx.createLinearGradient(0, 0, W, 100);
-  grad.addColorStop(0, '#1B2A4A');
-  grad.addColorStop(1, '#2C3E6B');
+  grad.addColorStop(0, '#C4922E');
+  grad.addColorStop(1, '#D4A843');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, 100);
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.font = '700 28px "Pirata One", serif';
   ctx.textAlign = 'center';
   ctx.fillText('Joga Bonito', W / 2, 42);
   ctx.font = '400 12px "Nunito", sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.fillStyle = 'rgba(10,10,10,0.5)';
   ctx.fillText(subtitle, W / 2, 70);
 }
 
 function drawCardFooter(ctx, W, H) {
   ctx.font = '400 11px "Nunito", sans-serif';
-  ctx.fillStyle = '#9CA3AF';
+  ctx.fillStyle = '#888888';
   ctx.textAlign = 'center';
   ctx.fillText('Joga Bonito · ' + DB.season, W / 2, H - 18);
 }
@@ -4167,13 +4171,13 @@ async function shareInsights(key) {
 
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = totalH;
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.fillRect(0, 0, W, totalH);
   drawCardHeader(ctx, W, title);
 
   let y = 95;
   items.forEach(it => {
-    ctx.fillStyle = '#F0F2F5';
+    ctx.fillStyle = '#1A1A1A';
     const cardH = 36 + it.lines.length * lineH + 12;
     ctx.beginPath();
     ctx.roundRect(PAD, y, W - PAD * 2, cardH, 8);
@@ -4185,11 +4189,11 @@ async function shareInsights(key) {
     ctx.fillText(it.tag.toUpperCase(), PAD + 12, y + 16);
 
     ctx.font = '700 12px "Montserrat", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#E8E4DE';
     ctx.fillText(it.title, PAD + 12, y + 32);
 
     ctx.font = '400 11px "Nunito", sans-serif';
-    ctx.fillStyle = '#6B7280';
+    ctx.fillStyle = '#888888';
     it.lines.forEach((line, i) => {
       ctx.fillText(line, PAD + 12, y + 48 + i * lineH);
     });
@@ -4245,13 +4249,13 @@ async function shareStatsCard() {
   const H = 130 + scorers.length * rowH + 40;
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.fillRect(0, 0, W, H);
   drawCardHeader(ctx, W, subtitle);
 
   let y = 100;
   ctx.font = '700 9px "Montserrat", sans-serif';
-  ctx.fillStyle = '#9CA3AF';
+  ctx.fillStyle = '#888888';
   ctx.textAlign = 'left';
   ctx.fillText('SPELER', PAD + 30, y);
   ctx.textAlign = 'center';
@@ -4260,29 +4264,29 @@ async function shareStatsCard() {
   ctx.fillText('A', W - 65, y);
   ctx.fillText('G+A', W - PAD - 10, y);
   y += 8;
-  ctx.strokeStyle = '#E5E7EB';
+  ctx.strokeStyle = '#2A2A2A';
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
   y += 4;
 
   scorers.forEach((s, i) => {
     if (i % 2 === 0) {
-      ctx.fillStyle = '#F9FAFB';
+      ctx.fillStyle = '#1A1A1A';
       ctx.fillRect(PAD, y - 2, W - PAD * 2, rowH);
     }
     ctx.font = '700 10px "Montserrat", sans-serif';
-    ctx.fillStyle = '#9CA3AF';
+    ctx.fillStyle = '#888888';
     ctx.textAlign = 'left';
     ctx.fillText((i + 1) + '.', PAD + 8, y + 14);
     ctx.font = '600 11px "Nunito", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#E8E4DE';
     ctx.fillText(s.name, PAD + 30, y + 14);
     ctx.textAlign = 'center';
     ctx.font = '400 11px "Nunito", sans-serif';
-    ctx.fillStyle = '#6B7280';
+    ctx.fillStyle = '#888888';
     ctx.fillText(s.played.toString(), W - 130, y + 14);
     ctx.font = '700 11px "Montserrat", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#E8E4DE';
     ctx.fillText(s.goals.toString(), W - 95, y + 14);
     ctx.fillText(s.assists.toString(), W - 65, y + 14);
     ctx.fillStyle = '#059669';
@@ -4309,24 +4313,24 @@ async function shareScheduleCard() {
   const H = 105 + progH + resH + 40 + (progH && resH ? 14 : 0);
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.fillRect(0, 0, W, H);
   drawCardHeader(ctx, W, 'Programma & Uitslagen');
 
   let y = 96;
   if (allUpcoming.length) {
     ctx.font = '800 10px "Montserrat", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#C4922E';
     ctx.textAlign = 'left';
     ctx.fillText('PROGRAMMA', PAD, y);
     y += 8;
     allUpcoming.forEach(m => {
       ctx.font = '400 10px "Nunito", sans-serif';
-      ctx.fillStyle = '#9CA3AF';
+      ctx.fillStyle = '#888888';
       ctx.textAlign = 'left';
       ctx.fillText(formatDate(m.date), PAD + 8, y + 18);
       ctx.font = '600 11px "Nunito", sans-serif';
-      ctx.fillStyle = '#1B2A4A';
+      ctx.fillStyle = '#E8E4DE';
       ctx.fillText(m.opp, PAD + 100, y + 18);
       y += rowH;
     });
@@ -4335,17 +4339,17 @@ async function shareScheduleCard() {
 
   if (allResults.length) {
     ctx.font = '800 10px "Montserrat", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#C4922E';
     ctx.textAlign = 'left';
     ctx.fillText('UITSLAGEN', PAD, y);
     y += 8;
     allResults.forEach(m => {
       ctx.font = '400 10px "Nunito", sans-serif';
-      ctx.fillStyle = '#9CA3AF';
+      ctx.fillStyle = '#888888';
       ctx.textAlign = 'left';
       ctx.fillText(formatDate(m.date), PAD + 8, y + 18);
       ctx.font = '600 11px "Nunito", sans-serif';
-      ctx.fillStyle = '#1B2A4A';
+      ctx.fillStyle = '#E8E4DE';
       ctx.fillText(m.opp, PAD + 100, y + 18);
       const score = `${m.jb} – ${m.opp_s}`;
       const col = m.jb > m.opp_s ? '#059669' : m.jb < m.opp_s ? '#EF4444' : '#F59E0B';
@@ -4372,23 +4376,23 @@ async function shareUitslagenCard() {
   const H = 105 + 26 + allResults.length * rowH + 40;
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.fillRect(0, 0, W, H);
   drawCardHeader(ctx, W, 'Laatste uitslagen');
 
   let y = 96;
   ctx.font = '800 10px "Montserrat", sans-serif';
-  ctx.fillStyle = '#1B2A4A';
+  ctx.fillStyle = '#C4922E';
   ctx.textAlign = 'left';
   ctx.fillText('UITSLAGEN', PAD, y);
   y += 8;
   allResults.forEach(m => {
     ctx.font = '400 10px "Nunito", sans-serif';
-    ctx.fillStyle = '#9CA3AF';
+    ctx.fillStyle = '#888888';
     ctx.textAlign = 'left';
     ctx.fillText(formatDate(m.date), PAD + 8, y + 18);
     ctx.font = '600 11px "Nunito", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#E8E4DE';
     ctx.fillText(m.opp, PAD + 100, y + 18);
     const score = `${m.jb} – ${m.opp_s}`;
     const col = m.jb > m.opp_s ? '#059669' : m.jb < m.opp_s ? '#EF4444' : '#F59E0B';
@@ -4416,25 +4420,25 @@ async function sharePlayerCard(id) {
   const H = 210 + careerH + 40;
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.fillRect(0, 0, W, H);
 
   const grd = ctx.createLinearGradient(0, 0, W, 100);
-  grd.addColorStop(0, '#1B2A4A');
-  grd.addColorStop(1, '#2C3E6B');
+  grd.addColorStop(0, '#C4922E');
+  grd.addColorStop(1, '#D4A843');
   ctx.fillStyle = grd;
   ctx.fillRect(0, 0, W, 100);
 
-  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillStyle = 'rgba(10,10,10,0.15)';
   ctx.beginPath(); ctx.arc(W - 40, 50, 32, 0, Math.PI * 2); ctx.fill();
   ctx.font = '800 30px "Montserrat", sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.fillStyle = 'rgba(10,10,10,0.3)';
   ctx.textAlign = 'center';
   ctx.fillText(`#${p.number}`, W - 40, 62);
 
   ctx.textAlign = 'left';
   ctx.font = '800 20px "Montserrat", sans-serif';
-  ctx.fillStyle = '#FFFFFF';
+  ctx.fillStyle = '#0A0A0A';
   ctx.fillText(p.name, PAD, 40);
 
   const badges = [];
@@ -4442,12 +4446,12 @@ async function sharePlayerCard(id) {
   if (p.isCaptain) badges.push('Aanvoerder');
   if (badges.length) {
     ctx.font = '600 10px "Nunito", sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.fillStyle = 'rgba(10,10,10,0.5)';
     ctx.fillText(badges.join(' · '), PAD, 58);
   }
 
   ctx.font = '18px "Pirata One", cursive';
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillStyle = 'rgba(10,10,10,0.4)';
   ctx.fillText('Joga Bonito', PAD, 85);
 
   let y = 112;
@@ -4460,11 +4464,11 @@ async function sharePlayerCard(id) {
   statsData.forEach((s, i) => {
     const x = PAD + i * statW + statW / 2;
     ctx.font = '800 22px "Montserrat", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#C4922E';
     ctx.textAlign = 'center';
     ctx.fillText(String(s.val), x, y + 24);
     ctx.font = '400 9px "Nunito", sans-serif';
-    ctx.fillStyle = '#9CA3AF';
+    ctx.fillStyle = '#888888';
     ctx.fillText(s.label, x, y + 38);
   });
 
@@ -4479,11 +4483,11 @@ async function sharePlayerCard(id) {
     extra.forEach((s, i) => {
       const x = PAD + i * statW + statW / 2;
       ctx.font = '800 16px "Montserrat", sans-serif';
-      ctx.fillStyle = '#1B2A4A';
+      ctx.fillStyle = '#C4922E';
       ctx.textAlign = 'center';
       ctx.fillText(String(s.val), x, y + 66);
       ctx.font = '400 9px "Nunito", sans-serif';
-      ctx.fillStyle = '#9CA3AF';
+      ctx.fillStyle = '#888888';
       ctx.fillText(s.label, x, y + 80);
     });
     y += 94;
@@ -4492,18 +4496,18 @@ async function sharePlayerCard(id) {
   }
 
   ctx.font = '800 10px "Montserrat", sans-serif';
-  ctx.fillStyle = '#1B2A4A';
+  ctx.fillStyle = '#C4922E';
   ctx.textAlign = 'left';
   ctx.fillText('CARRIÈRE', PAD, y);
   y += 12;
 
   career.seasons.forEach(s => {
     ctx.font = '600 10px "Nunito", sans-serif';
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#E8E4DE';
     ctx.textAlign = 'left';
     ctx.fillText(s.season, PAD + 8, y + 16);
     ctx.font = '400 10px "Nunito", sans-serif';
-    ctx.fillStyle = '#6B7280';
+    ctx.fillStyle = '#888888';
     ctx.textAlign = 'right';
     ctx.fillText(`${s.played} wed   ${s.goals} G   ${s.assists} A`, W - PAD - 8, y + 16);
     y += rowH;
@@ -4511,12 +4515,12 @@ async function sharePlayerCard(id) {
 
   if (hasTotal) {
     y += 4;
-    ctx.fillStyle = '#1B2A4A';
+    ctx.fillStyle = '#C4922E';
     ctx.beginPath();
     ctx.roundRect(PAD, y, W - PAD * 2, rowH, 6);
     ctx.fill();
     ctx.font = '700 10px "Nunito", sans-serif';
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = '#0A0A0A';
     ctx.textAlign = 'left';
     ctx.fillText('All-time', PAD + 8, y + 16);
     ctx.textAlign = 'right';
