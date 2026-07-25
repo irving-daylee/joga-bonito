@@ -229,6 +229,17 @@ input, select {
 }
 input:focus, select:focus { outline: none; border-color: var(--navy); }
 select option { background: var(--surface); color: var(--text); }
+/* iOS Safari geeft een datumveld een eigen minimumbreedte en centreert de
+   waarde, waardoor die buiten het veld valt en niet meeschaalt. */
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  min-height: 50px;
+  text-align: left;
+}
+input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.65); cursor: pointer; }
 label {
   display: block;
   font-weight: 600;
@@ -1637,7 +1648,7 @@ function doLogout() {
   fbAuth.signOut();
 }
 
-const SEED_VERSION = 3;
+const SEED_VERSION = 4;
 const SEEDED_SEASONS = ['2025/26'];
 
 function seedMatchesFromHistory() {
@@ -1652,6 +1663,7 @@ function seedMatchesFromHistory() {
       seeded.push({
         id: 'hs' + id++,
         _seeded: true,
+        season,
         date: r.date,
         opponent: r.opp,
         sporthal: r.hal || '',
@@ -1675,6 +1687,13 @@ function seedMatchesFromHistory() {
 
 function needsSeed() {
   return !DB.matches || DB.matches.length === 0 || (DB._seedVersion || 0) < SEED_VERSION;
+}
+
+// Wedstrijden van vóór de seizoensregistratie horen bij het lopende seizoen;
+// alleen historische seeds dragen expliciet hun eigen seizoen mee.
+function matchSeason(m) { return m.season || DB.season; }
+function currentSeasonMatches() {
+  return toArray(DB.matches).filter(m => m.status === 'finished' && matchSeason(m) === DB.season);
 }
 
 fbAuth.onAuthStateChanged(user => {
@@ -3110,7 +3129,7 @@ function renderStatsPage() {
 }
 
 function renderCurrentSeasonStats() {
-  const finished = DB.matches.filter(m => m.status === 'finished');
+  const finished = currentSeasonMatches();
   if (!finished.length) {
     return `<div class="empty-state"><div class="empty-icon">&#128202;</div>
       <h3>Nog geen statistieken</h3><p>Speel je eerste wedstrijd</p></div>`;
@@ -3206,7 +3225,7 @@ function renderCurrentSeasonStats() {
 }
 
 function setupCurrentLeaderboard() {
-  const finished = DB.matches.filter(m => m.status === 'finished');
+  const finished = currentSeasonMatches();
   if (!finished.length) return;
   const ps = {};
   DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0 }; });

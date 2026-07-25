@@ -203,6 +203,24 @@ await check('gecorrigeerde data wordt naar Firebase weggeschreven', () => {
   return `${writes.length} write(s)`;
 });
 
+await check('stats van dit seizoen tellen geen wedstrijden van vorig seizoen', () => {
+  // De seed zet 23 wedstrijden van 2025/26 in de DB. Die horen niet mee te
+  // tellen onder het tabblad van het lopende seizoen.
+  w.renderStatsPage();
+  const stats = w.document.getElementById('statsContent').textContent || '';
+  // Redeneer op datum, niet op een veld dat de app misschien niet zet: het
+  // seizoen 2026/27 begint op 1 juli 2026.
+  const alle = getDB(w).matches.filter(m => m.status === 'finished');
+  const vorigSeizoen = alle.filter(m => m.date < '2026-07-01');
+  const ditSeizoen = alle.filter(m => m.date >= '2026-07-01');
+  assert(vorigSeizoen.length > 0, 'testopzet klopt niet: geen wedstrijden uit een vorig seizoen');
+  const gespeeld = /(\d+)\s*Gespeeld/i.exec(stats);
+  assert(gespeeld, 'kon "Gespeeld" niet vinden in de stats-pagina');
+  assert(Number(gespeeld[1]) === ditSeizoen.length,
+    `stats tonen ${gespeeld[1]} gespeeld terwijl er dit seizoen ${ditSeizoen.length} wedstrijd(en) zijn; ${vorigSeizoen.length} van vorig seizoen worden meegeteld`);
+  return `${gespeeld[1]} dit seizoen, ${vorigSeizoen.length} uit vorig seizoen niet meegeteld`;
+});
+
 await check('het huidige seizoen wordt niet overschreven door de seed', () => {
   const db = getDB(w);
   assert(db.season === '2026/27', `seizoen werd ${db.season}`);
