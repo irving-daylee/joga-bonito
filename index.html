@@ -11,6 +11,9 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Montserrat:wght@400;600;700;800;900&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
 <style>
 /*
  * JOGA BONITO — BRAND GUIDE
@@ -1376,13 +1379,85 @@ body.overlay-open { overflow: hidden; }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ===== LOGIN SCREEN ===== */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  background: #0A0A0A;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-screen.hidden { display: none; }
+.login-card {
+  text-align: center;
+  padding: 40px 32px;
+  max-width: 340px;
+  width: 100%;
+}
+.login-logo {
+  font-family: 'Pirata One', cursive;
+  font-size: 2.4rem;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.login-sub {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-bottom: 32px;
+}
+.login-google-btn {
+  gap: 10px;
+  font-size: 0.95rem;
+  padding: 14px 24px;
+}
+.login-divider {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 16px 0;
+  position: relative;
+}
+.login-divider::before, .login-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: var(--border);
+}
+.login-divider::before { left: 0; }
+.login-divider::after { right: 0; }
+.login-error {
+  color: var(--card-red);
+  font-size: 0.8rem;
+  margin-top: 16px;
+  min-height: 20px;
+}
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--navy);
+}
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <span class="topbar-logo">Joga Bonito</span>
-  <span class="season-badge" id="seasonBadge">2026/27</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="season-badge" id="seasonBadge">2026/27</span>
+    <img class="user-avatar" id="userAvatar" src="" alt="" style="display:none" onclick="if(confirm('Uitloggen?'))doLogout()">
+  </div>
 </div>
 
 <div class="page active" id="pageMatch"><div id="matchContent"></div></div>
@@ -1418,11 +1493,48 @@ body.overlay-open { overflow: hidden; }
 <div class="match-detail-overlay" id="playerProfile"><div id="playerProfileContent"></div></div>
 <div class="toast" id="toast"></div>
 
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">Joga Bonito</div>
+    <p class="login-sub">Log in om verder te gaan</p>
+    <div class="form-group">
+      <input type="email" id="loginEmail" placeholder="Email" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <input type="password" id="loginPassword" placeholder="Wachtwoord" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="doEmailLogin()" style="margin-bottom:16px">Inloggen</button>
+    <div class="login-divider"><span>of</span></div>
+    <button class="btn btn-secondary btn-block login-google-btn" onclick="doGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Inloggen met Google
+    </button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
 <script>
 // =========================================================
-// DATA
+// DATA + FIREBASE
 // =========================================================
 const STORAGE_KEY = 'jogaBonito_v2';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCMs8R5y-ud2n8naGLc9eNlszXJFDkBF8w",
+  authDomain: "futsal-joga-bonito.firebaseapp.com",
+  databaseURL: "https://futsal-joga-bonito-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "futsal-joga-bonito",
+  storageBucket: "futsal-joga-bonito.firebasestorage.app",
+  messagingSenderId: "462991962749",
+  appId: "1:462991962749:web:6b180cac60bf4973b9b714"
+};
+
+firebase.initializeApp(firebaseConfig);
+const fbAuth = firebase.auth();
+const fbDb = firebase.database();
+const fbRef = fbDb.ref('data');
+let fbReady = false;
+let savingToFirebase = false;
 
 const DEFAULT_PLAYERS = [
   { id:'p1',  name:'Marco',   number:1,  isKeeper:true,  isCaptain:false, foot:'R', photo:null },
@@ -1449,9 +1561,9 @@ const defaultData = () => ({
   nextMatchId: 1
 });
 
-let DB = loadData();
+let DB = loadDataLocal();
 
-function loadData() {
+function loadDataLocal() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -1463,7 +1575,80 @@ function loadData() {
   } catch(e) {}
   return defaultData();
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+  if (fbReady) {
+    savingToFirebase = true;
+    fbRef.set(DB).finally(() => { savingToFirebase = false; });
+  }
+}
+
+function doEmailLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  if (!email || !pass) return;
+  document.getElementById('loginError').textContent = '';
+  fbAuth.signInWithEmailAndPassword(email, pass).catch(err => {
+    const msgs = { 'auth/invalid-credential': 'Onjuist email of wachtwoord', 'auth/invalid-email': 'Ongeldig emailadres', 'auth/too-many-requests': 'Te veel pogingen, probeer later opnieuw' };
+    document.getElementById('loginError').textContent = msgs[err.code] || 'Inloggen mislukt';
+  });
+}
+
+function doGoogleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  fbAuth.signInWithPopup(provider).catch(err => {
+    document.getElementById('loginError').textContent =
+      err.code === 'auth/popup-closed-by-user' ? '' : 'Inloggen mislukt: ' + err.message;
+  });
+}
+
+function doLogout() {
+  fbAuth.signOut();
+}
+
+fbAuth.onAuthStateChanged(user => {
+  const loginScreen = document.getElementById('loginScreen');
+  const avatar = document.getElementById('userAvatar');
+  if (user) {
+    loginScreen.classList.add('hidden');
+    if (user.photoURL) { avatar.src = user.photoURL; avatar.style.display = 'block'; }
+    fbRef.once('value').then(snap => {
+      const remote = snap.val();
+      if (!remote) {
+        fbRef.set(DB);
+      } else {
+        DB = remote;
+        if (!DB.nextPlayerId) DB.nextPlayerId = (DB.players||[]).length + 1;
+        if (!DB.nextMatchId) DB.nextMatchId = (DB.matches||[]).length + 1;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+      }
+      fbReady = true;
+      refreshApp();
+    });
+    fbRef.on('value', snap => {
+      if (savingToFirebase) return;
+      const remote = snap.val();
+      if (remote) {
+        DB = remote;
+        if (!DB.nextPlayerId) DB.nextPlayerId = (DB.players||[]).length + 1;
+        if (!DB.nextMatchId) DB.nextMatchId = (DB.matches||[]).length + 1;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+        refreshApp();
+      }
+    });
+  } else {
+    loginScreen.classList.remove('hidden');
+    avatar.style.display = 'none';
+    fbReady = false;
+    fbRef.off();
+  }
+});
+
+function refreshApp() {
+  document.getElementById('seasonBadge').textContent = DB.season;
+  renderMatchView();
+}
 function getPlayer(id) { return DB.players.find(p => p.id === id); }
 function getPlayerName(id) { const p = getPlayer(id); return p ? p.name : '?'; }
 
@@ -4554,6 +4739,8 @@ loadSRZA();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
+
+fbDb.goOnline();
 </script>
 </body>
 </html>
