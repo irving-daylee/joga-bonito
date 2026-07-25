@@ -1,0 +1,52 @@
+name: Deploy
+
+# Publiceert alleen als de smoke test slaagt. Draait ook na de srza-scraper:
+# die commit met het bot-token, en zo'n commit start uit zichzelf geen enkele
+# workflow — zonder deze koppeling zou verse standen-data nooit live komen.
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ['Scrape SRZA']
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    uses: ./.github/workflows/test.yml
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      # Alleen de bestanden die de app nodig heeft. Zo belanden backups/,
+      # scripts/ en workflows niet op een publieke URL.
+      - name: Verzamel site-bestanden
+        run: |
+          mkdir -p _site
+          cp index.html manifest.json sw.js _site/
+          cp -r icons data _site/
+          echo "Gepubliceerd:"
+          find _site -type f | sort
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

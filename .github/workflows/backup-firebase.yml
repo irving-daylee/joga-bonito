@@ -33,9 +33,17 @@ jobs:
           fi
 
           # Download current data
-          curl -sf "https://futsal-joga-bonito-default-rtdb.europe-west1.firebasedatabase.app/data.json?auth=$FIREBASE_DB_TOKEN" -o backups/firebase-latest.json
+          curl -sf "https://futsal-joga-bonito-default-rtdb.europe-west1.firebasedatabase.app/data.json?auth=$FIREBASE_DB_TOKEN" -o backups/raw.json
 
-          echo "Backup size: $(wc -c < backups/firebase-latest.json) bytes"
+          # Spelersfoto's staan als base64 in het spelerobject. Deze repo is
+          # publiek, en wat eenmaal in git-historie staat krijg je er niet meer
+          # uit — dus die gaan er hier uit (AVG).
+          jq 'walk(if type == "object" and has("photo") then .photo = null else . end)' \
+            backups/raw.json > backups/firebase-latest.json
+          rm backups/raw.json
+
+          gestript=$(jq '[.. | objects | select(has("photo"))] | length' backups/firebase-latest.json)
+          echo "Backup: $(wc -c < backups/firebase-latest.json) bytes, $gestript fotovelden geleegd"
 
       - name: Commit and push
         run: |

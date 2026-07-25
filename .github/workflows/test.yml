@@ -1,9 +1,10 @@
 name: Smoke test
 
+# Draait niet meer los op een push naar main: deploy.yml roept deze workflow
+# aan als poort vóór het publiceren, zodat de test niet dubbel draait.
 on:
-  push:
-    branches: [main]
   pull_request:
+  workflow_call:
   workflow_dispatch:
 
 jobs:
