@@ -1,17 +1,5 @@
 {
   "_seedVersion": 4,
-  "currentMatch": {
-    "comp": "comp",
-    "date": "2026-07-25",
-    "flyingKeeper": false,
-    "half": 1,
-    "id": "m24",
-    "opponent": "",
-    "scoreAway": 0,
-    "scoreHome": 0,
-    "sporthal": "",
-    "status": "setup"
-  },
   "matches": [
     {
       "_seeded": true,
