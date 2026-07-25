@@ -63,8 +63,11 @@ function assert(cond, msg) {
 
 const tick = () => new Promise(r => setTimeout(r, 0));
 
-function stubScript(snapshot) {
+function stubScript(snapshot, localStorageSeed) {
   return `<script>
+${Object.entries(localStorageSeed || {})
+  .map(([k, v]) => `localStorage.setItem(${JSON.stringify(k)}, ${JSON.stringify(v)});`)
+  .join('\n')}
 window.__fb = { writes: [], authCb: null, valueCb: null, snapshot: ${JSON.stringify(snapshot)} };
 window.firebase = {
   initializeApp() {},
@@ -91,10 +94,10 @@ window.firebase = {
 // data via zijn eigen pad inleest. Een crash tijdens het inladen wordt
 // teruggegeven in plaats van doorgegooid, zodat de test hem als nette
 // failure kan rapporteren in plaats van er zelf op stuk te lopen.
-async function loadAndLogin(snapshot) {
+async function loadAndLogin(snapshot, localStorageSeed) {
   const html = fs.readFileSync(HTML_PATH, 'utf8')
     .replace(/<script src="https:\/\/www\.gstatic\.com\/firebasejs[^"]*"><\/script>\s*/g, '')
-    .replace('</head>', `${stubScript(snapshot)}\n</head>`);
+    .replace('</head>', `${stubScript(snapshot, localStorageSeed)}\n</head>`);
 
   const virtualConsole = new VirtualConsole();
   virtualConsole.on('jsdomError', noteError);
@@ -258,6 +261,87 @@ await check('spelersfoto\'s worden niet bewaard of weggeschreven (AVG)', async (
   const bronCode = fs.readFileSync(HTML_PATH, 'utf8');
   assert(!/type="file"/.test(bronCode), 'er zit nog een bestandsupload in de app');
   return `${db.players.length} spelers, geen foto's`;
+});
+
+await check('offline vastgelegde wedstrijd wordt niet overschreven door de server', async () => {
+  // Sporthal zonder bereik: de wedstrijd staat in localStorage, de markering
+  // dat er nog iets openstaat ook, maar Firebase heeft hem nooit gekregen.
+  const lokaal = {
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 3, currentMatch: null, _seedVersion: 4,
+    updatedAt: 2000,
+    matches: [wedstrijd('lokaal1', '2026-09-24', 'In De Sporthal', 6, 2, { season: '2026/27' })],
+  };
+  const ouderOpServer = fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, currentMatch: null, _seedVersion: 4,
+    updatedAt: 1000,
+    matches: [wedstrijd('hs1', '2025-09-11', 'Weddingcars by DK', 2, 1, { _seeded: true, season: '2025/26' })],
+  });
+
+  const { w: w2, loginError: err2 } = await loadAndLogin(ouderOpServer, {
+    jogaBonito_v2: JSON.stringify(lokaal),
+    jogaBonito_unsynced: '1',
+  });
+  assert(!err2, `inloggen crasht: ${err2}`);
+
+  const db = getDB(w2);
+  const bewaard = db.matches.find(m => m.opponent === 'In De Sporthal');
+  assert(bewaard, 'de offline vastgelegde wedstrijd is weg na het inloggen');
+  assert(bewaard.scoreHome === 6 && bewaard.scoreAway === 2, 'de uitslag klopt niet meer');
+
+  const weggeschreven = JSON.stringify(w2.__fb.writes).includes('In De Sporthal');
+  assert(weggeschreven, 'de wedstrijd is niet alsnog naar Firebase gestuurd');
+  return 'lokale wedstrijd behouden en alsnog gesynct';
+});
+
+await check('server wint wel als er lokaal niets openstaat', async () => {
+  // Spiegelbeeld: zonder openstaande wijzigingen moet de app gewoon de server
+  // volgen, anders zou een oud apparaat verse data van het andere overschrijven.
+  const oudLokaal = {
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, currentMatch: null, _seedVersion: 4,
+    updatedAt: 1000, matches: [wedstrijd('oud1', '2026-09-01', 'Oud Apparaat', 1, 1, { season: '2026/27' })],
+  };
+  const nieuwerOpServer = fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, currentMatch: null, _seedVersion: 4,
+    updatedAt: 5000, matches: [wedstrijd('nieuw1', '2026-09-20', 'Van Erfan', 3, 0, { season: '2026/27' })],
+  });
+
+  const { w: w3 } = await loadAndLogin(nieuwerOpServer, { jogaBonito_v2: JSON.stringify(oudLokaal) });
+  const db = getDB(w3);
+  assert(db.matches.some(m => m.opponent === 'Van Erfan'), 'de server-versie is niet overgenomen');
+  assert(!db.matches.some(m => m.opponent === 'Oud Apparaat'), 'oude lokale data overschrijft de server');
+  return 'server-versie gevolgd';
+});
+
+await check('de wedstrijdklok overleeft een herstart', async () => {
+  // De app is gesloten terwijl de klok liep met nog 12 minuten te gaan.
+  const overGeblevenMs = 12 * 60 * 1000;
+  const lopendeWedstrijd = fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 4, updatedAt: 1,
+    currentMatch: {
+      id: 'm1', date: '2026-09-24', opponent: 'Lopende Wedstrijd', sporthal: 'Haven',
+      comp: 'comp', squad: [spelers[0].id, spelers[1].id], lineup: [spelers[0].id],
+      keeper: spelers[0].id, captain: spelers[1].id, motm: null, events: [],
+      flyingKeeper: false, scoreHome: 1, scoreAway: 0, half: 1, status: 'half1',
+      timerEndsAt: Date.now() + overGeblevenMs, timerRemaining: null,
+    },
+  });
+
+  const { w: w4, loginError: err4 } = await loadAndLogin(lopendeWedstrijd);
+  assert(!err4, `inloggen crasht: ${err4}`);
+  const resterend = Number(w4.eval('timerSeconds'));
+  assert(Math.abs(resterend - 720) <= 5,
+    `klok staat op ${Math.floor(resterend / 60)}:${String(resterend % 60).padStart(2, '0')} in plaats van 12:00`);
+
+  // De minuut van een goal wordt uit de klok berekend; die moet dus ook kloppen.
+  const minuut = Number(w4.eval('getCurrentMinute()'));
+  assert(minuut === 8, `goal zou op minuut ${minuut} komen in plaats van 8`);
+  w4.eval('stopTimer()');
+  return `klok op ${Math.round(resterend / 60)} min, goal op minuut ${minuut}`;
 });
 
 await check('HISTORY uitslagen komen overeen met srza.json', () => {

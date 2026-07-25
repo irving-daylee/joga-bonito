@@ -6,9 +6,11 @@ import * as cheerio from 'cheerio';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // --- Config (update at start of each season) ---
+// Te overschrijven met env vars om een nieuwe poule te proberen zonder het
+// script aan te passen: COMP_NR=7 node scripts/scrape-srza.js
 const TEAM = 'JOGA BONITO';
-const TEAM_ID = 358;
-const COMP_NR = 3; // Poule 1B = nr 3
+const TEAM_ID = Number(process.env.TEAM_ID || 358);
+const COMP_NR = Number(process.env.COMP_NR || 3); // Poule 1B = nr 3
 
 const URLS = {
   standen: `https://www.srza.nl/standen/?nr=${COMP_NR}`,
@@ -137,6 +139,19 @@ async function main() {
   const goalsAgainst = uitslagen.reduce((s, r) => s + r.opp_s, 0);
 
   const jbRow = standen.find(r => r.team.toUpperCase().includes(TEAM));
+
+  // Een verkeerde poule geeft gewoon HTTP 200 met de stand van een ander
+  // team. Zonder deze controle publiceren we dan stilletjes vreemde cijfers.
+  if (!standen.length) {
+    throw new Error(`Geen stand gevonden op ${URLS.standen} — klopt COMP_NR=${COMP_NR} nog?`);
+  }
+  if (!jbRow) {
+    throw new Error(
+      `${TEAM} staat niet in de stand van poule nr=${COMP_NR}.\n` +
+      `Gevonden teams: ${standen.map(r => r.team).join(', ')}\n` +
+      `Werk TEAM_ID/COMP_NR bovenaan dit script bij voor het nieuwe seizoen.`
+    );
+  }
 
   const data = {
     lastUpdated: new Date().toISOString(),

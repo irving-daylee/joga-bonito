@@ -1484,6 +1484,7 @@ body.overlay-open { overflow: hidden; }
 // DATA + FIREBASE
 // =========================================================
 const STORAGE_KEY = 'jogaBonito_v2';
+const UNSYNCED_KEY = 'jogaBonito_unsynced';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCMs8R5y-ud2n8naGLc9eNlszXJFDkBF8w",
@@ -1563,6 +1564,8 @@ function normalizeMatch(m) {
   if (m.keeper === undefined) m.keeper = null;
   if (m.captain === undefined) m.captain = null;
   if (m.motm === undefined) m.motm = null;
+  if (m.timerEndsAt === undefined) m.timerEndsAt = null;
+  if (m.timerRemaining === undefined) m.timerRemaining = null;
   if (typeof m.scoreHome !== 'number') m.scoreHome = 0;
   if (typeof m.scoreAway !== 'number') m.scoreAway = 0;
   return m;
@@ -1576,12 +1579,20 @@ function loadDataLocal() {
   return defaultData();
 }
 
+// De Firebase-webSDK bewaart wachtende schrijfacties alleen in het geheugen.
+// Sluit je de app in een sporthal zonder bereik, dan is die write weg. Daarom
+// markeren we lokaal dat er nog iets openstaat, en pas als Firebase de
+// schrijfactie bevestigt halen we die markering weg.
 function saveData() {
+  DB.updatedAt = Date.now();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
-  if (fbReady) {
-    savingToFirebase = true;
-    fbRef.set(DB).finally(() => { savingToFirebase = false; });
-  }
+  localStorage.setItem(UNSYNCED_KEY, '1');
+  if (!fbReady) return;
+  savingToFirebase = true;
+  fbRef.set(DB)
+    .then(() => localStorage.removeItem(UNSYNCED_KEY))
+    .catch(() => {})
+    .finally(() => { savingToFirebase = false; });
 }
 
 function doEmailLogin() {
@@ -1663,7 +1674,12 @@ fbAuth.onAuthStateChanged(user => {
     if (user.photoURL) { avatar.src = user.photoURL; avatar.style.display = 'block'; }
     fbRef.once('value').then(snap => {
       const remote = snap.val();
-      if (remote) DB = normalizeDB(remote);
+      // Blind de server volgen wist wedstrijden die offline zijn vastgelegd en
+      // Firebase nooit bereikten. Alleen als er zulke wijzigingen openstaan én
+      // ze nieuwer zijn dan wat er staat, wint de lokale versie.
+      const lokaalOpenstaand = localStorage.getItem(UNSYNCED_KEY) === '1';
+      const lokaalNieuwer = (DB.updatedAt || 0) > ((remote && remote.updatedAt) || 0);
+      if (remote && !(lokaalOpenstaand && lokaalNieuwer)) DB = normalizeDB(remote);
       fbReady = true;
       // saveData() moet ná fbReady staan, anders belandt de correctie alleen
       // in localStorage en laadt elke login opnieuw de foute data.
@@ -1690,6 +1706,7 @@ fbAuth.onAuthStateChanged(user => {
 
 function refreshApp() {
   document.getElementById('seasonBadge').textContent = DB.season;
+  if (!timerRunning) restoreTimer();
   const active = document.querySelector('.page.active');
   if (active) {
     if (active.id === 'pageMatch') renderMatchView();
@@ -1853,9 +1870,40 @@ let timerInterval = null;
 let timerSeconds = 20 * 60;
 let timerRunning = false;
 
+// De klok wordt verankerd aan een eindtijdstip in plaats van alleen af te
+// tellen in het geheugen. Zo staat hij na een herstart — of nadat iOS de app
+// uit het geheugen gooit tijdens de rust — nog op de juiste stand, en blijven
+// de minuten bij goals kloppen.
+function persistTimer(save = true) {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+  if (timerRunning) {
+    cm.timerEndsAt = Date.now() + timerSeconds * 1000;
+    cm.timerRemaining = null;
+  } else {
+    cm.timerEndsAt = null;
+    cm.timerRemaining = timerSeconds;
+  }
+  if (save) saveData();
+}
+
+function restoreTimer() {
+  const cm = DB.currentMatch;
+  if (!cm || (cm.status !== 'half1' && cm.status !== 'half2')) return;
+  if (cm.timerEndsAt) {
+    timerSeconds = Math.max(0, Math.round((cm.timerEndsAt - Date.now()) / 1000));
+    if (timerSeconds > 0) startTimer();
+    else { timerRunning = false; onTimerEnd(); }
+  } else if (typeof cm.timerRemaining === 'number') {
+    timerSeconds = cm.timerRemaining;
+    timerRunning = false;
+  }
+}
+
 function startTimer() {
   if (timerRunning) return;
   timerRunning = true;
+  persistTimer();
   timerInterval = setInterval(() => {
     if (timerSeconds > 0) { timerSeconds--; renderTimerDisplay(); }
     else { stopTimer(); onTimerEnd(); }
@@ -1865,9 +1913,10 @@ function startTimer() {
 function stopTimer() {
   timerRunning = false;
   clearInterval(timerInterval);
+  persistTimer();
   renderMatchView();
 }
-function resetTimer() { stopTimer(); timerSeconds = 20 * 60; renderMatchView(); }
+function resetTimer() { stopTimer(); timerSeconds = 20 * 60; persistTimer(); renderMatchView(); }
 
 function getCurrentMinute() {
   const cm = DB.currentMatch;
@@ -1889,7 +1938,8 @@ function onTimerEnd() {
   if (!cm) return;
   if (cm.half === 1) {
     showPhaseOverlay('Rust', `${cm.scoreHome} – ${cm.scoreAway}`, 'Start 2e Helft', () => {
-      cm.half = 2; timerSeconds = 20*60; saveData(); hidePhaseOverlay(); startTimer();
+      cm.half = 2; timerSeconds = 20*60; timerRunning = false; persistTimer(false);
+      saveData(); hidePhaseOverlay(); startTimer();
     });
   } else {
     cm.status = 'fulltime'; saveData();
@@ -2492,6 +2542,8 @@ function startMatch() {
   cm.status = 'half1';
   cm.half = 1;
   timerSeconds = 20 * 60;
+  timerRunning = false;
+  persistTimer(false);
   saveData(); renderMatchView();
 }
 
@@ -2540,8 +2592,8 @@ function renderMatchLive(c) {
   c.innerHTML = h;
 }
 
-function adjustTimer(s) { timerSeconds = Math.max(0, Math.min(20*60, timerSeconds+s)); renderMatchView(); }
-function endHalfEarly() { stopTimer(); timerSeconds = 0; onTimerEnd(); }
+function adjustTimer(s) { timerSeconds = Math.max(0, Math.min(20*60, timerSeconds+s)); persistTimer(); renderMatchView(); }
+function endHalfEarly() { stopTimer(); timerSeconds = 0; persistTimer(); onTimerEnd(); }
 
 function toggleFlyingKeeper() {
   const cm = DB.currentMatch;
@@ -4737,6 +4789,7 @@ function formatDate(d) {
 // INIT
 // =========================================================
 document.getElementById('seasonBadge').textContent = DB.season;
+restoreTimer();
 renderMatchView();
 loadSRZA();
 
