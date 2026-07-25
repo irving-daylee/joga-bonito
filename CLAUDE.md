@@ -14,7 +14,7 @@ Single-file HTML app (`index.html`, ~2600 regels). Alle CSS + JS inline, geen bu
 - Regels 1116–1127: Avatar + Power Play icon helpers
 - Regels 1129–1180: Timer systeem (countdown 2x20 min)
 - Regels 1182–1250: Navigation, modals, toasts, phase overlay
-- Regels 1257–1420: Team page (spelers CRUD, foto-upload)
+- Regels 1257–1420: Team page (spelers CRUD)
 - Regels 1423–1784: Match flow (setup → squad → lineup → live play)
 - Regels 1785–1903: Goal systeem (modal, save, celebration overlay)
 - Regels 1905–1980: Event editing (timeline click-to-edit)
@@ -59,7 +59,7 @@ Timer start NIET automatisch — gebruiker drukt zelf op play.
 
 Marco (#1, keeper), Irving (#7, aanvoerder), Lyzairo (#8), Rayvano (#9), Bobby (#10), Gregory (#11), Lawin (#5), Erfan (#12, keeper), Kenneth (#14), Said (#24), Amine (#59), Fouad (#99).
 
-Foto's worden opgeslagen als base64 JPEG (200x200 crop) in het player object.
+Geen spelersfoto's: avatars zijn het rugnummer. Bewust geen PII buiten voornaam, rugnummer, voorkeursvoet en positie (AVG).
 
 ## Key patterns
 
@@ -83,4 +83,4 @@ Foto's worden opgeslagen als base64 JPEG (200x200 crop) in het player object.
 - Geen comments in code tenzij niet-obvious waarom.
 - Geen externe dependencies in index.html behalve Google Fonts CDN. Scraper gebruikt cheerio (package.json).
 - Test altijd op mobile (375x812) — dit is primair een telefoon-app.
-- localStorage limiet (~5-10MB) — foto's eten dit op, hou er rekening mee.
+- Sla geen PII op: geen foto's, achternamen of geboortedata. Alleen voetbalgerelateerde gegevens.

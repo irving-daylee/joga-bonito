@@ -357,32 +357,6 @@ label {
   overflow: hidden;
   position: relative;
 }
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  inset: 0;
-}
-.avatar-num {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 3px;
-  background: var(--navy);
-  color: #0A0A0A;
-  border-radius: 8px;
-  font-size: 0.5rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid var(--surface);
-  z-index: 1;
-  line-height: 1;
-}
 .avatar-sm { width: 32px; height: 32px; font-size: 0.75rem; }
 .avatar-lg { width: 56px; height: 56px; font-size: 1.1rem; }
 .avatar-xl { width: 72px; height: 72px; font-size: 1.4rem; }
@@ -1076,7 +1050,6 @@ body.overlay-open { overflow: hidden; }
   background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
   font-size: 2rem; font-weight: 800; color: #fff; overflow: hidden;
 }
-.pp-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .pp-name { font-family: 'Montserrat', sans-serif; font-size: 1.3rem; font-weight: 800; }
 .pp-number { font-size: 0.85rem; opacity: 0.7; margin-top: 4px; }
 .pp-badges { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
@@ -1281,23 +1254,6 @@ body.overlay-open { overflow: hidden; }
 .motm-player.selected { border-color: var(--navy); background: var(--navy-10); }
 .motm-player .motm-name { font-size: 0.72rem; font-weight: 600; text-align: center; }
 
-/* ===== PHOTO UPLOAD ===== */
-.photo-upload {
-  position: relative;
-  cursor: pointer;
-}
-.photo-upload input[type="file"] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-.photo-upload-hint {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  text-align: center;
-  margin-top: 4px;
-}
 
 /* ===== GOAL CELEBRATION ===== */
 .goal-celebration {
@@ -1333,7 +1289,6 @@ body.overlay-open { overflow: hidden; }
   font-size: 2.5rem;
   color: var(--on-primary);
 }
-.celeb-photo img { width: 100%; height: 100%; object-fit: cover; }
 .celeb-label {
   font-family: 'Montserrat', sans-serif;
   font-weight: 900;
@@ -1548,18 +1503,18 @@ let fbReady = false;
 let savingToFirebase = false;
 
 const DEFAULT_PLAYERS = [
-  { id:'p1',  name:'Marco',   number:1,  isKeeper:true,  isCaptain:false, foot:'R', photo:null },
-  { id:'p2',  name:'Irving',  number:7,  isKeeper:false, isCaptain:true,  foot:'R', photo:null },
-  { id:'p3',  name:'Lyzairo', number:8,  isKeeper:false, isCaptain:false, foot:'R', photo:null },
-  { id:'p4',  name:'Rayvano', number:9,  isKeeper:false, isCaptain:false, foot:'R', photo:null },
-  { id:'p5',  name:'Bobby',   number:10, isKeeper:false, isCaptain:false, foot:'R', photo:null },
-  { id:'p6',  name:'Gregory', number:11, isKeeper:false, isCaptain:false, foot:'L', photo:null },
-  { id:'p7',  name:'Lawin',   number:5,  isKeeper:false, isCaptain:false, foot:'R', photo:null },
-  { id:'p8',  name:'Erfan',   number:12, isKeeper:true,  isCaptain:false, foot:'R', photo:null },
-  { id:'p9',  name:'Kenneth', number:14, isKeeper:false, isCaptain:false, foot:'L', photo:null },
-  { id:'p10', name:'Said',    number:24, isKeeper:false, isCaptain:false, foot:'R', photo:null },
-  { id:'p11', name:'Amine',   number:59, isKeeper:false, isCaptain:false, foot:'R', photo:null },
-  { id:'p12', name:'Fouad',   number:99, isKeeper:false, isCaptain:false, foot:'L', photo:null },
+  { id:'p1',  name:'Marco',   number:1,  isKeeper:true,  isCaptain:false, foot:'R' },
+  { id:'p2',  name:'Irving',  number:7,  isKeeper:false, isCaptain:true,  foot:'R' },
+  { id:'p3',  name:'Lyzairo', number:8,  isKeeper:false, isCaptain:false, foot:'R' },
+  { id:'p4',  name:'Rayvano', number:9,  isKeeper:false, isCaptain:false, foot:'R' },
+  { id:'p5',  name:'Bobby',   number:10, isKeeper:false, isCaptain:false, foot:'R' },
+  { id:'p6',  name:'Gregory', number:11, isKeeper:false, isCaptain:false, foot:'L' },
+  { id:'p7',  name:'Lawin',   number:5,  isKeeper:false, isCaptain:false, foot:'R' },
+  { id:'p8',  name:'Erfan',   number:12, isKeeper:true,  isCaptain:false, foot:'R' },
+  { id:'p9',  name:'Kenneth', number:14, isKeeper:false, isCaptain:false, foot:'L' },
+  { id:'p10', name:'Said',    number:24, isKeeper:false, isCaptain:false, foot:'R' },
+  { id:'p11', name:'Amine',   number:59, isKeeper:false, isCaptain:false, foot:'R' },
+  { id:'p12', name:'Fouad',   number:99, isKeeper:false, isCaptain:false, foot:'L' },
 ];
 
 const defaultData = () => ({
@@ -1590,6 +1545,10 @@ function normalizeDB(d) {
   d.season = d.season || base.season;
   d.players = toArray(d.players);
   if (!d.players.length) d.players = base.players;
+  // De app bewaart geen spelersfoto's meer (AVG). Bestaande foto's uit oudere
+  // versies worden hier weggegooid, zodat ze bij de eerstvolgende save ook
+  // echt uit Firebase verdwijnen in plaats van alleen ongebruikt te blijven.
+  d.players.forEach(p => { if (p && p.photo !== undefined) delete p.photo; });
   d.matches = toArray(d.matches).filter(Boolean).map(normalizeMatch);
   d.currentMatch = d.currentMatch ? normalizeMatch(d.currentMatch) : null;
   if (!d.nextPlayerId) d.nextPlayerId = d.players.length + 1;
@@ -1879,9 +1838,6 @@ async function loadSRZA() {
 
 function avatarHTML(player, sizeClass) {
   const cls = sizeClass ? `avatar ${sizeClass}` : 'avatar';
-  if (player && player.photo) {
-    return `<div class="${cls}"><img src="${player.photo}" alt="${player.name}"><span class="avatar-num">${player.number}</span></div>`;
-  }
   const num = player ? player.number : '?';
   return `<div class="${cls}">${num}</div>`;
 }
@@ -2035,10 +1991,7 @@ function renderTeamPage() {
       if (p.isKeeper) badges.push('Keeper');
       if (p.isCaptain) badges.push('Aanvoerder');
       h += `<div class="player-item" onclick="showPlayerProfile('${p.id}')" style="cursor:pointer">
-        <div class="photo-upload" onclick="event.stopPropagation();triggerPhotoUpload('${p.id}')">
-          ${avatarHTML(p)}
-          <input type="file" accept="image/*" id="photo_${p.id}" onchange="handlePhotoUpload('${p.id}', this)">
-        </div>
+        ${avatarHTML(p)}
         <div class="player-info">
           <div class="player-name">${p.name}</div>
           ${badges.length ? `<div class="player-badges">${badges.map(b=>`<span class="player-badge">${b}</span>`).join('')}</div>` : ''}
@@ -2061,30 +2014,6 @@ function renderTeamPage() {
   </div>`;
 
   c.innerHTML = h;
-}
-
-function triggerPhotoUpload(id) { document.getElementById('photo_'+id).click(); }
-
-function handlePhotoUpload(id, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const size = 200;
-      canvas.width = size; canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      const min = Math.min(img.width, img.height);
-      const sx = (img.width - min) / 2, sy = (img.height - min) / 2;
-      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
-      const p = getPlayer(id);
-      if (p) { p.photo = canvas.toDataURL('image/jpeg', 0.7); saveData(); renderTeamPage(); }
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
 }
 
 function openAddPlayerModal() {
@@ -2110,8 +2039,7 @@ function addPlayer() {
     name,
     number: parseInt(document.getElementById('npNum').value) || 0,
     isKeeper: document.getElementById('npKeeper').checked,
-    isCaptain: document.getElementById('npCaptain').checked,
-    photo: null
+    isCaptain: document.getElementById('npCaptain').checked
   });
   saveData(); closeModal(); renderTeamPage();
 }
@@ -2121,11 +2049,7 @@ function openEditPlayerModal(id) {
   if (!p) return;
   openModal(`<h3>Speler Bewerken</h3>
     <div style="text-align:center;margin-bottom:16px">
-      <div class="photo-upload" style="display:inline-block" onclick="document.getElementById('epPhoto').click()">
-        ${avatarHTML(p, 'avatar-xl')}
-        <input type="file" accept="image/*" id="epPhoto" onchange="handleEditPhoto('${id}', this)" style="display:none">
-        <div class="photo-upload-hint">Tik voor foto</div>
-      </div>
+      ${avatarHTML(p, 'avatar-xl')}
     </div>
     <div class="form-group"><label>Naam</label><input type="text" id="epName" value="${p.name}"></div>
     <div class="form-group"><label>Rugnummer</label><input type="number" id="epNum" value="${p.number}" min="0" max="99"></div>
@@ -2137,26 +2061,6 @@ function openEditPlayerModal(id) {
     </div>
     <button class="btn btn-primary btn-block" onclick="saveEditPlayer('${id}')">Opslaan</button>
     <button class="modal-cancel" onclick="closeModal()">Annuleren</button>`);
-}
-
-function handleEditPhoto(id, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 200; canvas.height = 200;
-      const ctx = canvas.getContext('2d');
-      const min = Math.min(img.width, img.height);
-      ctx.drawImage(img, (img.width-min)/2, (img.height-min)/2, min, min, 0, 0, 200, 200);
-      const p = getPlayer(id);
-      if (p) { p.photo = canvas.toDataURL('image/jpeg', 0.7); saveData(); openEditPlayerModal(id); }
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
 }
 
 function saveEditPlayer(id) {
@@ -2247,7 +2151,7 @@ function showPlayerProfile(id) {
     </button>
   </div>
   <div class="pp-header">
-    <div class="pp-avatar">${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : p.name.charAt(0)}</div>
+    <div class="pp-avatar">${p.name.charAt(0)}</div>
     <div class="pp-name">${p.name}</div>
     <div class="pp-number">#${p.number}</div>
     ${badges.length ? `<div class="pp-badges">${badges.map(b => `<span class="pp-badge">${b}</span>`).join('')}</div>` : ''}
@@ -2838,11 +2742,8 @@ function showGoalCelebration(ev, cm) {
   if (!scorer) return;
   const el = document.createElement('div');
   el.className = 'goal-celebration';
-  const photoHTML = scorer.photo
-    ? `<div class="celeb-photo"><img src="${scorer.photo}" alt="${scorer.name}"></div>`
-    : `<div class="celeb-photo">${scorer.number}</div>`;
   el.innerHTML = `
-    ${photoHTML}
+    <div class="celeb-photo">${scorer.number}</div>
     <div class="celeb-label">Goal!</div>
     <div class="celeb-name">${scorer.name}</div>
     <div class="celeb-number">#${scorer.number}</div>

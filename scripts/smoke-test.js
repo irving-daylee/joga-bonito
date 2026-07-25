@@ -241,6 +241,25 @@ await check('sync-update vanaf een ander apparaat crasht de app niet', () => {
   renderAllPages(w, 'na sync vanaf ander apparaat');
 });
 
+await check('spelersfoto\'s worden niet bewaard of weggeschreven (AVG)', async () => {
+  // Een oude opslag kan nog base64-foto's bevatten; die moeten bij het inlezen
+  // verdwijnen en niet opnieuw naar Firebase gaan.
+  const metFoto = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', nextPlayerId: 13, nextMatchId: 2,
+    players: spelers.map(p => ({ ...p, photo: 'data:image/jpeg;base64,AAAA' })),
+    matches: [wedstrijd('m1', '2026-09-10', 'Test', 1, 0)], currentMatch: null,
+  }));
+  const db = getDB(metFoto.w);
+  const nog = db.players.filter(p => p.photo);
+  assert(nog.length === 0, `${nog.length} speler(s) hebben nog een foto in de app-data`);
+  const writes = metFoto.w.__fb.writes;
+  const inFirebase = JSON.stringify(writes).includes('base64');
+  assert(!inFirebase, 'er is een foto naar Firebase weggeschreven');
+  const bronCode = fs.readFileSync(HTML_PATH, 'utf8');
+  assert(!/type="file"/.test(bronCode), 'er zit nog een bestandsupload in de app');
+  return `${db.players.length} spelers, geen foto's`;
+});
+
 await check('HISTORY uitslagen komen overeen met srza.json', () => {
   const srzaPad = path.join(path.dirname(HTML_PATH), 'data/srza.json');
   const srza = JSON.parse(fs.readFileSync(srzaPad, 'utf8'));
