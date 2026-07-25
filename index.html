@@ -1607,6 +1607,33 @@ function doLogout() {
   fbAuth.signOut();
 }
 
+function seedMatchesFromHistory() {
+  const matches = [];
+  let id = 1;
+  const historySeasons = ['2025/26'];
+  historySeasons.forEach(season => {
+    const h = HISTORY[season];
+    if (!h || !h.results) return;
+    h.results.forEach(r => {
+      matches.push({
+        id: 'm' + id++,
+        date: r.date,
+        opponent: r.opp,
+        sporthal: r.hal || '',
+        comp: r.comp === '1B' ? 'comp' : (r.comp === 'BK' ? 'beker' : r.comp),
+        squad: [], lineup: [], keeper: null, captain: null, flyingKeeper: false,
+        events: [],
+        scoreHome: r.jb,
+        scoreAway: r.opp_s,
+        half: 2, motm: null, status: 'finished'
+      });
+    });
+  });
+  DB.matches = matches;
+  DB.nextMatchId = id;
+  DB.season = '2025/26';
+}
+
 fbAuth.onAuthStateChanged(user => {
   const loginScreen = document.getElementById('loginScreen');
   const avatar = document.getElementById('userAvatar');
@@ -1616,12 +1643,15 @@ fbAuth.onAuthStateChanged(user => {
     fbRef.once('value').then(snap => {
       const remote = snap.val();
       if (!remote) {
+        seedMatchesFromHistory();
         fbRef.set(DB);
       } else {
         DB = remote;
         if (!DB.nextPlayerId) DB.nextPlayerId = (DB.players||[]).length + 1;
         if (!DB.nextMatchId) DB.nextMatchId = (DB.matches||[]).length + 1;
+        if (!DB.matches || DB.matches.length === 0) seedMatchesFromHistory();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+        saveData();
       }
       fbReady = true;
       refreshApp();
@@ -1664,10 +1694,12 @@ const HISTORY = {
       { name: 'Rayvano', goals: 14, assists: 5, played: 9 },
       { name: 'Lyzairo', goals: 13, assists: 14, played: 23 },
       { name: 'Amine', goals: 13, assists: 15, played: 11 },
+      { name: 'Reglementair', goals: 5, assists: 0, played: 1 },
       { name: 'Bobby', goals: 3, assists: 7, played: 6 },
       { name: 'Jamal', goals: 1, assists: 4, played: 4 },
+      { name: 'Eigen doelpunt', goals: 1, assists: 0, played: 1 },
       { name: 'Marco', goals: 0, assists: 3, played: 21 },
-      { name: 'Erfan', goals: 0, assists: 2, played: 3 },
+      { name: 'Erfan', goals: 2, assists: 3, played: 2 },
       { name: 'Lorenzo', goals: 0, assists: 0, played: 1 },
     ],
     standings: [
@@ -1721,6 +1753,8 @@ const HISTORY = {
       { name: 'Lorenzo', goals: 7, assists: 10, played: 12 },
       { name: 'Faissel', goals: 6, assists: 2, played: 7 },
       { name: 'Jamal', goals: 3, assists: 3, played: 6 },
+      { name: 'Reglementair', goals: 5, assists: 0, played: 1 },
+      { name: 'Eigen doelpunt', goals: 4, assists: 0, played: 1 },
       { name: 'Lyzairo', goals: 3, assists: 0, played: 5 },
       { name: 'Erfan', goals: 1, assists: 12, played: 15 },
       { name: 'Saber', goals: 1, assists: 0, played: 2 },
@@ -1739,11 +1773,13 @@ const HISTORY = {
       { name: 'Lyzairo', goals: 16, assists: 14, played: 28 },
       { name: 'Amine', goals: 13, assists: 15, played: 11 },
       { name: 'Bobby', goals: 12, assists: 20, played: 19 },
+      { name: 'Reglementair', goals: 10, assists: 0, played: 2 },
       { name: 'Ahmed', goals: 8, assists: 2, played: 13 },
       { name: 'Lorenzo', goals: 7, assists: 10, played: 13 },
       { name: 'Faissel', goals: 6, assists: 2, played: 7 },
+      { name: 'Eigen doelpunt', goals: 5, assists: 0, played: 2 },
       { name: 'Jamal', goals: 4, assists: 7, played: 10 },
-      { name: 'Erfan', goals: 1, assists: 14, played: 18 },
+      { name: 'Erfan', goals: 3, assists: 15, played: 17 },
       { name: 'Saber', goals: 1, assists: 0, played: 2 },
       { name: 'Marco', goals: 0, assists: 3, played: 31 },
       { name: 'Zakaria', goals: 0, assists: 2, played: 9 },
