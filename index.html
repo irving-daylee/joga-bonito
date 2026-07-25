@@ -1610,15 +1610,17 @@ function doLogout() {
 const SEED_VERSION = 2;
 
 function seedMatchesFromHistory() {
-  const matches = [];
+  const userMatches = (DB.matches || []).filter(m => !m._seeded);
+  const seeded = [];
   let id = 1;
   const historySeasons = ['2025/26'];
   historySeasons.forEach(season => {
     const h = HISTORY[season];
     if (!h || !h.results) return;
     h.results.forEach(r => {
-      matches.push({
-        id: 'm' + id++,
+      seeded.push({
+        id: 'hs' + id++,
+        _seeded: true,
         date: r.date,
         opponent: r.opp,
         sporthal: r.hal || '',
@@ -1631,8 +1633,8 @@ function seedMatchesFromHistory() {
       });
     });
   });
-  DB.matches = matches;
-  DB.nextMatchId = id;
+  DB.matches = [...seeded, ...userMatches];
+  DB.nextMatchId = Math.max(id, (DB.nextMatchId || 1));
   DB._seedVersion = SEED_VERSION;
 }
 
