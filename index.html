@@ -1563,15 +1563,45 @@ const defaultData = () => ({
 
 let DB = loadDataLocal();
 
+// Firebase slaat lege arrays en null-waarden niet op: `events: []` verdwijnt
+// volledig uit het object. Zonder deze normalisatie crasht elke `.filter()` op
+// een teruggeladen wedstrijd. Ook sparse arrays komen als object terug.
+function toArray(v) {
+  if (Array.isArray(v)) return v;
+  if (v && typeof v === 'object') return Object.values(v);
+  return [];
+}
+
+function normalizeDB(d) {
+  if (!d || typeof d !== 'object') return defaultData();
+  const base = defaultData();
+  d.teamName = d.teamName || base.teamName;
+  d.season = d.season || base.season;
+  d.players = toArray(d.players);
+  if (!d.players.length) d.players = base.players;
+  d.matches = toArray(d.matches).filter(Boolean).map(normalizeMatch);
+  d.currentMatch = d.currentMatch ? normalizeMatch(d.currentMatch) : null;
+  if (!d.nextPlayerId) d.nextPlayerId = d.players.length + 1;
+  if (!d.nextMatchId) d.nextMatchId = d.matches.length + 1;
+  return d;
+}
+
+function normalizeMatch(m) {
+  m.squad = toArray(m.squad);
+  m.lineup = toArray(m.lineup);
+  m.events = toArray(m.events).filter(Boolean);
+  if (m.keeper === undefined) m.keeper = null;
+  if (m.captain === undefined) m.captain = null;
+  if (m.motm === undefined) m.motm = null;
+  if (typeof m.scoreHome !== 'number') m.scoreHome = 0;
+  if (typeof m.scoreAway !== 'number') m.scoreAway = 0;
+  return m;
+}
+
 function loadDataLocal() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const d = JSON.parse(raw);
-      if (!d.nextPlayerId) d.nextPlayerId = (d.players||[]).length + 1;
-      if (!d.nextMatchId) d.nextMatchId = (d.matches||[]).length + 1;
-      return d;
-    }
+    if (raw) return normalizeDB(JSON.parse(raw));
   } catch(e) {}
   return defaultData();
 }
@@ -1607,17 +1637,18 @@ function doLogout() {
   fbAuth.signOut();
 }
 
-const SEED_VERSION = 2;
+const SEED_VERSION = 3;
+const SEEDED_SEASONS = ['2025/26'];
 
 function seedMatchesFromHistory() {
-  const userMatches = (DB.matches || []).filter(m => !m._seeded);
   const seeded = [];
+  const seededKeys = new Set();
   let id = 1;
-  const historySeasons = ['2025/26'];
-  historySeasons.forEach(season => {
+  SEEDED_SEASONS.forEach(season => {
     const h = HISTORY[season];
     if (!h || !h.results) return;
     h.results.forEach(r => {
+      seededKeys.add(r.date + '|' + r.opp);
       seeded.push({
         id: 'hs' + id++,
         _seeded: true,
@@ -1633,8 +1664,12 @@ function seedMatchesFromHistory() {
       });
     });
   });
+  // Behoud alleen zelf ingevoerde wedstrijden. De date|opponent check ruimt
+  // seeds van vóór de _seeded flag op, die anders als duplicaat blijven staan.
+  const userMatches = toArray(DB.matches).filter(m =>
+    m && !m._seeded && !seededKeys.has(m.date + '|' + m.opponent));
   DB.matches = [...seeded, ...userMatches];
-  DB.nextMatchId = Math.max(id, (DB.nextMatchId || 1));
+  DB.nextMatchId = Math.max(id, DB.nextMatchId || 1);
   DB._seedVersion = SEED_VERSION;
 }
 
@@ -1650,29 +1685,19 @@ fbAuth.onAuthStateChanged(user => {
     if (user.photoURL) { avatar.src = user.photoURL; avatar.style.display = 'block'; }
     fbRef.once('value').then(snap => {
       const remote = snap.val();
-      if (!remote) {
-        seedMatchesFromHistory();
-        fbRef.set(DB);
-      } else {
-        DB = remote;
-        if (!DB.nextPlayerId) DB.nextPlayerId = (DB.players||[]).length + 1;
-        if (!DB.nextMatchId) DB.nextMatchId = (DB.matches||[]).length + 1;
-        if (needsSeed()) {
-          seedMatchesFromHistory();
-          saveData();
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
-      }
+      if (remote) DB = normalizeDB(remote);
       fbReady = true;
+      // saveData() moet ná fbReady staan, anders belandt de correctie alleen
+      // in localStorage en laadt elke login opnieuw de foute data.
+      if (needsSeed()) seedMatchesFromHistory();
+      saveData();
       refreshApp();
     });
     fbRef.on('value', snap => {
       if (savingToFirebase) return;
       const remote = snap.val();
       if (remote) {
-        DB = remote;
-        if (!DB.nextPlayerId) DB.nextPlayerId = (DB.players||[]).length + 1;
-        if (!DB.nextMatchId) DB.nextMatchId = (DB.matches||[]).length + 1;
+        DB = normalizeDB(remote);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
         refreshApp();
       }
@@ -2320,7 +2345,7 @@ function renderMatchIdle(c) {
     finished.slice(0,5).forEach(m => {
       const res = getMatchResult(m);
       const scorerCounts = {};
-      m.events.filter(e => e.type==='goal' && e.team==='home' && !e.ownGoal && e.scorerId).forEach(e => {
+      (m.events || []).filter(e => e.type==='goal' && e.team==='home' && !e.ownGoal && e.scorerId).forEach(e => {
         const n = getPlayerName(e.scorerId);
         scorerCounts[n] = (scorerCounts[n] || 0) + 1;
       });
@@ -3011,7 +3036,7 @@ function showMatchDetail(matchId) {
         ${m.motm?`<div style="margin-top:12px;font-size:0.78rem;opacity:0.8">&#11088; Man of the Match: <strong>${getPlayerName(m.motm)}</strong></div>`:''}
       </div>`;
 
-  if (m.events.length > 0) {
+  if ((m.events || []).length > 0) {
     h += `<div class="card"><h3 style="font-size:0.88rem;margin-bottom:12px">Wedstrijdverloop</h3><div class="timeline">`;
     [...m.events].sort((a,b) => a.minute - b.minute).forEach(ev => { h += renderTimelineEvent(ev, m); });
     h += `</div></div>`;
@@ -3122,7 +3147,7 @@ function renderCurrentSeasonStats() {
   const phases = {};
   phaseKeys.forEach(k => { phases[k] = { for:0, against:0 }; });
   finished.forEach(m => {
-    m.events.filter(e => e.type==='goal' && e.minute != null).forEach(e => {
+    (m.events || []).filter(e => e.type==='goal' && e.minute != null).forEach(e => {
       const min = e.minute;
       let phase;
       if (min <= 5) phase = '0-5';
@@ -3187,7 +3212,7 @@ function setupCurrentLeaderboard() {
   DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0 }; });
   finished.forEach(m => {
     (m.squad||[]).forEach(pid => { if(ps[pid]) ps[pid].played++; });
-    m.events.forEach(ev => {
+    (m.events || []).forEach(ev => {
       if (ev.type==='goal' && ev.team==='home') {
         if (ev.scorerId && ps[ev.scorerId]) ps[ev.scorerId].goals++;
         if (ev.assistId && ps[ev.assistId]) ps[ev.assistId].assists++;
