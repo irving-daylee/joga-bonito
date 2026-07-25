@@ -1607,6 +1607,8 @@ function doLogout() {
   fbAuth.signOut();
 }
 
+const SEED_VERSION = 2;
+
 function seedMatchesFromHistory() {
   const matches = [];
   let id = 1;
@@ -1631,7 +1633,11 @@ function seedMatchesFromHistory() {
   });
   DB.matches = matches;
   DB.nextMatchId = id;
-  DB.season = '2025/26';
+  DB._seedVersion = SEED_VERSION;
+}
+
+function needsSeed() {
+  return !DB.matches || DB.matches.length === 0 || (DB._seedVersion || 0) < SEED_VERSION;
 }
 
 fbAuth.onAuthStateChanged(user => {
@@ -1649,9 +1655,11 @@ fbAuth.onAuthStateChanged(user => {
         DB = remote;
         if (!DB.nextPlayerId) DB.nextPlayerId = (DB.players||[]).length + 1;
         if (!DB.nextMatchId) DB.nextMatchId = (DB.matches||[]).length + 1;
-        if (!DB.matches || DB.matches.length === 0) seedMatchesFromHistory();
+        if (needsSeed()) {
+          seedMatchesFromHistory();
+          saveData();
+        }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
-        saveData();
       }
       fbReady = true;
       refreshApp();
@@ -1677,7 +1685,16 @@ fbAuth.onAuthStateChanged(user => {
 
 function refreshApp() {
   document.getElementById('seasonBadge').textContent = DB.season;
-  renderMatchView();
+  const active = document.querySelector('.page.active');
+  if (active) {
+    if (active.id === 'pageMatch') renderMatchView();
+    else if (active.id === 'pageStats') renderStatsPage();
+    else if (active.id === 'pageSchedule') renderSchedulePage();
+    else if (active.id === 'pageTeam') renderTeamPage();
+    else if (active.id === 'pageAnalyse') renderAnalysePage();
+  } else {
+    renderMatchView();
+  }
 }
 function getPlayer(id) { return DB.players.find(p => p.id === id); }
 function getPlayerName(id) { const p = getPlayer(id); return p ? p.name : '?'; }
@@ -1735,7 +1752,7 @@ const HISTORY = {
       { date: '2026-03-16', opp: 'Novia Facts', jb: 10, opp_s: 3, hal: 'Haven', home: true, comp: '1B' },
       { date: '2026-03-23', opp: 'Mladost', jb: 8, opp_s: 6, hal: 'Haven', home: false, comp: '1B' },
       { date: '2026-03-30', opp: 'AS Sport Events', jb: 5, opp_s: 7, hal: 'Haven', home: true, comp: '1B' },
-      { date: '2026-04-14', opp: 'Jai Hanuman 1', jb: 1, opp_s: 3, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2026-04-14', opp: 'Jai Hanuman 1', jb: 3, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' },
       { date: '2026-04-23', opp: 'CLK Engineering', jb: 7, opp_s: 4, hal: 'Buiten', home: false, comp: '1B' },
       { date: '2026-05-21', opp: 'APS', jb: 5, opp_s: 0, hal: 'Waterwijk', home: true, comp: '1B' },
       { date: '2026-06-01', opp: 'Cordoba Concept', jb: 4, opp_s: 3, hal: 'Stad', home: false, comp: '1B' },
@@ -2198,10 +2215,12 @@ function showPlayerProfile(id) {
 
   if (career.totalPlayed > 0) {
     if (p.isKeeper) {
-      const cleanSheets = DB.matches.filter(m => m.status === 'finished' && m.keeper === id && m.scoreAway === 0).length;
+      const keeperMatches = DB.matches.filter(m => m.status === 'finished' && m.keeper === id);
+      const cleanSheets = keeperMatches.filter(m => m.scoreAway === 0).length;
+      const goalsAgainstPer = keeperMatches.length ? (keeperMatches.reduce((s, m) => s + m.scoreAway, 0) / keeperMatches.length).toFixed(1) : '–';
       h += `<div class="pp-stats" style="margin-top:1px">
         <div class="pp-stat"><div class="pp-stat-val">${cleanSheets}</div><div class="pp-stat-label">Clean sheets</div></div>
-        <div class="pp-stat"><div class="pp-stat-val">${career.totalAssists}</div><div class="pp-stat-label">Assists</div></div>
+        <div class="pp-stat"><div class="pp-stat-val">${goalsAgainstPer}</div><div class="pp-stat-label">Tegen / wed.</div></div>
         <div class="pp-stat"><div class="pp-stat-val">${career.motm}</div><div class="pp-stat-label">MOTM</div></div>
       </div>`;
     } else {
@@ -2274,13 +2293,15 @@ function closePlayerProfile() {
 // =========================================================
 function renderMatchView() {
   const c = document.getElementById('matchContent');
+  if (!c) return;
   const cm = DB.currentMatch;
-  if (!cm) renderMatchIdle(c);
+  if (!cm || !cm.status) renderMatchIdle(c);
   else if (cm.status === 'setup') renderMatchSetup(c);
   else if (cm.status === 'squad') renderMatchSquad(c);
   else if (cm.status === 'lineup') renderMatchLineup(c);
   else if (cm.status === 'half1' || cm.status === 'half2') renderMatchLive(c);
   else if (cm.status === 'fulltime') renderMatchMOTM(c);
+  else renderMatchIdle(c);
   updateLiveDot();
 }
 
