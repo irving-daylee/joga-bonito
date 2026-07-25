@@ -2,9 +2,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "scrape": "node scripts/scrape-srza.js"
+    "scrape": "node scripts/scrape-srza.js",
+    "test": "node scripts/smoke-test.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
   }
 }
