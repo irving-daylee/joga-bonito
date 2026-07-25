@@ -1,2 +1,7 @@
 .DS_Store
 node_modules/
+
+# Lokale werkbestanden — buiten de repo houden. Deze repo is publiek, en
+# gegenereerde spelerskaarten kunnen persoonsgegevens bevatten.
+briefing-jugador.html
+*-player-card.png
