@@ -520,6 +520,30 @@ await check('een afgelopen seizoen krijgt vanzelf een eigen tabblad', () => {
   return tabs.join(', ');
 });
 
+await check('het versienummer staat in de topbar en is stempelbaar', () => {
+  const el = w.document.getElementById('appVersion');
+  assert(el, 'er staat geen versie-element in de topbar');
+  assert(el.textContent.trim().length > 0, 'de versie in de topbar is leeg');
+
+  // deploy.yml vervangt deze exacte regels. Wijzigt de opmaak, dan stempelt de
+  // deploy niets meer en blijft iedereen op een oude cache hangen.
+  const dir = path.dirname(HTML_PATH);
+  const bron = fs.readFileSync(HTML_PATH, 'utf8');
+  const sw = fs.readFileSync(path.join(dir, 'sw.js'), 'utf8');
+  assert(bron.includes("const APP_VERSION = 'dev';"),
+    "index.html mist de regel die deploy.yml vervangt: const APP_VERSION = 'dev';");
+  assert(sw.includes("const CACHE_NAME = 'joga-bonito-dev';"),
+    "sw.js mist de regel die deploy.yml vervangt: const CACHE_NAME = 'joga-bonito-dev';");
+
+  const workflow = path.join(dir, '.github/workflows/deploy.yml');
+  if (fs.existsSync(workflow)) {
+    const yml = fs.readFileSync(workflow, 'utf8');
+    assert(yml.includes("const APP_VERSION = 'dev';") && yml.includes("const CACHE_NAME = 'joga-bonito-dev';"),
+      'deploy.yml zoekt naar andere regels dan er in index.html/sw.js staan');
+  }
+  return el.textContent.trim();
+});
+
 await check('HISTORY uitslagen komen overeen met srza.json', () => {
   const srzaPad = path.join(path.dirname(HTML_PATH), 'data/srza.json');
   const srza = JSON.parse(fs.readFileSync(srzaPad, 'utf8'));

@@ -1,4 +1,6 @@
-const CACHE_NAME = 'joga-bonito-v7';
+// De versie wordt bij het uitrollen ingevuld (zie deploy.yml). Elke publicatie
+// levert dus een nieuwe cachenaam op, waarna de activate-stap de oude opruimt.
+const CACHE_NAME = 'joga-bonito-dev';
 const ASSETS = [
   '/',
   '/index.html',

@@ -102,11 +102,27 @@ h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; }
   top: 0;
   z-index: 100;
 }
+.topbar-left {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
 .topbar-logo {
   font-family: 'Pirata One', cursive;
   font-size: 1.5rem;
   font-weight: 400;
   letter-spacing: 0.5px;
+}
+/* Zo zie je op je telefoon meteen of de nieuwste versie geladen is. */
+.app-version {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  cursor: pointer;
 }
 .topbar .season-badge {
   font-family: 'Nunito', sans-serif;
@@ -1513,7 +1529,10 @@ body.overlay-open { overflow: hidden; }
 <body>
 
 <div class="topbar">
-  <span class="topbar-logo">Joga Bonito</span>
+  <span class="topbar-left">
+    <span class="topbar-logo">Joga Bonito</span>
+    <span class="app-version" id="appVersion" onclick="explainVersion()"></span>
+  </span>
   <div style="display:flex;align-items:center;gap:10px">
     <span class="sync-dot" id="syncDot" style="display:none" onclick="explainSync()"></span>
     <span class="season-badge" id="seasonBadge">2026/27</span>
@@ -1578,6 +1597,12 @@ body.overlay-open { overflow: hidden; }
 // =========================================================
 // DATA + FIREBASE
 // =========================================================
+// Wordt bij het uitrollen vervangen door datum + commit (zie deploy.yml), zodat
+// je op je telefoon kunt zien of de nieuwste versie geladen is. Lokaal blijft
+// het 'dev'. Dezelfde stempel gaat in de service worker cache, dus die verloopt
+// vanzelf bij elke publicatie — met de hand bumpen hoeft niet meer.
+const APP_VERSION = 'dev';
+
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
 
@@ -1704,6 +1729,12 @@ function setSyncState(state) {
   el.className = 'sync-dot ' + state;
   el.style.display = (fbReady || localStorage.getItem(UNSYNCED_KEY)) ? 'block' : 'none';
   el.title = { synced: 'Opgeslagen', pending: 'Bezig met opslaan', unsynced: 'Nog niet gesynct' }[state] || '';
+}
+
+function explainVersion() {
+  showToast(APP_VERSION === 'dev'
+    ? 'Lokale ontwikkelversie'
+    : `Versie ${APP_VERSION} — dit is wat er nu op dit toestel draait`);
 }
 
 function explainSync() {
@@ -5052,6 +5083,7 @@ function formatDate(d) {
 // INIT
 // =========================================================
 document.getElementById('seasonBadge').textContent = DB.season;
+document.getElementById('appVersion').textContent = APP_VERSION;
 setSyncState(localStorage.getItem(UNSYNCED_KEY) ? 'unsynced' : 'synced');
 restoreTimer();
 renderMatchView();
