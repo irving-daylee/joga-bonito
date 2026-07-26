@@ -432,15 +432,76 @@ await check('straftijd loopt door in de tweede helft', async () => {
   return '1:30 uitgezeten, 3:30 loopt door na rust';
 });
 
+await check('de analyse gaat over dit seizoen, niet over vorig seizoen', () => {
+  // Zet zelf de situatie op in plaats van te leunen op wat eerdere checks
+  // hebben achtergelaten: 23 wedstrijden van 2025/26 plus één van dit seizoen.
+  w.eval(`
+    DB.matches = []; DB._seedVersion = 0; seedMatchesFromHistory();
+    DB.season = '2026/27'; DB.currentMatch = null;
+    DB.matches.push({ id:'dit1', season:'2026/27', date:'2026-09-10', opponent:'Dit Seizoen',
+      sporthal:'Haven', comp:'comp', squad:[], lineup:[], keeper:null, captain:null, motm:null,
+      flyingKeeper:false, events:[], scoreHome:5, scoreAway:2, half:2, status:'finished' });
+    renderAnalysePage();
+  `);
+  const totaal = Number(w.eval('DB.matches.filter(m => m.status === "finished").length'));
+  const ditSeizoen = Number(w.eval('seasonMatches(DB.season).length'));
+  assert(totaal > ditSeizoen,
+    'testopzet klopt niet: er staan geen wedstrijden van een ander seizoen in de DB');
+
+  const t = w.document.getElementById('analyseContent').textContent.replace(/\s+/g, ' ');
+  const geanalyseerd = /(\d+)\s*wedstrijd/i.exec(t);
+  assert(geanalyseerd, 'kon het aantal geanalyseerde wedstrijden niet vinden');
+  assert(Number(geanalyseerd[1]) === ditSeizoen,
+    `analyse telt ${geanalyseerd[1]} wedstrijden terwijl er dit seizoen ${ditSeizoen} is; de andere ${totaal - ditSeizoen} zijn van vorig seizoen`);
+  assert(t.includes(w.eval('DB.season')), 'de analyse noemt niet over welk seizoen het gaat');
+  return `${ditSeizoen} van ${totaal} wedstrijden meegeteld`;
+});
+
+await check('een rode kaart toont de speler als uitgesloten in het scorebord', async () => {
+  const { w: w7 } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 4, updatedAt: 1, currentMatch: null,
+  }));
+  w7.eval(`
+    startNewMatch();
+    DB.currentMatch.opponent = 'Test';
+    DB.currentMatch.squad = DB.players.map(p => p.id);
+    DB.currentMatch.keeper = DB.players[0].id;
+    DB.currentMatch.lineup = DB.players.slice(0, 5).map(p => p.id);
+    startMatch();
+    cardState = { playerId: DB.players[1].id, cardType: 'red' };
+    saveCard();
+  `);
+  const uitgesloten = Number(w7.eval('excludedPlayers().length'));
+  assert(uitgesloten === 1, `${uitgesloten} uitgesloten spelers na een rode kaart in plaats van 1`);
+
+  const strip = w7.document.getElementById('penaltyStrip');
+  assert(strip && /UIT/.test(strip.textContent), 'de uitsluiting staat niet in het scorebord');
+  assert(/1 man minder/.test(strip.textContent), `telling klopt niet: "${strip.textContent.trim()}"`);
+
+  // Een rode kaart geeft geen straftijd met countdown.
+  const straffen = Number(w7.eval('(DB.currentMatch.penalties||[]).length'));
+  assert(straffen === 0, 'een rode kaart heeft ten onrechte een aftellende straftijd gekregen');
+
+  // Draai de kaart terug via de tijdlijn: de uitsluiting hoort mee te verdwijnen.
+  w7.eval('DB.currentMatch.events = []');
+  assert(Number(w7.eval('excludedPlayers().length')) === 0,
+    'de uitsluiting blijft staan nadat de rode kaart is teruggedraaid');
+  return 'uit in scorebord, geen countdown, verdwijnt bij terugdraaien';
+});
+
 await check('een afgelopen seizoen krijgt vanzelf een eigen tabblad', () => {
   const lees = () => w.document.getElementById('statsContent').textContent.replace(/\s+/g, ' ');
 
   // Ingevoerde seizoenen houden hun rijke HISTORY-cijfers, inclusief poulestand.
-  w.eval("selectedStatsSeason = '2025/26'; renderStatsPage()");
+  w.eval("DB.season = '2026/27'; selectedStatsSeason = '2025/26'; renderStatsPage()");
   assert(lees().includes('Eindstand'), 'het tabblad 2025/26 toont geen eindstand meer uit HISTORY');
 
-  // Zet het seizoen door alsof de zomer voorbij is.
+  // Zet zelf de uitgangssituatie op, zodat deze check niet afhangt van wat
+  // eerdere checks aan de DB veranderd hebben.
   w.eval(`
+    DB.matches = []; DB._seedVersion = 0; seedMatchesFromHistory();
+    DB.season = '2026/27'; DB.currentMatch = null;
     DB.matches.push({ id:'nieuw1', season:'2026/27', date:'2026-10-01', opponent:'Volgend Seizoen',
       sporthal:'Haven', comp:'comp', squad:[], lineup:[], keeper:null, captain:null, motm:null,
       flyingKeeper:false, events:[], scoreHome:4, scoreAway:2, half:2, status:'finished' });

@@ -499,7 +499,7 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 10px;
 }
 /* Straftijd in het scorebord: kaartje met mini-countdown. */
 .penalty-bar {
@@ -515,8 +515,8 @@ label {
 .penalty-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px 4px 6px;
+  gap: 8px;
+  padding: 4px 6px 4px 8px;
   border-radius: 20px;
   background: rgba(255,255,255,0.06);
   cursor: pointer;
@@ -529,13 +529,14 @@ label {
 }
 .penalty-chip.running .penalty-card { animation: penaltyBlink 1.8s ease-in-out infinite; }
 .penalty-btn {
-  width: 22px;
-  height: 22px;
+  position: relative;
+  width: 30px;
+  height: 30px;
   border: none;
   border-radius: 50%;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.12);
   color: var(--text);
-  font-size: 0.6rem;
+  font-size: 0.66rem;
   line-height: 1;
   cursor: pointer;
   flex-shrink: 0;
@@ -543,9 +544,14 @@ label {
   align-items: center;
   justify-content: center;
 }
-.penalty-btn.release { opacity: 0.45; }
+/* Het aanraakgebied loopt door buiten de zichtbare knop: 44px, zoals Apple
+   aanhoudt. Je tikt hier tijdens een wedstrijd, vaak gehaast. */
+.penalty-btn::after { content: ''; position: absolute; inset: -7px; }
+.penalty-btn.release { opacity: 0.5; font-size: 0.6rem; }
 .penalty-chip.green .penalty-card { background: var(--card-green); }
 .penalty-chip.yellow .penalty-card { background: var(--card-yellow); }
+.penalty-chip.red .penalty-card { background: var(--card-red); }
+.penalty-chip.red .penalty-time { color: var(--card-red); font-size: 0.68rem; letter-spacing: 1px; }
 .penalty-name {
   font-size: 0.72rem;
   font-weight: 600;
@@ -582,17 +588,21 @@ label {
 .match-team-name.away { text-align: left; }
 .match-score {
   font-family: 'Montserrat', sans-serif;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 900;
   background: rgba(255,255,255,0.1);
-  padding: 4px 20px;
+  padding: 4px 12px;
   border-radius: var(--radius-sm);
-  min-width: 100px;
+  min-width: 92px;
   flex-shrink: 0;
   text-align: center;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   white-space: nowrap;
 }
+/* Lange clubnamen krijgen een kleiner formaat in plaats van middenin een woord
+   te breken. De grens ligt bij het langste woord, niet bij de hele naam. */
+.match-team-name.sm { font-size: 0.70rem; }
+.match-team-name.xs { font-size: 0.62rem; }
 .timer-controls {
   display: flex;
   justify-content: center;
@@ -1941,6 +1951,15 @@ const HISTORY = {
 let srzaData = null;
 let srzaShowAllResults = false;
 
+// Het langste losse woord bepaalt of een clubnaam past; "AS Sport Events" is
+// langer dan "Weddingcars" maar breekt netjes op de spaties.
+function teamNameClass(naam) {
+  const langste = String(naam || '').split(/\s+/).reduce((m, w) => Math.max(m, w.length), 0);
+  if (langste >= 11) return ' xs';
+  if (langste >= 8) return ' sm';
+  return '';
+}
+
 function matchTypeHTML(comp) {
   if (!comp) return '';
   if (comp === 'comp' || /^\d/.test(comp)) return '<span class="match-type comp">Competitie</span>';
@@ -2681,9 +2700,9 @@ function renderMatchLive(c) {
       <button class="timer-btn" onclick="endHalfEarly()" style="font-size:0.72rem">&#9724;</button>
     </div>
     <div style="margin-top:16px"><div class="match-score-row">
-      <span class="match-team-name home">${DB.teamName}</span>
+      <span class="match-team-name home${teamNameClass(DB.teamName)}">${DB.teamName}</span>
       <span class="match-score">${cm.scoreHome} – ${cm.scoreAway}</span>
-      <span class="match-team-name away">${cm.opponent}</span>
+      <span class="match-team-name away${teamNameClass(cm.opponent)}">${cm.opponent}</span>
     </div></div>
     <div id="penaltyStrip">${penaltyStripHTML()}</div>
   </div>
@@ -3066,10 +3085,30 @@ function pausePenalty(playerId) {
   saveData(); renderMatchView();
 }
 
+// Uitsluitingen komen uit de events zelf, niet uit een aparte lijst: zo blijft
+// het kloppen als een rode kaart via de tijdlijn wordt teruggedraaid.
+function excludedPlayers() {
+  const cm = DB.currentMatch;
+  if (!cm) return [];
+  return [...new Set(toArray(cm.events)
+    .filter(e => e.type === 'card' && e.cardType === 'red' && e.playerId)
+    .map(e => e.playerId))];
+}
+
 function penaltyStripHTML() {
   const actief = activePenalties();
-  if (!actief.length) return '';
+  const uitgesloten = excludedPlayers();
+  if (!actief.length && !uitgesloten.length) return '';
+  const minder = actief.length + uitgesloten.length;
   return `<div class="penalty-bar">
+    ${uitgesloten.map(id => {
+      const speler = getPlayer(id);
+      return `<span class="penalty-chip red">
+        <span class="penalty-card"></span>
+        <span class="penalty-name">${speler ? '#' + speler.number + ' ' + speler.name : getPlayerName(id)}</span>
+        <span class="penalty-time">UIT</span>
+      </span>`;
+    }).join('')}
     ${actief.map(p => {
       const speler = getPlayer(p.playerId);
       const loopt = penaltyRunning(p);
@@ -3082,7 +3121,7 @@ function penaltyStripHTML() {
         <button class="penalty-btn release" onclick="releasePenalty('${p.playerId}')" title="Nu vrijgeven">&#10005;</button>
       </span>`;
     }).join('')}
-    <span class="penalty-note">${actief.length} man minder</span>
+    <span class="penalty-note">${minder} man minder</span>
   </div>`;
 }
 
@@ -3143,9 +3182,9 @@ function renderMatchMOTM(c) {
   let h = `<div class="match-header">
     <div class="match-half-label">Einde Wedstrijd</div>
     <div style="margin-top:8px"><div class="match-score-row">
-      <span class="match-team-name home">${DB.teamName}</span>
+      <span class="match-team-name home${teamNameClass(DB.teamName)}">${DB.teamName}</span>
       <span class="match-score">${cm.scoreHome} – ${cm.scoreAway}</span>
-      <span class="match-team-name away">${cm.opponent}</span>
+      <span class="match-team-name away${teamNameClass(cm.opponent)}">${cm.opponent}</span>
     </div></div>
   </div>
   <div class="card motm-section">
@@ -3198,9 +3237,9 @@ function showMatchDetail(matchId) {
       <div class="match-header">
         <div class="match-half-label">${formatDate(m.date)}${m.sporthal ? ' — ' + m.sporthal : ''}</div>
         <div style="margin-top:8px"><div class="match-score-row">
-          <span class="match-team-name home">${DB.teamName}</span>
+          <span class="match-team-name home${teamNameClass(DB.teamName)}">${DB.teamName}</span>
           <span class="match-score">${m.scoreHome} – ${m.scoreAway}</span>
-          <span class="match-team-name away">${m.opponent}</span>
+          <span class="match-team-name away${teamNameClass(m.opponent)}">${m.opponent}</span>
         </div></div>
         ${m.motm?`<div style="margin-top:12px;font-size:0.78rem;opacity:0.8">&#11088; Man of the Match: <strong>${getPlayerName(m.motm)}</strong></div>`:''}
       </div>`;
@@ -4361,7 +4400,10 @@ function renderInsightSection(h, title, insights, shareKey) {
 
 function renderAnalysePage() {
   const c = document.getElementById('analyseContent');
-  const finished = DB.matches.filter(m => m.status === 'finished').sort((a, b) => new Date(a.date) - new Date(b.date));
+  // Alleen het lopende seizoen: anders presenteert de app een reeks van vorig
+  // seizoen als actuele vorm. De competitie-inzichten gaan wél over de
+  // historie en staan onder hun eigen kopje.
+  const finished = seasonMatches(DB.season).sort((a, b) => new Date(a.date) - new Date(b.date));
 
   const lastMatch = generateLastMatchInsights(finished);
   const season = generateSeasonInsights(finished);
@@ -4371,7 +4413,9 @@ function renderAnalysePage() {
 
   let h = `<div class="analyse-header">
     <h2>AI Analyse</h2>
-    <p>${finished.length ? finished.length + ' wedstrijden geanalyseerd' : 'Inzichten verschijnen na je eerste wedstrijd'}</p>
+    <p>${finished.length
+      ? `${finished.length} ${finished.length === 1 ? 'wedstrijd' : 'wedstrijden'} in ${DB.season} geanalyseerd`
+      : `Nog geen wedstrijden in ${DB.season} — inzichten verschijnen na je eerste wedstrijd`}</p>
   </div>`;
 
   if (!hasAny) {
