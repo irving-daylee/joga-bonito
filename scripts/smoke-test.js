@@ -102,7 +102,11 @@ async function loadAndLogin(snapshot, localStorageSeed) {
   const virtualConsole = new VirtualConsole();
   virtualConsole.on('jsdomError', noteError);
 
-  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'http://localhost/', virtualConsole });
+  // pretendToBeVisual levert requestAnimationFrame, die de app gebruikt om
+  // een toast in te faden.
+  const dom = new JSDOM(html, {
+    runScripts: 'dangerously', url: 'http://localhost/', virtualConsole, pretendToBeVisual: true,
+  });
   const w = dom.window;
   assert(typeof w.__fb.authCb === 'function', 'app registreert geen auth-listener');
   drainErrors();
@@ -344,6 +348,117 @@ await check('de wedstrijdklok overleeft een herstart', async () => {
   return `klok op ${Math.round(resterend / 60)} min, goal op minuut ${minuut}`;
 });
 
+await check('straftijd start pas als je zelf op play drukt', async () => {
+  const { w: w5, loginError } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 4, updatedAt: 1, currentMatch: null,
+  }));
+  assert(!loginError, `inloggen crasht: ${loginError}`);
+
+  // Wedstrijd opzetten en een groene kaart geven.
+  w5.eval(`
+    startNewMatch();
+    DB.currentMatch.opponent = 'Test';
+    DB.currentMatch.squad = DB.players.map(p => p.id);
+    DB.currentMatch.keeper = DB.players[0].id;
+    DB.currentMatch.lineup = DB.players.slice(0, 5).map(p => p.id);
+    startMatch();
+    cardState = { playerId: DB.players[1].id, cardType: 'green' };
+    saveCard();
+  `);
+
+  const lees = () => JSON.parse(w5.eval(`JSON.stringify({
+    aantal: (DB.currentMatch.penalties||[]).length,
+    loopt: DB.currentMatch.penalties[0] ? penaltyRunning(DB.currentMatch.penalties[0]) : null,
+    rest: DB.currentMatch.penalties[0] ? penaltyRemaining(DB.currentMatch.penalties[0]) : null,
+    klok: timerSeconds
+  })`));
+
+  let s = lees();
+  assert(s.aantal === 1, `${s.aantal} straffen na een groene kaart in plaats van 1`);
+  assert(s.loopt === false, 'de straftijd loopt meteen, terwijl je zelf op play moet drukken');
+  assert(s.rest === 120, `groene kaart geeft ${s.rest} sec in plaats van 120`);
+
+  // De wedstrijdklok loopt door zonder dat de straf begint.
+  w5.eval('timerSeconds -= 30');
+  s = lees();
+  assert(s.rest === 120, `straftijd liep mee met de klok zonder play (${s.rest} sec over)`);
+
+  // Nu starten en 45 seconden spelen.
+  w5.eval(`startPenalty(DB.players[1].id); timerSeconds -= 45;`);
+  s = lees();
+  assert(s.loopt === true, 'straftijd loopt niet na play');
+  assert(s.rest === 75, `na 45 sec spelen nog ${s.rest} sec over in plaats van 75`);
+
+  // Straftijd hangt aan de wedstrijdklok: een herstart mag niets veranderen.
+  w5.eval('DB.currentMatch = normalizeMatch(JSON.parse(JSON.stringify(DB.currentMatch)))');
+  assert(lees().rest === 75, 'straftijd klopt niet meer na een herstart');
+
+  // Uitzitten: de straf verdwijnt en de speler mag terug.
+  w5.eval('timerSeconds -= 75; checkPenalties();');
+  assert(lees().aantal === 0, 'de straf blijft staan nadat hij is uitgezeten');
+  return 'gepauzeerd bij kaart, loopt na play, overleeft herstart';
+});
+
+await check('straftijd loopt door in de tweede helft', async () => {
+  const { w: w6 } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 4, updatedAt: 1, currentMatch: null,
+  }));
+  // Gele kaart (5 min) met nog anderhalve minuut te spelen in de eerste helft.
+  w6.eval(`
+    startNewMatch();
+    DB.currentMatch.opponent = 'Test';
+    DB.currentMatch.squad = DB.players.map(p => p.id);
+    DB.currentMatch.keeper = DB.players[0].id;
+    DB.currentMatch.lineup = DB.players.slice(0, 5).map(p => p.id);
+    startMatch();
+    timerSeconds = 90;
+    cardState = { playerId: DB.players[1].id, cardType: 'yellow' };
+    saveCard();
+    startPenalty(DB.players[1].id);
+    timerSeconds = 0;
+  `);
+  const restEindeHelft = Number(w6.eval('penaltyRemaining(DB.currentMatch.penalties[0])'));
+  assert(restEindeHelft === 210, `aan het eind van de helft ${restEindeHelft} sec over in plaats van 210`);
+
+  // Helftwissel zoals de app die uitvoert.
+  w6.eval(`
+    DB.currentMatch.half = 2; timerSeconds = 20*60;
+    DB.currentMatch.penalties.forEach(p => { if (p.endsAtClock != null) p.endsAtClock += 20*60; });
+  `);
+  const restNaRust = Number(w6.eval('penaltyRemaining(DB.currentMatch.penalties[0])'));
+  assert(restNaRust === 210, `na de rust ${restNaRust} sec over in plaats van 210`);
+  return '1:30 uitgezeten, 3:30 loopt door na rust';
+});
+
+await check('een afgelopen seizoen krijgt vanzelf een eigen tabblad', () => {
+  const lees = () => w.document.getElementById('statsContent').textContent.replace(/\s+/g, ' ');
+
+  // Ingevoerde seizoenen houden hun rijke HISTORY-cijfers, inclusief poulestand.
+  w.eval("selectedStatsSeason = '2025/26'; renderStatsPage()");
+  assert(lees().includes('Eindstand'), 'het tabblad 2025/26 toont geen eindstand meer uit HISTORY');
+
+  // Zet het seizoen door alsof de zomer voorbij is.
+  w.eval(`
+    DB.matches.push({ id:'nieuw1', season:'2026/27', date:'2026-10-01', opponent:'Volgend Seizoen',
+      sporthal:'Haven', comp:'comp', squad:[], lineup:[], keeper:null, captain:null, motm:null,
+      flyingKeeper:false, events:[], scoreHome:4, scoreAway:2, half:2, status:'finished' });
+    DB.season = '2027/28';
+  `);
+  const tabs = JSON.parse(w.eval('JSON.stringify(statsSeasons().map(s => s.label))'));
+  assert(tabs.includes('2026/27'), `2026/27 ontbreekt in de tabbladen: ${tabs.join(', ')}`);
+  assert(tabs[0] === '2027/28', `het eerste tabblad is ${tabs[0]} in plaats van het nieuwe seizoen`);
+
+  w.eval("selectedStatsSeason = '2026/27'; renderStatsPage()");
+  const gespeeld = /(\d+)\s*Gespeeld/i.exec(lees());
+  assert(gespeeld && gespeeld[1] === '1',
+    `het afgelopen seizoen toont ${gespeeld ? gespeeld[1] : '?'} gespeeld in plaats van 1`);
+
+  w.eval("DB.season = '2026/27'; selectedStatsSeason = 'current'");
+  return tabs.join(', ');
+});
+
 await check('HISTORY uitslagen komen overeen met srza.json', () => {
   const srzaPad = path.join(path.dirname(HTML_PATH), 'data/srza.json');
   const srza = JSON.parse(fs.readFileSync(srzaPad, 'utf8'));
@@ -367,3 +482,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(`Alle ${total} checks geslaagd\n`);
+// pretendToBeVisual houdt een animatielus aan; expliciet afsluiten.
+process.exit(0);

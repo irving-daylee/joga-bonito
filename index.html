@@ -116,6 +116,21 @@ h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; }
   padding: 3px 10px;
   border-radius: 20px;
 }
+/* Laat zien of een wijziging Firebase al bereikt heeft. */
+.sync-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.sync-dot.synced { background: var(--navy); }
+.sync-dot.pending { background: var(--text-muted); }
+.sync-dot.unsynced {
+  background: var(--card-yellow);
+  animation: syncPulse 1.6s ease-in-out infinite;
+}
+@keyframes syncPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
 /* ===== BOTTOM NAV ===== */
 .bottomnav {
@@ -486,6 +501,73 @@ label {
   justify-content: center;
   gap: 16px;
 }
+/* Straftijd in het scorebord: kaartje met mini-countdown. */
+.penalty-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.penalty-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 6px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  cursor: pointer;
+}
+.penalty-card {
+  width: 11px;
+  height: 15px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.penalty-chip.running .penalty-card { animation: penaltyBlink 1.8s ease-in-out infinite; }
+.penalty-btn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+  font-size: 0.6rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.penalty-btn.release { opacity: 0.45; }
+.penalty-chip.green .penalty-card { background: var(--card-green); }
+.penalty-chip.yellow .penalty-card { background: var(--card-yellow); }
+.penalty-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.penalty-time {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.penalty-chip.green .penalty-time { color: var(--card-green); }
+.penalty-chip.yellow .penalty-time { color: var(--card-yellow); }
+.penalty-note {
+  width: 100%;
+  text-align: center;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.45;
+}
+@keyframes penaltyBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 .match-team-name {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
@@ -493,6 +575,8 @@ label {
   text-transform: uppercase;
   flex: 1;
   min-width: 0;
+  /* Lange clubnamen breken op spaties in plaats van weggesneden te worden. */
+  overflow-wrap: break-word;
 }
 .match-team-name.home { text-align: right; }
 .match-team-name.away { text-align: left; }
@@ -1421,6 +1505,7 @@ body.overlay-open { overflow: hidden; }
 <div class="topbar">
   <span class="topbar-logo">Joga Bonito</span>
   <div style="display:flex;align-items:center;gap:10px">
+    <span class="sync-dot" id="syncDot" style="display:none" onclick="explainSync()"></span>
     <span class="season-badge" id="seasonBadge">2026/27</span>
     <img class="user-avatar" id="userAvatar" src="" alt="" style="display:none" onclick="if(confirm('Uitloggen?'))doLogout()">
   </div>
@@ -1561,6 +1646,11 @@ function normalizeMatch(m) {
   m.squad = toArray(m.squad);
   m.lineup = toArray(m.lineup);
   m.events = toArray(m.events).filter(Boolean);
+  m.penalties = toArray(m.penalties).filter(Boolean).map(p => {
+    if (p.endsAtClock === undefined) p.endsAtClock = null;
+    if (p.remaining === undefined) p.remaining = null;
+    return p;
+  });
   if (m.keeper === undefined) m.keeper = null;
   if (m.captain === undefined) m.captain = null;
   if (m.motm === undefined) m.motm = null;
@@ -1587,12 +1677,32 @@ function saveData() {
   DB.updatedAt = Date.now();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
   localStorage.setItem(UNSYNCED_KEY, '1');
-  if (!fbReady) return;
+  if (!fbReady) { setSyncState('unsynced'); return; }
   savingToFirebase = true;
+  setSyncState('pending');
   fbRef.set(DB)
-    .then(() => localStorage.removeItem(UNSYNCED_KEY))
-    .catch(() => {})
+    .then(() => { localStorage.removeItem(UNSYNCED_KEY); setSyncState('synced'); })
+    .catch(() => setSyncState('unsynced'))
     .finally(() => { savingToFirebase = false; });
+}
+
+let syncState = 'synced';
+function setSyncState(state) {
+  syncState = state;
+  const el = document.getElementById('syncDot');
+  if (!el) return;
+  el.className = 'sync-dot ' + state;
+  el.style.display = (fbReady || localStorage.getItem(UNSYNCED_KEY)) ? 'block' : 'none';
+  el.title = { synced: 'Opgeslagen', pending: 'Bezig met opslaan', unsynced: 'Nog niet gesynct' }[state] || '';
+}
+
+function explainSync() {
+  const uitleg = {
+    synced: 'Alles is opgeslagen en staat ook op je andere apparaat.',
+    pending: 'Bezig met opslaan…',
+    unsynced: 'Nog niet gesynct. Je gegevens staan veilig op dit toestel en gaan vanzelf mee zodra je weer verbinding hebt.',
+  };
+  showToast(uitleg[syncState] || '');
 }
 
 function doEmailLogin() {
@@ -1662,8 +1772,8 @@ function needsSeed() {
 // Wedstrijden van vóór de seizoensregistratie horen bij het lopende seizoen;
 // alleen historische seeds dragen expliciet hun eigen seizoen mee.
 function matchSeason(m) { return m.season || DB.season; }
-function currentSeasonMatches() {
-  return toArray(DB.matches).filter(m => m.status === 'finished' && matchSeason(m) === DB.season);
+function seasonMatches(season) {
+  return toArray(DB.matches).filter(m => m.status === 'finished' && matchSeason(m) === season);
 }
 
 fbAuth.onAuthStateChanged(user => {
@@ -1701,6 +1811,8 @@ fbAuth.onAuthStateChanged(user => {
     avatar.style.display = 'none';
     fbReady = false;
     fbRef.off();
+    const dot = document.getElementById('syncDot');
+    if (dot) dot.style.display = 'none';
   }
 });
 
@@ -1905,7 +2017,7 @@ function startTimer() {
   timerRunning = true;
   persistTimer();
   timerInterval = setInterval(() => {
-    if (timerSeconds > 0) { timerSeconds--; renderTimerDisplay(); }
+    if (timerSeconds > 0) { timerSeconds--; renderTimerDisplay(); renderPenaltyStrip(); checkPenalties(); }
     else { stopTimer(); onTimerEnd(); }
   }, 1000);
   renderMatchView();
@@ -1939,6 +2051,9 @@ function onTimerEnd() {
   if (cm.half === 1) {
     showPhaseOverlay('Rust', `${cm.scoreHome} – ${cm.scoreAway}`, 'Start 2e Helft', () => {
       cm.half = 2; timerSeconds = 20*60; timerRunning = false; persistTimer(false);
+      // Nog niet uitgezeten straftijd loopt door in de tweede helft; de klok
+      // begint weer op 20:00, dus de afloopstand van lopende straffen schuift mee.
+      toArray(cm.penalties).forEach(p => { if (p.endsAtClock != null) p.endsAtClock += 20*60; });
       saveData(); hidePhaseOverlay(); startTimer();
     });
   } else {
@@ -2570,6 +2685,7 @@ function renderMatchLive(c) {
       <span class="match-score">${cm.scoreHome} – ${cm.scoreAway}</span>
       <span class="match-team-name away">${cm.opponent}</span>
     </div></div>
+    <div id="penaltyStrip">${penaltyStripHTML()}</div>
   </div>
 
   <div class="match-actions">
@@ -2922,16 +3038,97 @@ function renderCardModal() {
 function setCardType(t) { cardState.cardType = t; renderCardModal(); }
 function setCardPlayer(id) { cardState.playerId = id; renderCardModal(); }
 
+// Straftijd loopt op de wedstrijdklok, niet op de echte klok: een onderbreking
+// telt dus niet mee. De straf wordt vastgelegd als de klokstand waarop hij
+// afloopt, zodat hij een herstart overleeft zonder elke seconde op te slaan.
+const PENALTY_SECONDS = { green: 2 * 60, yellow: 5 * 60 };
+
+// Een straf start niet vanzelf: de klok gaat pas lopen bij de hervatting, dus
+// je drukt zelf op play. Zolang hij loopt hangt hij aan de wedstrijdklok, dus
+// een onderbreking telt niet mee en een herstart verandert niets.
+function penaltyRunning(p) { return p.endsAtClock != null; }
+function penaltyRemaining(p) {
+  if (penaltyRunning(p)) return Math.max(0, timerSeconds - p.endsAtClock);
+  return Math.max(0, p.remaining || 0);
+}
+function startPenalty(playerId) {
+  const p = toArray(DB.currentMatch && DB.currentMatch.penalties).find(x => x.playerId === playerId);
+  if (!p || penaltyRunning(p)) return;
+  p.endsAtClock = timerSeconds - penaltyRemaining(p);
+  p.remaining = null;
+  saveData(); renderMatchView();
+}
+function pausePenalty(playerId) {
+  const p = toArray(DB.currentMatch && DB.currentMatch.penalties).find(x => x.playerId === playerId);
+  if (!p || !penaltyRunning(p)) return;
+  p.remaining = penaltyRemaining(p);
+  p.endsAtClock = null;
+  saveData(); renderMatchView();
+}
+
+function penaltyStripHTML() {
+  const actief = activePenalties();
+  if (!actief.length) return '';
+  return `<div class="penalty-bar">
+    ${actief.map(p => {
+      const speler = getPlayer(p.playerId);
+      const loopt = penaltyRunning(p);
+      return `<span class="penalty-chip ${p.type}${loopt ? ' running' : ''}">
+        <span class="penalty-card"></span>
+        <span class="penalty-name">${speler ? '#' + speler.number + ' ' + speler.name : getPlayerName(p.playerId)}</span>
+        <span class="penalty-time">${formatTimer(penaltyRemaining(p))}</span>
+        <button class="penalty-btn" onclick="${loopt ? `pausePenalty('${p.playerId}')` : `startPenalty('${p.playerId}')`}"
+          title="${loopt ? 'Pauze' : 'Start straftijd'}">${loopt ? '&#10074;&#10074;' : '&#9654;'}</button>
+        <button class="penalty-btn release" onclick="releasePenalty('${p.playerId}')" title="Nu vrijgeven">&#10005;</button>
+      </span>`;
+    }).join('')}
+    <span class="penalty-note">${actief.length} man minder</span>
+  </div>`;
+}
+
+function renderPenaltyStrip() {
+  const el = document.getElementById('penaltyStrip');
+  if (el) el.innerHTML = penaltyStripHTML();
+}
+function activePenalties() {
+  const cm = DB.currentMatch;
+  if (!cm) return [];
+  return toArray(cm.penalties).filter(p => penaltyRemaining(p) > 0);
+}
+function releasePenalty(playerId) {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+  cm.penalties = toArray(cm.penalties).filter(p => p.playerId !== playerId);
+  saveData(); renderMatchView();
+}
+// Wordt elke seconde door de klok aangeroepen; meldt wie er weer in mag.
+function checkPenalties() {
+  const cm = DB.currentMatch;
+  if (!cm || !toArray(cm.penalties).length) return;
+  const afgelopen = cm.penalties.filter(p => penaltyRunning(p) && penaltyRemaining(p) <= 0);
+  if (!afgelopen.length) return;
+  cm.penalties = cm.penalties.filter(p => !afgelopen.includes(p));
+  saveData(); renderMatchView();
+  afgelopen.forEach(p => showToast(`${getPlayerName(p.playerId)} mag er weer in`));
+}
+
 function saveCard() {
   const cm = DB.currentMatch;
   const ev = { type:'card', minute:getCurrentMinute(), half:cm.half, playerId:cardState.playerId, cardType:cardState.cardType };
   cm.events.push(ev);
+
+  const straf = PENALTY_SECONDS[ev.cardType];
+  if (straf) {
+    cm.penalties = toArray(cm.penalties).filter(p => p.playerId !== ev.playerId);
+    cm.penalties.push({ playerId: ev.playerId, type: ev.cardType, remaining: straf, endsAtClock: null });
+  }
   saveData(); closeModal(); renderMatchView();
 
   const labels = { green:'Groene kaart', yellow:'Gele kaart', red:'Rode kaart' };
   const evIdx = cm.events.length - 1;
   showToast(`${labels[ev.cardType]} — ${getPlayerName(ev.playerId)}`, () => {
     cm.events.splice(evIdx, 1);
+    if (straf) cm.penalties = toArray(cm.penalties).filter(p => p.playerId !== ev.playerId);
     saveData(); renderMatchView();
   });
 }
@@ -3055,14 +3252,28 @@ function deleteFinishedMatch(matchId) {
 // =========================================================
 let selectedStatsSeason = 'current';
 
+// De tabbladen volgen de data: elk seizoen dat in HISTORY zit of waar
+// wedstrijden van in de DB staan krijgt er vanzelf een. Zo verschijnt het
+// huidige seizoen na de jaarwissel automatisch als historisch tabblad.
+function statsSeasons() {
+  const uitData = toArray(DB.matches)
+    .filter(m => m.status === 'finished')
+    .map(m => matchSeason(m));
+  const keys = [...new Set([...Object.keys(HISTORY).filter(k => k !== 'all'), ...uitData])]
+    .filter(k => k && k !== DB.season)
+    .sort()
+    .reverse();
+  return [
+    { key: 'current', label: DB.season },
+    ...keys.map(k => ({ key: k, label: k })),
+    { key: 'all', label: 'All-time' },
+  ];
+}
+
 function renderStatsPage() {
   const c = document.getElementById('statsContent');
-  const seasons = [
-    { key: 'current', label: DB.season },
-    { key: '2025/26', label: '2025/26' },
-    { key: '2024/25', label: '2024/25' },
-    { key: 'all', label: 'All-time' }
-  ];
+  const seasons = statsSeasons();
+  if (!seasons.some(s => s.key === selectedStatsSeason)) selectedStatsSeason = 'current';
 
   let h = `<div class="season-tabs">`;
   seasons.forEach(s => {
@@ -3070,10 +3281,18 @@ function renderStatsPage() {
   });
   h += `</div>`;
 
-  if (selectedStatsSeason === 'current') {
-    h += renderCurrentSeasonStats();
+  // HISTORY gaat voor waar het bestaat: die seizoenen zijn met de hand
+  // ingevoerd en bevatten eindstand, poulestand en spelerstotalen die niet uit
+  // de geseede wedstrijden te halen zijn. Seizoenen die je zelf in de app hebt
+  // gespeeld worden uit de wedstrijden zelf berekend.
+  const seizoen = selectedStatsSeason === 'current' ? DB.season : selectedStatsSeason;
+  const uitEigenWedstrijden = selectedStatsSeason === 'current' ||
+    (selectedStatsSeason !== 'all' && !HISTORY[selectedStatsSeason]);
+
+  if (uitEigenWedstrijden) {
+    h += renderSeasonStats(seizoen);
     c.innerHTML = h;
-    setupCurrentLeaderboard();
+    setupSeasonLeaderboard(seizoen);
   } else {
     h += renderHistoricalStats(selectedStatsSeason);
     c.innerHTML = h;
@@ -3081,8 +3300,8 @@ function renderStatsPage() {
   }
 }
 
-function renderCurrentSeasonStats() {
-  const finished = currentSeasonMatches();
+function renderSeasonStats(season) {
+  const finished = seasonMatches(season);
   if (!finished.length) {
     return `<div class="empty-state"><div class="empty-icon">&#128202;</div>
       <h3>Nog geen statistieken</h3><p>Speel je eerste wedstrijd</p></div>`;
@@ -3177,8 +3396,8 @@ function renderCurrentSeasonStats() {
   return h;
 }
 
-function setupCurrentLeaderboard() {
-  const finished = currentSeasonMatches();
+function setupSeasonLeaderboard(season) {
+  const finished = seasonMatches(season);
   if (!finished.length) return;
   const ps = {};
   DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0 }; });
@@ -4789,6 +5008,7 @@ function formatDate(d) {
 // INIT
 // =========================================================
 document.getElementById('seasonBadge').textContent = DB.season;
+setSyncState(localStorage.getItem(UNSYNCED_KEY) ? 'unsynced' : 'synced');
 restoreTimer();
 renderMatchView();
 loadSRZA();
