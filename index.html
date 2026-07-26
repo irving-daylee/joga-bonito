@@ -1597,11 +1597,10 @@ body.overlay-open { overflow: hidden; }
 // =========================================================
 // DATA + FIREBASE
 // =========================================================
-// Wordt bij het uitrollen vervangen door datum + commit (zie deploy.yml), zodat
-// je op je telefoon kunt zien of de nieuwste versie geladen is. Lokaal blijft
-// het 'dev'. Dezelfde stempel gaat in de service worker cache, dus die verloopt
-// vanzelf bij elke publicatie — met de hand bumpen hoeft niet meer.
-const APP_VERSION = 'dev';
+// Hét versienummer van de app; hier ophogen bij een release. De deploy leest
+// deze waarde en hangt er het commit-kenmerk achter voor de naam van de
+// service worker cache, zodat die ook verloopt als je het bumpen vergeet.
+const APP_VERSION = '1.1.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1732,9 +1731,7 @@ function setSyncState(state) {
 }
 
 function explainVersion() {
-  showToast(APP_VERSION === 'dev'
-    ? 'Lokale ontwikkelversie'
-    : `Versie ${APP_VERSION} — dit is wat er nu op dit toestel draait`);
+  showToast(`Versie ${APP_VERSION} — dit is wat er nu op dit toestel draait`);
 }
 
 function explainSync() {
@@ -5083,7 +5080,7 @@ function formatDate(d) {
 // INIT
 // =========================================================
 document.getElementById('seasonBadge').textContent = DB.season;
-document.getElementById('appVersion').textContent = APP_VERSION;
+document.getElementById('appVersion').textContent = 'v' + APP_VERSION;
 setSyncState(localStorage.getItem(UNSYNCED_KEY) ? 'unsynced' : 'synced');
 restoreTimer();
 renderMatchView();

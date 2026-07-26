@@ -34,7 +34,9 @@ GitHub Actions:
 - `backup-firebase.yml` — twee roterende backups in `backups/`. Spelersfoto's worden geleegd vóór het wegschrijven: de repo is publiek
 - `srza.yml` — dagelijkse scrape
 
-Bump `CACHE_NAME` in `sw.js` bij een wijziging aan de service worker zelf; `index.html` is network-first en ververst vanzelf.
+### Versienummer
+
+`APP_VERSION` bovenaan het script in `index.html` is de enige plek waar het versienummer staat; de topbar toont het. Hoog het op bij een release (`1.1.0` → `1.2.0`). De deploy leest die waarde, plakt het commit-kenmerk erachter en zet dat als `CACHE_NAME` in `sw.js`. De servicewerker-cache verloopt dus bij élke publicatie, ook als je het versienummer vergeet — met de hand bumpen is niet nodig. Lokaal staat `CACHE_NAME` op `joga-bonito-dev`; die regel moet letterlijk zo blijven, want de deploy vervangt hem via `sed` en faalt als hij hem niet vindt.
 
 ## Brand guide (zwart/goud dark-mode)
 

@@ -42,19 +42,20 @@ jobs:
           cp index.html manifest.json sw.js _site/
           cp -r icons data _site/
 
-          # Stempel datum + commit in de app en in de servicewerkercache. Zo
-          # verloopt die cache bij elke publicatie vanzelf en zie je in de
-          # topbar meteen of je toestel de nieuwste versie draait.
-          VERSIE="$(date -u +%Y.%m.%d)-$(git rev-parse --short HEAD)"
-          sed -i "s/const APP_VERSION = 'dev';/const APP_VERSION = '${VERSIE}';/" _site/index.html
-          sed -i "s/const CACHE_NAME = 'joga-bonito-dev';/const CACHE_NAME = 'joga-bonito-${VERSIE}';/" _site/sw.js
+          # APP_VERSION in index.html is de bron; die blijft ongemoeid. Het
+          # commit-kenmerk gaat er alleen achter voor de cachenaam, zodat die
+          # ook verloopt als het versienummer een keer niet is opgehoogd.
+          VERSIE="$(sed -n "s/^const APP_VERSION = '\(.*\)';$/\1/p" _site/index.html)"
+          if [ -z "$VERSIE" ]; then
+            echo "::error::kon APP_VERSION niet uit index.html lezen"; exit 1
+          fi
+          BUILD="${VERSIE}-$(git rev-parse --short HEAD)"
+          sed -i "s/const CACHE_NAME = 'joga-bonito-dev';/const CACHE_NAME = 'joga-bonito-${BUILD}';/" _site/sw.js
 
-          grep -q "const APP_VERSION = '${VERSIE}';" _site/index.html \
-            || { echo "::error::versie niet in index.html gezet"; exit 1; }
-          grep -q "joga-bonito-${VERSIE}" _site/sw.js \
-            || { echo "::error::versie niet in sw.js gezet"; exit 1; }
+          grep -q "joga-bonito-${BUILD}" _site/sw.js \
+            || { echo "::error::cachenaam niet gestempeld in sw.js"; exit 1; }
 
-          echo "Versie: ${VERSIE}"
+          echo "Versie: ${VERSIE} (cache: joga-bonito-${BUILD})"
           echo "Gepubliceerd:"
           find _site -type f | sort
 

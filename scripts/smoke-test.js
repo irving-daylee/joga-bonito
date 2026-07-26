@@ -523,25 +523,30 @@ await check('een afgelopen seizoen krijgt vanzelf een eigen tabblad', () => {
 await check('het versienummer staat in de topbar en is stempelbaar', () => {
   const el = w.document.getElementById('appVersion');
   assert(el, 'er staat geen versie-element in de topbar');
-  assert(el.textContent.trim().length > 0, 'de versie in de topbar is leeg');
+  const getoond = el.textContent.trim();
+  assert(/^v\d+\.\d+\.\d+$/.test(getoond), `de topbar toont "${getoond}" in plaats van bijv. v1.1.0`);
 
-  // deploy.yml vervangt deze exacte regels. Wijzigt de opmaak, dan stempelt de
-  // deploy niets meer en blijft iedereen op een oude cache hangen.
   const dir = path.dirname(HTML_PATH);
   const bron = fs.readFileSync(HTML_PATH, 'utf8');
   const sw = fs.readFileSync(path.join(dir, 'sw.js'), 'utf8');
-  assert(bron.includes("const APP_VERSION = 'dev';"),
-    "index.html mist de regel die deploy.yml vervangt: const APP_VERSION = 'dev';");
+
+  // De deploy leest APP_VERSION met dit patroon; wijkt de regel af, dan
+  // stempelt hij niets en blijft iedereen op een oude cache hangen.
+  const gelezen = /^const APP_VERSION = '(\d+\.\d+\.\d+)';$/m.exec(bron);
+  assert(gelezen, 'deploy.yml kan APP_VERSION niet uit index.html lezen met zijn sed-patroon');
+  assert('v' + gelezen[1] === getoond, `topbar toont ${getoond} maar APP_VERSION is ${gelezen[1]}`);
   assert(sw.includes("const CACHE_NAME = 'joga-bonito-dev';"),
     "sw.js mist de regel die deploy.yml vervangt: const CACHE_NAME = 'joga-bonito-dev';");
 
   const workflow = path.join(dir, '.github/workflows/deploy.yml');
   if (fs.existsSync(workflow)) {
     const yml = fs.readFileSync(workflow, 'utf8');
-    assert(yml.includes("const APP_VERSION = 'dev';") && yml.includes("const CACHE_NAME = 'joga-bonito-dev';"),
-      'deploy.yml zoekt naar andere regels dan er in index.html/sw.js staan');
+    assert(yml.includes("const CACHE_NAME = 'joga-bonito-dev';"),
+      'deploy.yml zoekt naar een andere cacheregel dan er in sw.js staat');
+    assert(/APP_VERSION = '\\\(\.\*\\\)';/.test(yml) || yml.includes("APP_VERSION"),
+      'deploy.yml leest het versienummer niet meer uit');
   }
-  return el.textContent.trim();
+  return getoond;
 });
 
 await check('HISTORY uitslagen komen overeen met srza.json', () => {
