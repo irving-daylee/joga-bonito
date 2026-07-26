@@ -74,7 +74,7 @@ Beide hangen aan een vast punt in plaats van aan een teller in het geheugen, zod
 - **Wedstrijdklok**: `timerEndsAt` (wandklok) als hij loopt, `timerRemaining` als hij gepauzeerd is. `restoreTimer()` zet hem terug bij het laden.
 - **Straftijd**: `cm.penalties[]` met `endsAtClock`, de stand van de wédstrijdklok waarop de straf afloopt. Zo telt een onderbreking niet mee. Nog niet gestart? Dan staat de volle duur in `remaining` en is `endsAtClock` null. Bij de helftwissel schuift `endsAtClock` van lopende straffen met 20 minuten mee, zodat resterende tijd doorloopt.
 
-Straftijd eindigt niet automatisch bij een tegengoal — die regel is niet geverifieerd voor deze competitie. Handmatig vrijgeven kan met de ×.
+**Een tegengoal beëindigt de straftijd NIET** (bevestigd door Irving voor de Almere-competitie, juli 2026). In veel futsalreglementen mag een speler er wel weer in zodra de tegenstander scoort — bouw dat hier dus niet in, ook niet als het elders de standaard is. De straf loopt puur op tijd. Handmatig vrijgeven kan met de ×.
 
 ## Spelers (pre-loaded)
 
