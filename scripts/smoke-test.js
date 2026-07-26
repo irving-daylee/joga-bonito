@@ -543,10 +543,17 @@ await check('het versienummer staat in de topbar en is stempelbaar', () => {
     const yml = fs.readFileSync(workflow, 'utf8');
     assert(yml.includes("const CACHE_NAME = 'joga-bonito-dev';"),
       'deploy.yml zoekt naar een andere cacheregel dan er in sw.js staat');
-    assert(/APP_VERSION = '\\\(\.\*\\\)';/.test(yml) || yml.includes("APP_VERSION"),
-      'deploy.yml leest het versienummer niet meer uit');
+    assert(yml.includes('APP_VERSION'), 'deploy.yml leest het versienummer niet meer uit');
   }
-  return getoond;
+
+  // De changelog moet de versie beschrijven die daadwerkelijk uitgerold wordt.
+  const changelog = path.join(dir, 'CHANGELOG.md');
+  assert(fs.existsSync(changelog), 'CHANGELOG.md ontbreekt');
+  const bovenste = /^##\s*\[(\d+\.\d+\.\d+)\]/m.exec(fs.readFileSync(changelog, 'utf8'));
+  assert(bovenste, 'geen versiekop gevonden in CHANGELOG.md');
+  assert(bovenste[1] === gelezen[1],
+    `changelog begint bij ${bovenste[1]} maar de app draait op ${gelezen[1]}`);
+  return `${getoond}, changelog gelijk`;
 });
 
 await check('HISTORY uitslagen komen overeen met srza.json', () => {

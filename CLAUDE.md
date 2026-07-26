@@ -34,9 +34,15 @@ GitHub Actions:
 - `backup-firebase.yml` — twee roterende backups in `backups/`. Spelersfoto's worden geleegd vóór het wegschrijven: de repo is publiek
 - `srza.yml` — dagelijkse scrape
 
-### Versienummer
+### Versienummer en changelog
 
-`APP_VERSION` bovenaan het script in `index.html` is de enige plek waar het versienummer staat; de topbar toont het. Hoog het op bij een release (`1.1.0` → `1.2.0`). De deploy leest die waarde, plakt het commit-kenmerk erachter en zet dat als `CACHE_NAME` in `sw.js`. De servicewerker-cache verloopt dus bij élke publicatie, ook als je het versienummer vergeet — met de hand bumpen is niet nodig. Lokaal staat `CACHE_NAME` op `joga-bonito-dev`; die regel moet letterlijk zo blijven, want de deploy vervangt hem via `sed` en faalt als hij hem niet vindt.
+`APP_VERSION` bovenaan het script in `index.html` is de enige plek waar het versienummer staat; de topbar toont het. **Hoog het op bij elke push en voeg een blok toe aan `CHANGELOG.md`** — niet aan Irving vragen, gewoon doen. Zonder versienummer kan hij op zijn telefoon niet zien of een deploy is doorgekomen.
+
+- **Patch** (2.3.1) — bugfix of kleine aanpassing
+- **Minor** (2.4.0) — nieuwe functie of zichtbare gedragsverandering
+- **Major** (3.0.0) — volledige herziening of een wijziging aan hoe data wordt opgeslagen
+
+De changelog beschrijft wat de gebruiker merkt, niet wat er in de code veranderde. `CACHE_NAME` hoef je niet mee te bumpen: de deploy leest `APP_VERSION`, plakt het commit-kenmerk erachter en stempelt dat in `sw.js`, dus de cache verloopt bij élke publicatie. Lokaal staat er `joga-bonito-dev`; die regel moet letterlijk zo blijven, want de deploy vervangt hem via `sed` en faalt als hij hem niet vindt. De smoke test bewaakt dat versie, topbar en changelog gelijk lopen.
 
 ## Brand guide (zwart/goud dark-mode)
 
