@@ -324,7 +324,7 @@
       "status": "finished"
     }
   ],
-  "nextMatchId": 26,
+  "nextMatchId": 27,
   "nextPlayerId": 13,
   "players": [
     {
@@ -426,5 +426,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1785058885165
+  "updatedAt": 1785244091372
 }
