@@ -9,6 +9,22 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.4.0] — 26 juli 2026
+
+### Toegevoegd
+- **Vlaggers bijhouden.** Op het selectiescherm leg je vast wie vlagt of een
+  vlagger regelt. Onder Stats staat een tabblad **Vlaggen** met de verdeling per
+  seizoen en all-time, en in het wedstrijddetail zie je wie het die avond deed.
+- Knop **Wijs aan** die loot onder de aanwezigen die dit seizoen het minst
+  gevlagd hebben, zodat het niet steeds bij dezelfde persoon belandt.
+- De vlaggers van 2024/25 en 2025/26 zijn overgenomen uit de
+  seizoensadministratie: 40 wedstrijden, waarvan 19 gekoppeld aan de wedstrijd zelf.
+
+### Opgelost
+- Meldingen met een knop werden samengeperst tot één woord per regel.
+
+---
+
 ## [2.3.0] — 26 juli 2026
 
 ### Toegevoegd

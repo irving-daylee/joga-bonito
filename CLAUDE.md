@@ -97,6 +97,7 @@ Geen spelersfoto's: avatars zijn het rugnummer. Bewust geen PII buiten voornaam,
 - **Goal celebration**: Fullscreen overlay bij thuisgoals (niet bij eigen goals/tegengoals), auto-dismiss na 2.5s.
 - **Timeline events**: `{ type, minute, half, team, ... }`. Bij retroactieve invoer is `minute: null` → toont "–" in timeline, wordt overgeslagen in fase-analyse.
 - **retroState**: Tijdelijke state voor achteraf-invoer modal. Goals worden in sub-modal toegevoegd.
+- **Vlagger**: elke wedstrijd moet iemand vlaggen of een vlagger regelen; beide tellen gelijk. Op de wedstrijd staat `vlagger` (speler-id) én `vlaggerNaam` (tekst) — dat tweede is nodig omdat een historische vlagger niet meer in de selectie hoeft te zitten. `wijsVlaggerAan()` loot onder de aanwezigen met de laagste stand van dit seizoen, niet puur willekeurig, anders blijft de scheve verdeling bestaan. Historische tellingen staan als `vlaggers` in `HISTORY`.
 - **Seizoenen**: een wedstrijd zonder `season` hoort bij het lopende seizoen; alleen geseede historie draagt zijn eigen seizoen mee. De tabbladen op Stats komen uit `statsSeasons()` en volgen de data, dus na een jaarwissel verschijnt het afgelopen seizoen vanzelf. `HISTORY` gaat voor waar het bestaat (die heeft poulestand en spelerstotalen); seizoenen die je zelf hebt gespeeld worden uit `DB.matches` berekend.
 
 ## Openstaande punten

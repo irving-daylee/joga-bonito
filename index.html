@@ -353,7 +353,10 @@ label {
   gap: 12px;
   box-shadow: var(--shadow-lg);
   transition: transform 0.3s ease, opacity 0.3s ease;
-  max-width: 90%;
+  /* left:50% zonder right laat de beschikbare breedte op de halve viewport
+     uitkomen, waardoor de tekst tot één woord per regel kromp. */
+  width: max-content;
+  max-width: calc(100vw - 32px);
   opacity: 0;
 }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
@@ -427,6 +430,32 @@ label {
 .player-actions button:hover { opacity: 1; }
 
 /* ===== SQUAD SELECTION ===== */
+/* Wie vlagt of een vlagger regelt — keuze op het selectiescherm. */
+.vlagger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.vlagger-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.vlagger-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+.vlagger-naam { font-weight: 700; font-size: 0.92rem; color: var(--navy); }
+.vlagger-naam.leeg { color: var(--text-muted); font-weight: 500; font-style: italic; }
+.vlagger-acties { display: flex; gap: 6px; }
+
 .squad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .squad-player {
   display: flex;
@@ -1600,7 +1629,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.3.0';
+const APP_VERSION = '2.4.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1690,6 +1719,8 @@ function normalizeMatch(m) {
   if (m.motm === undefined) m.motm = null;
   if (m.timerEndsAt === undefined) m.timerEndsAt = null;
   if (m.timerRemaining === undefined) m.timerRemaining = null;
+  if (m.vlagger === undefined) m.vlagger = null;
+  if (m.vlaggerNaam === undefined) m.vlaggerNaam = null;
   if (typeof m.scoreHome !== 'number') m.scoreHome = 0;
   if (typeof m.scoreAway !== 'number') m.scoreAway = 0;
   return m;
@@ -1766,7 +1797,7 @@ function doLogout() {
   fbAuth.signOut();
 }
 
-const SEED_VERSION = 4;
+const SEED_VERSION = 5;
 const SEEDED_SEASONS = ['2025/26'];
 
 function seedMatchesFromHistory() {
@@ -1790,6 +1821,10 @@ function seedMatchesFromHistory() {
         events: [],
         scoreHome: r.jb,
         scoreAway: r.opp_s,
+        // De vlagger staat als naam: het kan iemand zijn die niet meer in de
+        // selectie zit, en dan is er geen speler-id om naar te verwijzen.
+        vlagger: null,
+        vlaggerNaam: r.vlagger || null,
         half: 2, motm: null, status: 'finished'
       });
     });
@@ -1812,6 +1847,78 @@ function needsSeed() {
 function matchSeason(m) { return m.season || DB.season; }
 function seasonMatches(season) {
   return toArray(DB.matches).filter(m => m.status === 'finished' && matchSeason(m) === season);
+}
+
+// ===== VLAGGER =====
+// Elke wedstrijd moet iemand vlaggen of een vlagger regelen. We houden bij wie
+// dat op zich neemt, zodat het niet altijd bij dezelfde persoon belandt.
+function vlaggerVan(m) {
+  if (m.vlagger) {
+    const p = getPlayer(m.vlagger);
+    if (p) return p.name;
+  }
+  return m.vlaggerNaam || null;
+}
+
+function vlaggerTellingen(season) {
+  const telling = {};
+  seasonMatches(season).forEach(m => {
+    const naam = vlaggerVan(m);
+    if (naam) telling[naam] = (telling[naam] || 0) + 1;
+  });
+  return telling;
+}
+
+function setVlagger(playerId) {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+  const p = getPlayer(playerId);
+  cm.vlagger = p ? p.id : null;
+  cm.vlaggerNaam = p ? p.name : null;
+  saveData(); closeModal(); renderMatchView();
+}
+
+// Loot onder de aanwezigen die dit seizoen het minst gevlagd hebben. Puur
+// willekeurig zou de scheve verdeling in stand houden.
+function wijsVlaggerAan() {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+  const aanwezig = toArray(cm.squad).map(getPlayer).filter(Boolean);
+  if (!aanwezig.length) return;
+  const telling = vlaggerTellingen(DB.season);
+  const minimum = Math.min(...aanwezig.map(p => telling[p.name] || 0));
+  const kandidaten = aanwezig.filter(p => (telling[p.name] || 0) === minimum);
+  const gekozen = kandidaten[Math.floor(Math.random() * kandidaten.length)];
+  const vorige = cm.vlagger;
+  cm.vlagger = gekozen.id;
+  cm.vlaggerNaam = gekozen.name;
+  saveData(); renderMatchView();
+  showToast(
+    `${gekozen.name} vlagt${minimum === 0 ? ' (nog niet gevlagd dit seizoen)' : ` (${minimum}x dit seizoen)`}`,
+    () => { setVlagger(vorige); }
+  );
+}
+
+function openVlaggerModal() {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+  const telling = vlaggerTellingen(DB.season);
+  const aanwezig = toArray(cm.squad).map(getPlayer).filter(Boolean)
+    .sort((a, b) => (telling[a.name] || 0) - (telling[b.name] || 0) || a.number - b.number);
+  let h = `<h3>Wie vlagt?</h3>
+    <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
+      Vlaggen of een vlagger regelen telt allebei mee.</p>`;
+  aanwezig.forEach(p => {
+    const n = telling[p.name] || 0;
+    h += `<div class="squad-player ${cm.vlagger === p.id ? 'selected' : ''}" style="margin-bottom:6px"
+      onclick="setVlagger('${p.id}')">
+      ${avatarHTML(p, 'avatar-sm')}
+      <span class="sq-name">${p.name}</span>
+      <span class="sq-badge">${n}x</span>
+    </div>`;
+  });
+  h += `<button class="modal-cancel" onclick="closeModal()">Sluiten</button>`;
+  openModal(h);
 }
 
 fbAuth.onAuthStateChanged(user => {
@@ -1875,6 +1982,11 @@ const HISTORY = {
   '2025/26': {
     team: { played: 20, wins: 14, draws: 2, losses: 4, goalsFor: 130, goalsAgainst: 63, position: 3, points: 44 },
     totalGoals: 155, totalAssists: 120,
+    // Wie er gevlagd heeft of een vlagger geregeld heeft. Uit de seizoensadministratie.
+    vlaggers: [
+      { name: 'Erfan', count: 13 }, { name: 'Irving', count: 3 },
+      { name: 'Kenneth', count: 2 }, { name: 'Said', count: 1 }, { name: 'Zakaria', count: 1 },
+    ],
     players: [
       { name: 'Irving', goals: 34, assists: 18, played: 16 },
       { name: 'Lawin', goals: 30, assists: 27, played: 18 },
@@ -1905,33 +2017,38 @@ const HISTORY = {
       { pos: 11, team: 'APS', g: 20, w: 4, gl: 3, v: 13, dv: 51, dt: 85, ds: -44, p: 12 },
     ],
     results: [
-      { date: '2025-09-11', opp: 'Weddingcars by DK', jb: 2, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' },
-      { date: '2025-09-30', opp: 'Green Monday Energy', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' },
-      { date: '2025-10-07', opp: 'Old Legends', jb: 2, opp_s: 3, hal: 'Buiten', home: false, comp: '1B' },
-      { date: '2025-10-09', opp: 'Wonam', jb: 8, opp_s: 2, hal: 'Buiten', home: false, comp: 'BK' },
-      { date: '2025-10-30', opp: 'Novia Facts', jb: 18, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' },
-      { date: '2025-11-06', opp: 'Mladost', jb: 2, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' },
-      { date: '2025-11-13', opp: 'AS Sport Events', jb: 5, opp_s: 6, hal: 'Buiten', home: true, comp: '1B' },
-      { date: '2025-11-24', opp: 'Jai Hanuman 1', jb: 3, opp_s: 3, hal: 'Haven', home: true, comp: '1B' },
-      { date: '2025-11-27', opp: 'The Woo FC', jb: 15, opp_s: 0, hal: 'Buiten', home: false, comp: 'BK' },
-      { date: '2025-12-15', opp: 'CLK Engineering', jb: 10, opp_s: 5, hal: 'Haven', home: false, comp: '1B' },
-      { date: '2026-01-05', opp: 'RK Bouw & Project', jb: 2, opp_s: 5, hal: 'Haven', home: false, comp: 'BK' },
-      { date: '2026-01-08', opp: 'APS', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' },
-      { date: '2026-01-20', opp: 'Cordoba Concept', jb: 6, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2025-09-11', opp: 'Weddingcars by DK', jb: 2, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2025-09-30', opp: 'Green Monday Energy', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2025-10-07', opp: 'Old Legends', jb: 2, opp_s: 3, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Irving' },
+      { date: '2025-10-09', opp: 'Wonam', jb: 8, opp_s: 2, hal: 'Buiten', home: false, comp: 'BK' , vlagger: 'Irving' },
+      { date: '2025-10-30', opp: 'Novia Facts', jb: 18, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2025-11-06', opp: 'Mladost', jb: 2, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2025-11-13', opp: 'AS Sport Events', jb: 5, opp_s: 6, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Said' },
+      { date: '2025-11-24', opp: 'Jai Hanuman 1', jb: 3, opp_s: 3, hal: 'Haven', home: true, comp: '1B' , vlagger: 'Irving' },
+      { date: '2025-11-27', opp: 'The Woo FC', jb: 15, opp_s: 0, hal: 'Buiten', home: false, comp: 'BK' , vlagger: 'Erfan' },
+      { date: '2025-12-15', opp: 'CLK Engineering', jb: 10, opp_s: 5, hal: 'Haven', home: false, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2026-01-05', opp: 'RK Bouw & Project', jb: 2, opp_s: 5, hal: 'Haven', home: false, comp: 'BK' , vlagger: 'Erfan' },
+      { date: '2026-01-08', opp: 'APS', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Kenneth' },
+      { date: '2026-01-20', opp: 'Cordoba Concept', jb: 6, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
       { date: '2026-02-02', opp: 'Weddingcars by DK', jb: 8, opp_s: 4, hal: 'Haven', home: false, comp: '1B' },
       { date: '2026-02-19', opp: 'Green Monday Energy', jb: 10, opp_s: 3, hal: 'Buiten', home: true, comp: '1B' },
-      { date: '2026-03-05', opp: 'Old Legends', jb: 6, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2026-03-05', opp: 'Old Legends', jb: 6, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Kenneth' },
       { date: '2026-03-16', opp: 'Novia Facts', jb: 10, opp_s: 3, hal: 'Haven', home: true, comp: '1B' },
-      { date: '2026-03-23', opp: 'Mladost', jb: 8, opp_s: 6, hal: 'Haven', home: false, comp: '1B' },
-      { date: '2026-03-30', opp: 'AS Sport Events', jb: 5, opp_s: 7, hal: 'Haven', home: true, comp: '1B' },
-      { date: '2026-04-14', opp: 'Jai Hanuman 1', jb: 3, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' },
-      { date: '2026-04-23', opp: 'CLK Engineering', jb: 7, opp_s: 4, hal: 'Buiten', home: false, comp: '1B' },
+      { date: '2026-03-23', opp: 'Mladost', jb: 8, opp_s: 6, hal: 'Haven', home: false, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2026-03-30', opp: 'AS Sport Events', jb: 5, opp_s: 7, hal: 'Haven', home: true, comp: '1B' , vlagger: 'Zakaria' },
+      { date: '2026-04-14', opp: 'Jai Hanuman 1', jb: 3, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2026-04-23', opp: 'CLK Engineering', jb: 7, opp_s: 4, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
       { date: '2026-05-21', opp: 'APS', jb: 5, opp_s: 0, hal: 'Waterwijk', home: true, comp: '1B' },
-      { date: '2026-06-01', opp: 'Cordoba Concept', jb: 4, opp_s: 3, hal: 'Stad', home: false, comp: '1B' },
+      { date: '2026-06-01', opp: 'Cordoba Concept', jb: 4, opp_s: 3, hal: 'Stad', home: false, comp: '1B' , vlagger: 'Erfan' },
     ]
   },
   '2024/25': {
     totalGoals: 132, totalAssists: 96,
+    vlaggers: [
+      { name: 'Marco', count: 6 }, { name: 'Ahmed', count: 4 }, { name: 'Erfan', count: 4 },
+      { name: 'Rayvano', count: 2 }, { name: 'Irving', count: 1 }, { name: 'Kenneth', count: 1 },
+      { name: 'Lorenzo', count: 1 }, { name: 'Zakaria', count: 1 },
+    ],
     players: [
       { name: 'Kenneth', goals: 29, assists: 18, played: 20 },
       { name: 'Irving', goals: 24, assists: 14, played: 17 },
@@ -1953,6 +2070,11 @@ const HISTORY = {
   },
   'all': {
     totalGoals: 287, totalAssists: 216,
+    vlaggers: [
+      { name: 'Erfan', count: 17 }, { name: 'Marco', count: 6 }, { name: 'Ahmed', count: 4 },
+      { name: 'Irving', count: 4 }, { name: 'Kenneth', count: 3 }, { name: 'Rayvano', count: 2 },
+      { name: 'Zakaria', count: 2 }, { name: 'Lorenzo', count: 1 }, { name: 'Said', count: 1 },
+    ],
     players: [
       { name: 'Irving', goals: 58, assists: 32, played: 33 },
       { name: 'Kenneth', goals: 54, assists: 33, played: 35 },
@@ -2519,6 +2641,8 @@ function startNewMatch() {
     scoreAway: 0,
     half: 1,
     motm: null,
+    vlagger: null,
+    vlaggerNaam: null,
     status: 'setup'
   };
   saveData(); renderMatchView();
@@ -2576,7 +2700,19 @@ function renderMatchSquad(c) {
       ${p.isKeeper?'<span class="sq-badge">GK</span>':''}
     </div>`;
   });
-  h += `</div><div style="margin-top:16px">
+  const vlaggerNaam = vlaggerVan(cm);
+  h += `</div>
+    <div class="vlagger-row">
+      <div class="vlagger-info">
+        <span class="vlagger-label">Vlagger</span>
+        <span class="vlagger-naam ${vlaggerNaam ? '' : 'leeg'}">${vlaggerNaam || 'nog niemand'}</span>
+      </div>
+      <div class="vlagger-acties">
+        <button class="btn btn-secondary btn-sm" onclick="openVlaggerModal()" ${cm.squad.length ? '' : 'disabled'}>Kiezen</button>
+        <button class="btn btn-secondary btn-sm" onclick="wijsVlaggerAan()" ${cm.squad.length ? '' : 'disabled'} title="Loot onder wie dit seizoen het minst vlagde">&#127922; Wijs aan</button>
+      </div>
+    </div>
+    <div style="margin-top:16px">
     <button class="btn btn-primary btn-block btn-lg" onclick="proceedToLineup()" ${cm.squad.length<5?'disabled':''}>
       Volgende: Opstelling &#10145;</button>
     ${cm.squad.length<5?'<p style="font-size:0.78rem;color:var(--text-muted);text-align:center;margin-top:6px">Min. 5 spelers nodig</p>':''}
@@ -3278,6 +3414,14 @@ function showMatchDetail(matchId) {
     h += `</div></div>`;
   }
 
+  const detailVlagger = vlaggerVan(m);
+  if (detailVlagger) {
+    h += `<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span style="font-size:0.82rem;color:var(--text-muted)">&#128681; Vlagger</span>
+      <strong style="font-size:0.9rem;color:var(--navy)">${detailVlagger}</strong>
+    </div>`;
+  }
+
   if (m.squad && m.squad.length) {
     h += `<div class="card"><h3 style="font-size:0.88rem;margin-bottom:12px">Selectie</h3>`;
     m.squad.map(id => getPlayer(id)).filter(Boolean).sort((a,b) => a.number - b.number).forEach(p => {
@@ -3443,6 +3587,7 @@ function renderSeasonStats(season) {
       <button class="tab-btn" data-sort="assists">Assists</button>
       <button class="tab-btn" data-sort="motm">MotM</button>
       <button class="tab-btn" data-sort="cards">Kaarten</button>
+      <button class="tab-btn" data-sort="vlagger">Vlaggen</button>
     </div>
     <div class="card" id="leaderboard"></div>`;
 
@@ -3467,8 +3612,10 @@ function setupSeasonLeaderboard(season) {
   const finished = seasonMatches(season);
   if (!finished.length) return;
   const ps = {};
-  DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0 }; });
+  DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0, vlagger:0 }; });
   finished.forEach(m => {
+    const vlagId = m.vlagger || (DB.players.find(p => p.name === m.vlaggerNaam) || {}).id;
+    if (vlagId && ps[vlagId]) ps[vlagId].vlagger++;
     (m.squad||[]).forEach(pid => { if(ps[pid]) ps[pid].played++; });
     (m.events || []).forEach(ev => {
       if (ev.type==='goal' && ev.team==='home') {
@@ -3501,6 +3648,7 @@ function renderLeaderboard(ps, sortBy) {
   if (sortBy==='goals') sortFn = (a,b) => b[1].goals-a[1].goals || b[1].assists-a[1].assists;
   else if (sortBy==='assists') sortFn = (a,b) => b[1].assists-a[1].assists || b[1].goals-a[1].goals;
   else if (sortBy==='motm') sortFn = (a,b) => b[1].motm-a[1].motm || b[1].goals-a[1].goals;
+  else if (sortBy==='vlagger') sortFn = (a,b) => (b[1].vlagger||0)-(a[1].vlagger||0) || b[1].played-a[1].played;
   else sortFn = (a,b) => (b[1].greens+b[1].yellows+b[1].reds)-(a[1].greens+a[1].yellows+a[1].reds);
 
   const sorted = Object.entries(ps).filter(([id]) => getPlayer(id)).sort(sortFn);
@@ -3515,12 +3663,16 @@ function renderLeaderboard(ps, sortBy) {
   sorted.forEach(([id, s], i) => {
     const p = getPlayer(id);
     if (!p) return;
-    let stats = `<span>${s.goals}</span><span>${s.assists}</span>`;
-    if (s.motm) stats += `<span>${s.motm}</span>`;
-    if (s.cleanSheets) stats += `<span>🧤 ${s.cleanSheets}</span>`;
-    if (s.greens) stats += `<span>&#x1F7E2; ${s.greens}</span>`;
-    if (s.yellows) stats += `<span>&#x1F7E1; ${s.yellows}</span>`;
-    if (s.reds) stats += `<span>&#x1F534; ${s.reds}</span>`;
+    let stats = sortBy === 'vlagger'
+      ? `<span>&#128681; ${s.vlagger || 0}</span>`
+      : `<span>${s.goals}</span><span>${s.assists}</span>`;
+    if (sortBy !== 'vlagger') {
+      if (s.motm) stats += `<span>${s.motm}</span>`;
+      if (s.cleanSheets) stats += `<span>🧤 ${s.cleanSheets}</span>`;
+      if (s.greens) stats += `<span>&#x1F7E2; ${s.greens}</span>`;
+      if (s.yellows) stats += `<span>&#x1F7E1; ${s.yellows}</span>`;
+      if (s.reds) stats += `<span>&#x1F534; ${s.reds}</span>`;
+    }
     h += `<div class="leaderboard-item">
       <span class="lb-rank ${i===0?'top':''}">${i+1}</span>
       ${avatarHTML(p, 'avatar-sm')}
@@ -3587,6 +3739,7 @@ function renderHistoricalStats(seasonKey) {
       <button class="tab-btn active" data-sort="goals">Goals</button>
       <button class="tab-btn" data-sort="assists">Assists</button>
       <button class="tab-btn" data-sort="ratio">G+A Ratio</button>
+      ${(data.vlaggers || []).length ? '<button class="tab-btn" data-sort="vlagger">Vlaggen</button>' : ''}
     </div>
     <div class="card" id="historyLeaderboard"></div>`;
 
@@ -3612,19 +3765,39 @@ function renderHistoricalStats(seasonKey) {
 function setupHistoricalLeaderboard(seasonKey) {
   const data = HISTORY[seasonKey];
   if (!data) return;
-  renderHistoricalPlayerList(data.players, 'goals');
+  renderHistoricalPlayerList(data.players, 'goals', data.vlaggers);
   document.querySelectorAll('#historyTabs .tab-btn').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('#historyTabs .tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderHistoricalPlayerList(data.players, btn.dataset.sort);
+      renderHistoricalPlayerList(data.players, btn.dataset.sort, data.vlaggers);
     };
   });
 }
 
-function renderHistoricalPlayerList(players, sortBy) {
+function renderVlaggerLijst(el, vlaggers) {
+  let h = `<div class="leaderboard-item" style="border-bottom:2px solid var(--border);padding-bottom:8px">
+    <span class="lb-rank" style="font-size:0.65rem">#</span>
+    <span class="player-name" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);flex:1">Naam</span>
+    <div class="lb-stats" style="color:var(--text-muted);font-size:0.68rem"><span>Gevlagd</span></div>
+  </div>`;
+  [...vlaggers].sort((a, b) => b.count - a.count).forEach((v, i) => {
+    const dbPlayer = DB.players.find(dp => dp.name === v.name);
+    const avatar = dbPlayer ? avatarHTML(dbPlayer, 'avatar-sm') : `<div class="avatar avatar-sm">?</div>`;
+    h += `<div class="leaderboard-item">
+      <span class="lb-rank ${i===0?'top':''}">${i+1}</span>
+      ${avatar}
+      <span class="player-name">${v.name}</span>
+      <div class="lb-stats"><span>&#128681; ${v.count}</span></div>
+    </div>`;
+  });
+  el.innerHTML = h;
+}
+
+function renderHistoricalPlayerList(players, sortBy, vlaggers) {
   const el = document.getElementById('historyLeaderboard');
   if (!el) return;
+  if (sortBy === 'vlagger') return renderVlaggerLijst(el, vlaggers || []);
   const sorted = [...players].sort((a, b) => {
     if (sortBy === 'goals') return b.goals - a.goals || b.assists - a.assists;
     if (sortBy === 'assists') return b.assists - a.assists || b.goals - a.goals;

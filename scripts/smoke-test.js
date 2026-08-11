@@ -520,6 +520,56 @@ await check('een afgelopen seizoen krijgt vanzelf een eigen tabblad', () => {
   return tabs.join(', ');
 });
 
+await check('de vlagger overleeft een rondje Firebase en staat op de historie', async () => {
+  const { w: w8, loginError } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 0, updatedAt: 1, currentMatch: null,
+  }));
+  assert(!loginError, `inloggen crasht: ${loginError}`);
+
+  const metVlagger = Number(w8.eval('DB.matches.filter(m => m.vlaggerNaam).length'));
+  assert(metVlagger === 19, `${metVlagger} geseede wedstrijden met een vlagger in plaats van 19`);
+
+  // Firebase stript null-velden; de vlagger moet daar tegen kunnen.
+  const heen = JSON.parse(w8.eval('JSON.stringify(DB.matches.find(m => m.vlaggerNaam))'));
+  const terug = fbShape(heen);
+  w8.eval(`(() => { const m = normalizeMatch(${JSON.stringify(terug)}); window.__t = vlaggerVan(m); })()`);
+  assert(w8.__t === heen.vlaggerNaam,
+    `na een rondje Firebase is de vlagger "${w8.__t}" in plaats van "${heen.vlaggerNaam}"`);
+  return `${metVlagger} wedstrijden, ${heen.date}: ${heen.vlaggerNaam}`;
+});
+
+await check('de loting kiest wie het minst gevlagd heeft', async () => {
+  const { w: w9 } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 0, updatedAt: 1, currentMatch: null,
+  }));
+  // Twee wedstrijden dit seizoen die speler 1 al gevlagd heeft.
+  w9.eval(`
+    ['2026-09-10','2026-09-17'].forEach((d, i) => DB.matches.push({
+      id: 'v'+i, season: '2026/27', date: d, opponent: 'Test', sporthal: 'Haven', comp: 'comp',
+      squad: [], lineup: [], keeper: null, captain: null, motm: null, flyingKeeper: false,
+      events: [], scoreHome: 1, scoreAway: 0, half: 2, status: 'finished',
+      vlagger: DB.players[0].id, vlaggerNaam: DB.players[0].name }));
+    startNewMatch();
+    DB.currentMatch.squad = [DB.players[0].id, DB.players[1].id];
+  `);
+  const tel = JSON.parse(w9.eval('JSON.stringify(vlaggerTellingen(DB.season))'));
+  const veelvlagger = JSON.parse(w9.eval('JSON.stringify(DB.players[0].name)'));
+  assert(tel[veelvlagger] === 2, `testopzet klopt niet: ${veelvlagger} staat op ${tel[veelvlagger]}`);
+
+  // 25 lotingen: degene die al twee keer vlagde mag er geen enkele keer uitkomen.
+  const uitkomsten = new Set();
+  for (let i = 0; i < 25; i++) {
+    w9.eval('wijsVlaggerAan()');
+    uitkomsten.add(w9.eval('vlaggerVan(DB.currentMatch)'));
+  }
+  assert(!uitkomsten.has(veelvlagger),
+    `${veelvlagger} werd geloot terwijl een teamgenoot minder vaak vlagde`);
+  assert(uitkomsten.size === 1, `onverwachte uitkomsten: ${[...uitkomsten].join(', ')}`);
+  return `altijd ${[...uitkomsten][0]}, nooit ${veelvlagger}`;
+});
+
 await check('het versienummer staat in de topbar en is stempelbaar', () => {
   const el = w.document.getElementById('appVersion');
   assert(el, 'er staat geen versie-element in de topbar');
