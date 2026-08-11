@@ -432,6 +432,7 @@ label {
 /* ===== SQUAD SELECTION ===== */
 /* Wie vlagt of een vlagger regelt — keuze op het selectiescherm. */
 .vlagger-row {
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -455,6 +456,7 @@ label {
 .vlagger-naam { font-weight: 700; font-size: 0.92rem; color: var(--navy); }
 .vlagger-naam.leeg { color: var(--text-muted); font-weight: 500; font-style: italic; }
 .vlagger-acties { display: flex; gap: 6px; }
+.vlag-icon { vertical-align: -2px; }
 
 .squad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .squad-player {
@@ -1629,7 +1631,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.4.0';
+const APP_VERSION = '2.5.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1721,6 +1723,10 @@ function normalizeMatch(m) {
   if (m.timerRemaining === undefined) m.timerRemaining = null;
   if (m.vlagger === undefined) m.vlagger = null;
   if (m.vlaggerNaam === undefined) m.vlaggerNaam = null;
+  if (m.zaaldienst === undefined) m.zaaldienst = null;
+  if (m.zaaldienstNaam === undefined) m.zaaldienstNaam = null;
+  m.squadNamen = toArray(m.squadNamen);
+  m.assistsNamen = toArray(m.assistsNamen).filter(Boolean);
   if (typeof m.scoreHome !== 'number') m.scoreHome = 0;
   if (typeof m.scoreAway !== 'number') m.scoreAway = 0;
   return m;
@@ -1797,8 +1803,8 @@ function doLogout() {
   fbAuth.signOut();
 }
 
-const SEED_VERSION = 5;
-const SEEDED_SEASONS = ['2025/26'];
+const SEED_VERSION = 6;
+const SEEDED_SEASONS = ['2025/26', '2024/25'];
 
 function seedMatchesFromHistory() {
   const seeded = [];
@@ -1809,6 +1815,24 @@ function seedMatchesFromHistory() {
     if (!h || !h.results) return;
     h.results.forEach(r => {
       seededKeys.add(r.date + '|' + r.opp);
+      const d = MATCH_DETAILS[r.date + '|' + r.opp] || {};
+      const spelerIdVan = naam => (DB.players.find(p => p.name === naam) || {}).id || null;
+
+      // Uit de administratie kennen we per speler het áántal goals, niet welke
+      // assist bij welke goal hoorde. Doelpunten worden dus losse gebeurtenissen
+      // zonder minuut, en assists tonen we apart in plaats van ze te koppelen.
+      const events = [];
+      (d.g || []).forEach(([naam, aantal]) => {
+        for (let i = 0; i < aantal; i++) {
+          events.push({ type: 'goal', team: 'home', minute: null, half: null,
+            scorerId: spelerIdVan(naam), scorerNaam: naam, assistId: null });
+        }
+      });
+      (d.c || []).forEach(([naam, soort]) => {
+        events.push({ type: 'card', minute: null, half: null,
+          playerId: spelerIdVan(naam), playerNaam: naam, cardType: soort });
+      });
+
       seeded.push({
         id: 'hs' + id++,
         _seeded: true,
@@ -1816,15 +1840,20 @@ function seedMatchesFromHistory() {
         date: r.date,
         opponent: r.opp,
         sporthal: r.hal || '',
-        comp: r.comp === '1B' ? 'comp' : (r.comp === 'BK' ? 'beker' : r.comp),
-        squad: [], lineup: [], keeper: null, captain: null, flyingKeeper: false,
-        events: [],
+        comp: r.comp === '1B' || r.comp === 'HB' ? 'comp' : (r.comp === 'BK' ? 'beker' : r.comp),
+        squad: (d.s || []).map(spelerIdVan).filter(Boolean),
+        squadNamen: d.s || [],
+        assistsNamen: d.a || [],
+        lineup: [], keeper: null, captain: null, flyingKeeper: false,
+        events,
         scoreHome: r.jb,
         scoreAway: r.opp_s,
-        // De vlagger staat als naam: het kan iemand zijn die niet meer in de
-        // selectie zit, en dan is er geen speler-id om naar te verwijzen.
+        // Vlagger en zaaldienst staan als naam: het kan iemand zijn die niet
+        // meer in de selectie zit, en dan is er geen speler-id om naar te wijzen.
         vlagger: null,
-        vlaggerNaam: r.vlagger || null,
+        vlaggerNaam: d.v || null,
+        zaaldienst: null,
+        zaaldienstNaam: d.z || null,
         half: 2, motm: null, status: 'finished'
       });
     });
@@ -1849,69 +1878,93 @@ function seasonMatches(season) {
   return toArray(DB.matches).filter(m => m.status === 'finished' && matchSeason(m) === season);
 }
 
-// ===== VLAGGER =====
-// Elke wedstrijd moet iemand vlaggen of een vlagger regelen. We houden bij wie
-// dat op zich neemt, zodat het niet altijd bij dezelfde persoon belandt.
-function vlaggerVan(m) {
-  if (m.vlagger) {
-    const p = getPlayer(m.vlagger);
-    if (p) return p.name;
-  }
-  return m.vlaggerNaam || null;
+// ===== TAKEN: VLAGGER EN ZAALDIENST =====
+// Elke wedstrijd moet iemand vlaggen of een vlagger regelen, en iemand draait
+// zaaldienst. Beide werken hetzelfde, dus ze delen deze machinerie. We houden
+// bij wie het op zich neemt, zodat het niet altijd bij dezelfde persoon belandt.
+const TAKEN = {
+  vlagger:    { veld: 'vlagger',    naamVeld: 'vlaggerNaam',    label: 'Vlagger',    vraag: 'Wie vlagt?',
+                uitleg: 'Vlaggen of een vlagger regelen telt allebei mee.', werkwoord: 'vlagt', historie: 'vlaggers' },
+  zaaldienst: { veld: 'zaaldienst', naamVeld: 'zaaldienstNaam', label: 'Zaaldienst', vraag: 'Wie draait zaaldienst?',
+                uitleg: 'De zaaldienst houdt het wedstrijdformulier bij.', werkwoord: 'draait zaaldienst', historie: 'zaaldiensten' },
+};
+
+// De geblokte grensrechtersvlag; de rode-driehoek-emoji leest als iets anders.
+function vlagIcon(size = 14) {
+  return `<svg class="vlag-icon" width="${size}" height="${size}" viewBox="0 0 16 16" aria-hidden="true">
+    <rect x="1.1" y="0.8" width="1.5" height="14.4" rx="0.7" fill="currentColor" opacity="0.5"/>
+    <rect x="3.2" y="1.8" width="5.4" height="4.4" fill="var(--card-red)"/>
+    <rect x="8.6" y="1.8" width="5.4" height="4.4" fill="var(--card-yellow)"/>
+    <rect x="3.2" y="6.2" width="5.4" height="4.4" fill="var(--card-yellow)"/>
+    <rect x="8.6" y="6.2" width="5.4" height="4.4" fill="var(--card-red)"/>
+  </svg>`;
 }
 
-function vlaggerTellingen(season) {
+function taakVan(m, taak) {
+  const t = TAKEN[taak];
+  if (m[t.veld]) {
+    const p = getPlayer(m[t.veld]);
+    if (p) return p.name;
+  }
+  return m[t.naamVeld] || null;
+}
+function vlaggerVan(m) { return taakVan(m, 'vlagger'); }
+
+function taakTellingen(season, taak) {
   const telling = {};
   seasonMatches(season).forEach(m => {
-    const naam = vlaggerVan(m);
+    const naam = taakVan(m, taak);
     if (naam) telling[naam] = (telling[naam] || 0) + 1;
   });
   return telling;
 }
+function vlaggerTellingen(season) { return taakTellingen(season, 'vlagger'); }
 
-function setVlagger(playerId) {
+function setTaak(taak, playerId) {
   const cm = DB.currentMatch;
   if (!cm) return;
+  const t = TAKEN[taak];
   const p = getPlayer(playerId);
-  cm.vlagger = p ? p.id : null;
-  cm.vlaggerNaam = p ? p.name : null;
+  cm[t.veld] = p ? p.id : null;
+  cm[t.naamVeld] = p ? p.name : null;
   saveData(); closeModal(); renderMatchView();
 }
 
-// Loot onder de aanwezigen die dit seizoen het minst gevlagd hebben. Puur
-// willekeurig zou de scheve verdeling in stand houden.
-function wijsVlaggerAan() {
+// Loot onder de aanwezigen die dit seizoen het minst aan de beurt zijn geweest.
+// Puur willekeurig zou de scheve verdeling in stand houden.
+function wijsTaakAan(taak) {
   const cm = DB.currentMatch;
   if (!cm) return;
+  const t = TAKEN[taak];
   const aanwezig = toArray(cm.squad).map(getPlayer).filter(Boolean);
   if (!aanwezig.length) return;
-  const telling = vlaggerTellingen(DB.season);
+  const telling = taakTellingen(DB.season, taak);
   const minimum = Math.min(...aanwezig.map(p => telling[p.name] || 0));
   const kandidaten = aanwezig.filter(p => (telling[p.name] || 0) === minimum);
   const gekozen = kandidaten[Math.floor(Math.random() * kandidaten.length)];
-  const vorige = cm.vlagger;
-  cm.vlagger = gekozen.id;
-  cm.vlaggerNaam = gekozen.name;
+  const vorige = cm[t.veld];
+  cm[t.veld] = gekozen.id;
+  cm[t.naamVeld] = gekozen.name;
   saveData(); renderMatchView();
   showToast(
-    `${gekozen.name} vlagt${minimum === 0 ? ' (nog niet gevlagd dit seizoen)' : ` (${minimum}x dit seizoen)`}`,
-    () => { setVlagger(vorige); }
+    `${gekozen.name} ${t.werkwoord}${minimum === 0 ? ' (nog niet aan de beurt geweest)' : ` (${minimum}x dit seizoen)`}`,
+    () => { setTaak(taak, vorige); }
   );
 }
 
-function openVlaggerModal() {
+function openTaakModal(taak) {
   const cm = DB.currentMatch;
   if (!cm) return;
-  const telling = vlaggerTellingen(DB.season);
+  const t = TAKEN[taak];
+  const telling = taakTellingen(DB.season, taak);
   const aanwezig = toArray(cm.squad).map(getPlayer).filter(Boolean)
     .sort((a, b) => (telling[a.name] || 0) - (telling[b.name] || 0) || a.number - b.number);
-  let h = `<h3>Wie vlagt?</h3>
-    <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
-      Vlaggen of een vlagger regelen telt allebei mee.</p>`;
+  let h = `<h3>${t.vraag}</h3>
+    <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">${t.uitleg}</p>`;
   aanwezig.forEach(p => {
     const n = telling[p.name] || 0;
-    h += `<div class="squad-player ${cm.vlagger === p.id ? 'selected' : ''}" style="margin-bottom:6px"
-      onclick="setVlagger('${p.id}')">
+    h += `<div class="squad-player ${cm[t.veld] === p.id ? 'selected' : ''}" style="margin-bottom:6px"
+      onclick="setTaak('${taak}', '${p.id}')">
       ${avatarHTML(p, 'avatar-sm')}
       <span class="sq-name">${p.name}</span>
       <span class="sq-badge">${n}x</span>
@@ -1978,8 +2031,60 @@ function refreshApp() {
 function getPlayer(id) { return DB.players.find(p => p.id === id); }
 function getPlayerName(id) { const p = getPlayer(id); return p ? p.name : '?'; }
 
+const MATCH_DETAILS = {
+  '2024-09-09|Tuinderij Groene Pluk': {s:['Bobby','Kenneth','Irving','Rayvano','Ahmed','Marco','Said'], g:[['Bobby',4],['Kenneth',2],['Ahmed',1]], a:[['Said',2],['Kenneth',1],['Irving',1]], v:'Erfan'},
+  '2024-09-18|Unicum v/d Voort': {s:['Bobby','Kenneth','Ahmed','Said','Lorenzo','Erfan'], g:[['Kenneth',3],['Bobby',2]], a:[['Bobby',1],['Kenneth',1],['Lorenzo',1],['Erfan',1]], c:[['Erfan','green'],['Erfan','red']], v:'Marco'},
+  '2024-10-01|Van Eck Beenmode': {s:['Bobby','Kenneth','Ahmed','Lorenzo','Marco','Irving','Rayvano'], g:[['Kenneth',3],['Irving',2],['Bobby',1],['Lorenzo',1]], a:[['Bobby',2],['Kenneth',1],['Rayvano',1]], v:'Erfan'},
+  '2024-10-16|FC Sacapuntas': {s:['Said','Bobby','Kenneth','Ahmed','Irving','Erfan','Zakaria'], g:[['Said',3],['Irving',3],['Kenneth',2],['Ahmed',1]], a:[['Irving',3],['Kenneth',2],['Said',1],['Bobby',1],['Ahmed',1]], v:'Marco'},
+  '2024-11-05|Salders Doet': {s:['Said','Bobby','Kenneth','Irving','Erfan','Zakaria','Lorenzo','Rayvano'], g:[['Irving',2],['Bobby',1],['Kenneth',1],['Rayvano',1]], a:[['Bobby',1],['Kenneth',1],['Erfan',1],['Rayvano',1]], v:'Rayvano'},
+  '2024-11-20|Rif United': {s:['Said','Bobby','Kenneth','Ahmed','Irving','Marco','Zakaria','Saber','Rayvano','Eigen doelpunt'], g:[['Irving',4],['Kenneth',2],['Eigen doelpunt',1]], a:[['Kenneth',1],['Irving',1],['Zakaria',1]], v:'Erfan'},
+  '2024-12-02|Doko Kunststof Kozijnen BV': {s:['Lorenzo','Said','Kenneth','Ahmed','Irving','Rayvano','Erfan'], g:[['Rayvano',3],['Kenneth',2],['Lorenzo',1]], a:[['Kenneth',3],['Erfan',2],['Rayvano',1]], v:'Ahmed'},
+  '2024-12-17|Goud Wit (2B)': {s:['Marco','Zakaria','Lorenzo','Said','Kenneth','Ahmed','Rayvano','Erfan'], g:[['Rayvano',2],['Lorenzo',1],['Said',1],['Kenneth',1],['Ahmed',1]], a:[['Kenneth',3],['Lorenzo',1],['Rayvano',1],['Erfan',1]], v:'Erfan'},
+  '2025-01-06|Compañeros': {s:['Lorenzo','Said','Kenneth','Bobby','Erfan','Irving','Jamal'], g:[['Irving',2],['Bobby',1],['Erfan',1],['Jamal',1]], a:[['Kenneth',2],['Bobby',1],['Erfan',1],['Jamal',1]], c:[['Said','green']], v:'Kenneth'},
+  '2025-01-13|Vag Specialist': {s:['Erfan','Said','Kenneth','Bobby','Irving','Jamal','Zakaria','Rayvano','Marco'], g:[['Irving',1],['Jamal',1],['Rayvano',1]], a:[['Bobby',1],['Rayvano',1]], v:'Lorenzo'},
+  '2025-01-20|Tuinderij Groene Pluk': {s:['Lorenzo','Said','Kenneth','Irving','Jamal','Zakaria','Faissel','Rayvano','Ahmed'], g:[['Faissel',3],['Lorenzo',1],['Said',1],['Kenneth',1],['Jamal',1]], a:[['Rayvano',3],['Lorenzo',2]], c:[['Faissel','green']], v:'Marco'},
+  '2025-01-30|Wsam (1A)': {s:['Reglementair'], g:[['Reglementair',5]]},
+  '2025-02-10|Unicum v/d Voort': {s:['Erfan','Rayvano','Marco','Lorenzo','Said','Ahmed','Faissel','Irving'], g:[['Irving',4],['Rayvano',2],['Said',2],['Ahmed',1]], a:[['Lorenzo',4],['Rayvano',1],['Faissel',1],['Irving',1]], v:'Zakaria'},
+  '2025-03-04|Van Eck Beenmode': {s:['Erfan','Zakaria','Rayvano','Lorenzo','Said','Ahmed','Irving','Kenneth'], g:[['Rayvano',3],['Lorenzo',3],['Irving',2],['Said',1],['Ahmed',1],['Kenneth',1]], a:[['Erfan',3],['Lorenzo',2],['Kenneth',2],['Zakaria',1],['Rayvano',1],['Irving',1]], v:'Rayvano'},
+  '2025-03-04|Zinè Deluxe': {s:['Bobby','Kenneth','Rayvano','Said','Ahmed','Faissel','Irving'], g:[['Kenneth',2],['Rayvano',1],['Said',1],['Ahmed',1]], a:[['Irving',2],['Bobby',1],['Rayvano',1],['Ahmed',1]], v:'Irving'},
+  '2025-03-14|FC Sacapuntas': {s:['Bobby','Rayvano','Lorenzo','Said','Ahmed','Kenneth','Marco'], g:[['Rayvano',2]], a:[['Bobby',1]], v:'Ahmed'},
+  '2025-03-20|Salders Doet': {s:['Rayvano','Lorenzo','Said','Ahmed','Kenneth','Irving','Erfan','Lyzairo','Faissel'], g:[['Kenneth',3],['Ahmed',2],['Faissel',2],['Rayvano',1],['Lyzairo',1]], a:[['Rayvano',2],['Erfan',2],['Said',1],['Kenneth',1],['Faissel',1]], v:'Marco'},
+  '2025-03-31|Rif United': {s:['Rayvano','Said','Marco','Kenneth','Bobby','Irving','Zakaria','Erfan','Eigen doelpunt'], g:[['Kenneth',3],['Eigen doelpunt',3],['Rayvano',2],['Irving',2]], a:[['Irving',3],['Said',2],['Bobby',2]], v:'Ahmed'},
+  '2025-04-07|Doko Kunststof Kozijnen BV': {s:['Erfan','Rayvano','Faissel','Irving','Kenneth','Jamal','Lyzairo','Said','Lorenzo'], g:[['Rayvano',1],['Kenneth',1],['Said',1]], a:[['Irving',1]], v:'Ahmed'},
+  '2025-05-08|Compañeros': {s:['Erfan','Rayvano','Faissel','Kenneth','Jamal','Lyzairo','Bobby'], g:[['Rayvano',2],['Lyzairo',2],['Faissel',1],['Kenneth',1]], a:[['Erfan',1],['Rayvano',1],['Jamal',1],['Bobby',1]], v:'Marco'},
+  '2025-05-27|Vag Specialist': {s:['Erfan','Rayvano','Kenneth','Jamal','Lyzairo','Irving','Said'], g:[['Irving',2],['Kenneth',1]], a:[['Jamal',1],['Irving',1]], v:'Marco'},
+  '2025-06-20|Compañeros': {s:['Saber','Bobby','Irving','Rayvano','Erfan','Marco','Lyzairo','Kenneth','Faissel','Marco','Zakaria'], g:[['Saber',1],['Rayvano',1]], a:[['Bobby',1]]},
+  '2025-09-11|Weddingcars by DK': {s:['Marco','Irving','Kenneth','Said','Lorenzo','Lyzairo'], g:[['Irving',1],['Lyzairo',1]], a:[['Irving',1],['Kenneth',1]], v:'Erfan'},
+  '2025-09-30|Green Monday Energy': {s:['Erfan','Irving','Lyzairo','Kenneth','Said','Bobby','Lawin','Jamal'], g:[['Irving',2],['Kenneth',2],['Lawin',2],['Said',1],['Bobby',1]], a:[['Bobby',2],['Jamal',2],['Irving',1],['Kenneth',1],['Said',1]], v:'Erfan'},
+  '2025-10-07|Old Legends': {s:['Said','Lyzairo','Lawin','Kenneth','Rayvano','Marco'], g:[['Said',2]], a:[['Lyzairo',2]], v:'Irving'},
+  '2025-10-09|Wonam': {s:['Erfan','Said','Lyzairo','Kenneth','Rayvano','Marco'], g:[['Rayvano',4],['Kenneth',2],['Said',1],['Lyzairo',1]], a:[['Erfan',2],['Kenneth',2],['Said',1],['Lyzairo',1],['Rayvano',1]], v:'Irving'},
+  '2025-10-30|Novia Facts': {s:['Amine','Lawin','Rayvano','Marco','Kenneth','Said','Lyzairo','Irving'], g:[['Irving',4],['Amine',3],['Kenneth',3],['Lawin',2],['Rayvano',2],['Said',2],['Lyzairo',2]], a:[['Lawin',4],['Kenneth',2],['Said',2],['Irving',2],['Amine',1],['Lyzairo',1]], v:'Erfan'},
+  '2025-11-06|Mladost': {s:['Rayvano','Marco','Kenneth','Said','Lyzairo','Irving','Jamal'], g:[['Irving',1],['Jamal',1]], a:[['Lyzairo',1],['Jamal',1]], v:'Erfan'},
+  '2025-11-13|AS Sport Events': {s:['Rayvano','Marco','Kenneth','Lyzairo','Irving','Jamal'], g:[['Irving',2],['Rayvano',1],['Kenneth',1],['Lyzairo',1]], a:[['Rayvano',1],['Kenneth',1],['Jamal',1]], v:'Said'},
+  '2025-11-24|Jai Hanuman 1': {s:['Marco','Jamal','Said','Lawin','Kenneth','Amine','Lyzairo','Bobby'], g:[['Kenneth',2],['Lawin',1]], a:[['Marco',1],['Lyzairo',1],['Bobby',1]], v:'Irving'},
+  '2025-11-27|The Woo FC': {s:['Marco','Said','Lawin','Kenneth','Lyzairo','Irving','Rayvano'], g:[['Irving',8],['Kenneth',3],['Rayvano',2],['Said',1],['Lawin',1]], a:[['Irving',5],['Lyzairo',3],['Said',2],['Kenneth',2],['Lawin',1],['Rayvano',1]], v:'Erfan'},
+  '2025-12-15|CLK Engineering': {s:['Amine','Said','Lawin','Kenneth','Lyzairo','Marco'], g:[['Lawin',3],['Amine',2],['Said',2],['Kenneth',2],['Lyzairo',1]], a:[['Lawin',3],['Kenneth',3],['Amine',2],['Said',1],['Lyzairo',1]], v:'Erfan'},
+  '2026-01-05|RK Bouw & Project': {s:['Marco','Said','Lawin','Kenneth','Lyzairo','Irving'], g:[['Said',1],['Kenneth',1]], a:[['Lawin',2]], v:'Erfan'},
+  '2026-01-08|APS': {s:['Amine','Lawin','Marco','Lyzairo','Said'], g:[['Lyzairo',3],['Amine',2],['Lawin',2],['Said',1]], a:[['Amine',3],['Lawin',2],['Lyzairo',1],['Said',1]], v:'Kenneth'},
+  '2026-01-20|Cordoba Concept': {s:['Amine','Lawin','Marco','Lyzairo','Said','Irving','Erfan'], g:[['Lawin',5],['Amine',1]], a:[['Amine',3],['Lawin',1],['Said',1]], v:'Erfan'},
+  '2026-02-19|Green Monday Energy': {s:['Amine','Lawin','Marco','Lyzairo','Said','Irving','Bobby'], g:[['Lawin',4],['Irving',4],['Amine',1],['Bobby',1]], a:[['Bobby',3],['Lawin',2],['Amine',1],['Lyzairo',1],['Irving',1]]},
+  '2026-03-05|Old Legends': {s:['Irving','Rayvano','Lawin','Marco','Lyzairo','Said'], g:[['Lawin',4],['Irving',1],['Rayvano',1]], a:[['Rayvano',2],['Irving',1],['Lyzairo',1]], v:'Kenneth'},
+  '2026-03-16|Novia Facts': {s:['Irving','Amine','Kenneth','Said','Lawin','Marco','Lyzairo'], g:[['Kenneth',6],['Irving',2],['Said',2]], a:[['Lawin',4],['Irving',3],['Kenneth',1]]},
+  '2026-03-23|Mladost': {s:['Irving','Amine','Kenneth','Said','Lawin','Marco','Lyzairo','Bobby'], g:[['Irving',2],['Amine',2],['Kenneth',1],['Said',1],['Lawin',1],['Lyzairo',1]], a:[['Irving',1],['Amine',1],['Kenneth',1],['Said',1],['Lawin',1],['Marco',1]], v:'Erfan'},
+  '2026-03-30|AS Sport Events': {s:['Lyzairo','Irving','Amine','Said','Lawin','Marco','Lyzairo','Rayvano'], g:[['Rayvano',3],['Irving',1],['Amine',1]], a:[['Lawin',2],['Lyzairo',1]], v:'Zakaria'},
+  '2026-04-14|Jai Hanuman 1': {s:['Amine','Said','Lawin','Marco','Lyzairo','Rayvano'], g:[['Lawin',1],['Lyzairo',1],['Rayvano',1]], a:[['Amine',2]], v:'Erfan'},
+  '2026-04-23|CLK Engineering': {s:['Said','Kenneth','Lawin','Irving','Lyzairo','Marco','Eigen doelpunt'], g:[['Kenneth',2],['Lawin',2],['Irving',2],['Eigen doelpunt',1]], a:[['Irving',2],['Lawin',1],['Marco',1]], v:'Erfan'},
+  '2026-05-21|APS': {s:['Reglementair'], g:[['Reglementair',5]]},
+  '2026-06-01|Cordoba Concept': {s:['Bobby','Irving','Lawin','Lyzairo','Kenneth','Said','Marco'], g:[['Bobby',1],['Irving',1],['Lawin',1],['Lyzairo',1]], a:[['Irving',1],['Lawin',1],['Kenneth',1]], v:'Erfan'},
+  '2026-09-11|Weddingcars By Dk (vh VMB)': {s:['Amine','Lawin','Marco','Lyzairo','Said','Irving','Bobby'], g:[['Irving',3],['Said',2],['Amine',1],['Lawin',1],['Lyzairo',1]], a:[['Lawin',3],['Amine',2],['Bobby',1]], v:'Erfan'},
+};
+
 const HISTORY = {
   '2025/26': {
+    zaaldiensten: [
+      { name: 'Lyzairo', count: 2 }, { name: 'Marco', count: 2 }, { name: 'Kenneth', count: 1 },
+      { name: 'Erfan', count: 1 }, { name: 'Bobby', count: 1 }, { name: 'Said', count: 1 },
+    ],
     team: { played: 20, wins: 14, draws: 2, losses: 4, goalsFor: 130, goalsAgainst: 63, position: 3, points: 44 },
     totalGoals: 155, totalAssists: 120,
     // Wie er gevlagd heeft of een vlagger geregeld heeft. Uit de seizoensadministratie.
@@ -2017,33 +2122,61 @@ const HISTORY = {
       { pos: 11, team: 'APS', g: 20, w: 4, gl: 3, v: 13, dv: 51, dt: 85, ds: -44, p: 12 },
     ],
     results: [
-      { date: '2025-09-11', opp: 'Weddingcars by DK', jb: 2, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
-      { date: '2025-09-30', opp: 'Green Monday Energy', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Erfan' },
-      { date: '2025-10-07', opp: 'Old Legends', jb: 2, opp_s: 3, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Irving' },
-      { date: '2025-10-09', opp: 'Wonam', jb: 8, opp_s: 2, hal: 'Buiten', home: false, comp: 'BK' , vlagger: 'Irving' },
-      { date: '2025-10-30', opp: 'Novia Facts', jb: 18, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Erfan' },
-      { date: '2025-11-06', opp: 'Mladost', jb: 2, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
-      { date: '2025-11-13', opp: 'AS Sport Events', jb: 5, opp_s: 6, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Said' },
-      { date: '2025-11-24', opp: 'Jai Hanuman 1', jb: 3, opp_s: 3, hal: 'Haven', home: true, comp: '1B' , vlagger: 'Irving' },
-      { date: '2025-11-27', opp: 'The Woo FC', jb: 15, opp_s: 0, hal: 'Buiten', home: false, comp: 'BK' , vlagger: 'Erfan' },
-      { date: '2025-12-15', opp: 'CLK Engineering', jb: 10, opp_s: 5, hal: 'Haven', home: false, comp: '1B' , vlagger: 'Erfan' },
-      { date: '2026-01-05', opp: 'RK Bouw & Project', jb: 2, opp_s: 5, hal: 'Haven', home: false, comp: 'BK' , vlagger: 'Erfan' },
-      { date: '2026-01-08', opp: 'APS', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Kenneth' },
-      { date: '2026-01-20', opp: 'Cordoba Concept', jb: 6, opp_s: 1, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2025-09-11', opp: 'Weddingcars by DK', jb: 2, opp_s: 1, hal: 'Buiten', home: false, comp: '1B'  },
+      { date: '2025-09-30', opp: 'Green Monday Energy', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B'  },
+      { date: '2025-10-07', opp: 'Old Legends', jb: 2, opp_s: 3, hal: 'Buiten', home: false, comp: '1B'  },
+      { date: '2025-10-09', opp: 'Wonam', jb: 8, opp_s: 2, hal: 'Buiten', home: false, comp: 'BK'  },
+      { date: '2025-10-30', opp: 'Novia Facts', jb: 18, opp_s: 1, hal: 'Buiten', home: true, comp: '1B'  },
+      { date: '2025-11-06', opp: 'Mladost', jb: 2, opp_s: 6, hal: 'Buiten', home: false, comp: '1B'  },
+      { date: '2025-11-13', opp: 'AS Sport Events', jb: 5, opp_s: 6, hal: 'Buiten', home: true, comp: '1B'  },
+      { date: '2025-11-24', opp: 'Jai Hanuman 1', jb: 3, opp_s: 3, hal: 'Haven', home: true, comp: '1B'  },
+      { date: '2025-11-27', opp: 'The Woo FC', jb: 15, opp_s: 0, hal: 'Buiten', home: false, comp: 'BK'  },
+      { date: '2025-12-15', opp: 'CLK Engineering', jb: 10, opp_s: 5, hal: 'Haven', home: false, comp: '1B'  },
+      { date: '2026-01-05', opp: 'RK Bouw & Project', jb: 2, opp_s: 5, hal: 'Haven', home: false, comp: 'BK'  },
+      { date: '2026-01-08', opp: 'APS', jb: 8, opp_s: 0, hal: 'Buiten', home: true, comp: '1B'  },
+      { date: '2026-01-20', opp: 'Cordoba Concept', jb: 6, opp_s: 1, hal: 'Buiten', home: false, comp: '1B'  },
       { date: '2026-02-02', opp: 'Weddingcars by DK', jb: 8, opp_s: 4, hal: 'Haven', home: false, comp: '1B' },
       { date: '2026-02-19', opp: 'Green Monday Energy', jb: 10, opp_s: 3, hal: 'Buiten', home: true, comp: '1B' },
-      { date: '2026-03-05', opp: 'Old Legends', jb: 6, opp_s: 6, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Kenneth' },
+      { date: '2026-03-05', opp: 'Old Legends', jb: 6, opp_s: 6, hal: 'Buiten', home: false, comp: '1B'  },
       { date: '2026-03-16', opp: 'Novia Facts', jb: 10, opp_s: 3, hal: 'Haven', home: true, comp: '1B' },
-      { date: '2026-03-23', opp: 'Mladost', jb: 8, opp_s: 6, hal: 'Haven', home: false, comp: '1B' , vlagger: 'Erfan' },
-      { date: '2026-03-30', opp: 'AS Sport Events', jb: 5, opp_s: 7, hal: 'Haven', home: true, comp: '1B' , vlagger: 'Zakaria' },
-      { date: '2026-04-14', opp: 'Jai Hanuman 1', jb: 3, opp_s: 1, hal: 'Buiten', home: true, comp: '1B' , vlagger: 'Erfan' },
-      { date: '2026-04-23', opp: 'CLK Engineering', jb: 7, opp_s: 4, hal: 'Buiten', home: false, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2026-03-23', opp: 'Mladost', jb: 8, opp_s: 6, hal: 'Haven', home: false, comp: '1B'  },
+      { date: '2026-03-30', opp: 'AS Sport Events', jb: 5, opp_s: 7, hal: 'Haven', home: true, comp: '1B'  },
+      { date: '2026-04-14', opp: 'Jai Hanuman 1', jb: 3, opp_s: 1, hal: 'Buiten', home: true, comp: '1B'  },
+      { date: '2026-04-23', opp: 'CLK Engineering', jb: 7, opp_s: 4, hal: 'Buiten', home: false, comp: '1B'  },
       { date: '2026-05-21', opp: 'APS', jb: 5, opp_s: 0, hal: 'Waterwijk', home: true, comp: '1B' },
-      { date: '2026-06-01', opp: 'Cordoba Concept', jb: 4, opp_s: 3, hal: 'Stad', home: false, comp: '1B' , vlagger: 'Erfan' },
+      { date: '2026-06-01', opp: 'Cordoba Concept', jb: 4, opp_s: 3, hal: 'Stad', home: false, comp: '1B'  },
     ]
   },
   '2024/25': {
+    zaaldiensten: [
+      { name: 'Faissel', count: 1 }, { name: 'Ahmed', count: 1 },
+      { name: 'Irving', count: 1 }, { name: 'Kenneth', count: 1 },
+    ],
     totalGoals: 132, totalAssists: 96,
+    results: [
+{ date: '2024-09-09', opp: 'Tuinderij Groene Pluk', jb: 7, opp_s: 1, hal: 'Haven', home: false, comp: 'HB' },
+      { date: '2024-09-18', opp: 'Unicum v/d Voort', jb: 5, opp_s: 3, hal: 'Waterwijk', home: false, comp: 'HB' },
+      { date: '2024-10-01', opp: 'Van Eck Beenmode', jb: 7, opp_s: 2, hal: 'Buiten', home: false, comp: 'HB' },
+      { date: '2024-10-16', opp: 'FC Sacapuntas', jb: 9, opp_s: 0, hal: 'Waterwijk', home: false, comp: 'HB' },
+      { date: '2024-11-05', opp: 'Salders Doet', jb: 5, opp_s: 0, hal: 'Buiten', home: true, comp: 'HB' },
+      { date: '2024-11-20', opp: 'Rif United', jb: 7, opp_s: 4, hal: 'Waterwijk', home: false, comp: 'HB' },
+      { date: '2024-12-02', opp: 'Doko Kunststof Kozijnen BV', jb: 6, opp_s: 2, hal: 'Stedenwijk', home: true, comp: 'HB' },
+      { date: '2024-12-17', opp: 'Goud Wit (2B)', jb: 6, opp_s: 5, hal: 'Buiten', home: true, comp: 'BK' },
+      { date: '2025-01-06', opp: 'Compañeros', jb: 5, opp_s: 5, hal: 'Haven', home: true, comp: 'HB' },
+      { date: '2025-01-13', opp: 'Vag Specialist', jb: 3, opp_s: 5, hal: 'Haven', home: false, comp: 'HB' },
+      { date: '2025-01-20', opp: 'Tuinderij Groene Pluk', jb: 7, opp_s: 3, hal: 'Stedenwijk', home: false, comp: 'HB' },
+      { date: '2025-01-30', opp: 'Wsam (1A)', jb: 5, opp_s: 0, hal: 'Buiten', home: true, comp: 'BK' },
+      { date: '2025-02-10', opp: 'Unicum v/d Voort', jb: 9, opp_s: 4, hal: 'Haven', home: true, comp: 'HB' },
+      { date: '2025-03-04', opp: 'Van Eck Beenmode', jb: 11, opp_s: 0, hal: 'Buiten', home: true, comp: 'HB' },
+      { date: '2025-03-04', opp: 'Zinè Deluxe', jb: 5, opp_s: 7, hal: 'Stedenwijk', home: true, comp: 'BK' },
+      { date: '2025-03-14', opp: 'FC Sacapuntas', jb: 2, opp_s: 3, hal: 'Stedenwijk', home: true, comp: 'HB' },
+      { date: '2025-03-20', opp: 'Salders Doet', jb: 9, opp_s: 2, hal: 'Waterwijk', home: false, comp: 'HB' },
+      { date: '2025-03-31', opp: 'Rif United', jb: 10, opp_s: 2, hal: 'Haven', home: true, comp: 'HB' },
+      { date: '2025-04-07', opp: 'Doko Kunststof Kozijnen BV', jb: 3, opp_s: 0, hal: 'Haven', home: false, comp: 'HB' },
+      { date: '2025-05-08', opp: 'Compañeros', jb: 6, opp_s: 2, hal: 'Waterwijk', home: false, comp: 'HB' },
+      { date: '2025-05-27', opp: 'Vag Specialist', jb: 3, opp_s: 2, hal: 'Buiten', home: true, comp: 'HB' },
+      { date: '2025-06-20', opp: 'Compañeros', jb: 2, opp_s: 4, hal: 'Stedenwijk', home: false, comp: 'HB' },
+    ],
     vlaggers: [
       { name: 'Marco', count: 6 }, { name: 'Ahmed', count: 4 }, { name: 'Erfan', count: 4 },
       { name: 'Rayvano', count: 2 }, { name: 'Irving', count: 1 }, { name: 'Kenneth', count: 1 },
@@ -2069,6 +2202,11 @@ const HISTORY = {
     ]
   },
   'all': {
+    zaaldiensten: [
+      { name: 'Kenneth', count: 2 }, { name: 'Lyzairo', count: 2 }, { name: 'Marco', count: 2 },
+      { name: 'Ahmed', count: 1 }, { name: 'Bobby', count: 1 }, { name: 'Erfan', count: 1 },
+      { name: 'Faissel', count: 1 }, { name: 'Irving', count: 1 }, { name: 'Said', count: 1 },
+    ],
     totalGoals: 287, totalAssists: 216,
     vlaggers: [
       { name: 'Erfan', count: 17 }, { name: 'Marco', count: 6 }, { name: 'Ahmed', count: 4 },
@@ -2700,19 +2838,22 @@ function renderMatchSquad(c) {
       ${p.isKeeper?'<span class="sq-badge">GK</span>':''}
     </div>`;
   });
-  const vlaggerNaam = vlaggerVan(cm);
-  h += `</div>
-    <div class="vlagger-row">
+  h += `</div>`;
+  ['vlagger', 'zaaldienst'].forEach(taak => {
+    const t = TAKEN[taak];
+    const naam = taakVan(cm, taak);
+    h += `<div class="vlagger-row">
       <div class="vlagger-info">
-        <span class="vlagger-label">Vlagger</span>
-        <span class="vlagger-naam ${vlaggerNaam ? '' : 'leeg'}">${vlaggerNaam || 'nog niemand'}</span>
+        <span class="vlagger-label">${t.label}</span>
+        <span class="vlagger-naam ${naam ? '' : 'leeg'}">${naam || 'nog niemand'}</span>
       </div>
       <div class="vlagger-acties">
-        <button class="btn btn-secondary btn-sm" onclick="openVlaggerModal()" ${cm.squad.length ? '' : 'disabled'}>Kiezen</button>
-        <button class="btn btn-secondary btn-sm" onclick="wijsVlaggerAan()" ${cm.squad.length ? '' : 'disabled'} title="Loot onder wie dit seizoen het minst vlagde">&#127922; Wijs aan</button>
+        <button class="btn btn-secondary btn-sm" onclick="openTaakModal('${taak}')" ${cm.squad.length ? '' : 'disabled'}>Kiezen</button>
+        <button class="btn btn-secondary btn-sm" onclick="wijsTaakAan('${taak}')" ${cm.squad.length ? '' : 'disabled'} title="Loot onder wie dit seizoen het minst aan de beurt was">&#127922; Wijs aan</button>
       </div>
-    </div>
-    <div style="margin-top:16px">
+    </div>`;
+  });
+  h += `<div style="margin-top:16px">
     <button class="btn btn-primary btn-block btn-lg" onclick="proceedToLineup()" ${cm.squad.length<5?'disabled':''}>
       Volgende: Opstelling &#10145;</button>
     ${cm.squad.length<5?'<p style="font-size:0.78rem;color:var(--text-muted);text-align:center;margin-top:6px">Min. 5 spelers nodig</p>':''}
@@ -2953,8 +3094,9 @@ function renderTimelineEvent(ev, m, evIdx) {
     let detail = '';
     if (isOwnGoal) {
       detail = `<strong>Eigen goal</strong>`;
-    } else if (isOurs && scorer) {
-      detail = `<strong>${scorer.name}</strong>`;
+    } else if (isOurs && (scorer || ev.scorerNaam)) {
+      // scorerNaam vangt oud-spelers op die geen speler-id meer hebben.
+      detail = `<strong>${scorer ? scorer.name : ev.scorerNaam}</strong>`;
       if (ev.assistId) detail += ` <span class="sub-text">(${getPlayerName(ev.assistId)})</span>`;
     } else {
       detail = `<strong>${m.opponent}</strong>`;
@@ -2973,7 +3115,7 @@ function renderTimelineEvent(ev, m, evIdx) {
     return `<div class="timeline-event" ${clickAttr}>
       <span class="timeline-minute">${ev.minute != null ? ev.minute + "'" : '–'}</span>
       <span class="timeline-icon">${icons[ev.cardType]||''}</span>
-      <span class="timeline-detail"><strong>${getPlayerName(ev.playerId)}</strong> <span class="sub-text">${labels[ev.cardType]||''}</span></span>
+      <span class="timeline-detail"><strong>${getPlayer(ev.playerId) ? getPlayerName(ev.playerId) : (ev.playerNaam || '?')}</strong> <span class="sub-text">${labels[ev.cardType]||''}</span></span>
       <span class="timeline-score"></span>
     </div>`;
   }
@@ -3414,15 +3556,36 @@ function showMatchDetail(matchId) {
     h += `</div></div>`;
   }
 
-  const detailVlagger = vlaggerVan(m);
-  if (detailVlagger) {
-    h += `<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <span style="font-size:0.82rem;color:var(--text-muted)">&#128681; Vlagger</span>
-      <strong style="font-size:0.9rem;color:var(--navy)">${detailVlagger}</strong>
-    </div>`;
+  if ((m.assistsNamen || []).length) {
+    h += `<div class="card"><h3 style="font-size:0.88rem;margin-bottom:8px">Assists</h3>
+      <p style="font-size:0.85rem;color:var(--text)">${
+        m.assistsNamen.map(([naam, n]) => `${naam}${n > 1 ? ` (${n}x)` : ''}`).join(', ')
+      }</p>
+      <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px">
+        Uit de seizoensadministratie; niet te herleiden naar een specifiek doelpunt.</p></div>`;
   }
 
-  if (m.squad && m.squad.length) {
+  const taakRegels = ['vlagger', 'zaaldienst']
+    .map(taak => [TAKEN[taak], taakVan(m, taak)])
+    .filter(([, naam]) => naam);
+  if (taakRegels.length) {
+    h += `<div class="card">`;
+    taakRegels.forEach(([t, naam], i) => {
+      h += `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px${i ? ';margin-top:10px' : ''}">
+        <span style="font-size:0.82rem;color:var(--text-muted)">${t.label}</span>
+        <strong style="font-size:0.9rem;color:var(--navy)">${naam}</strong>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
+  // Oud-spelers hebben geen speler-id meer; die staan alleen als naam.
+  // Bij historische wedstrijden staat de selectie als namen, want een deel van
+  // die spelers zit niet meer in de app en heeft dus geen speler-id.
+  if ((m.squadNamen || []).length) {
+    h += `<div class="card"><h3 style="font-size:0.88rem;margin-bottom:8px">Selectie</h3>
+      <p style="font-size:0.85rem;line-height:1.6">${m.squadNamen.join(', ')}</p></div>`;
+  } else if (m.squad && m.squad.length) {
     h += `<div class="card"><h3 style="font-size:0.88rem;margin-bottom:12px">Selectie</h3>`;
     m.squad.map(id => getPlayer(id)).filter(Boolean).sort((a,b) => a.number - b.number).forEach(p => {
       const roles = [];
@@ -3588,6 +3751,7 @@ function renderSeasonStats(season) {
       <button class="tab-btn" data-sort="motm">MotM</button>
       <button class="tab-btn" data-sort="cards">Kaarten</button>
       <button class="tab-btn" data-sort="vlagger">Vlaggen</button>
+      <button class="tab-btn" data-sort="zaaldienst">Zaaldienst</button>
     </div>
     <div class="card" id="leaderboard"></div>`;
 
@@ -3612,10 +3776,13 @@ function setupSeasonLeaderboard(season) {
   const finished = seasonMatches(season);
   if (!finished.length) return;
   const ps = {};
-  DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0, vlagger:0 }; });
+  DB.players.forEach(p => { ps[p.id] = { goals:0, assists:0, greens:0, yellows:0, reds:0, motm:0, played:0, cleanSheets:0, vlagger:0, zaaldienst:0 }; });
   finished.forEach(m => {
-    const vlagId = m.vlagger || (DB.players.find(p => p.name === m.vlaggerNaam) || {}).id;
-    if (vlagId && ps[vlagId]) ps[vlagId].vlagger++;
+    ['vlagger', 'zaaldienst'].forEach(taak => {
+      const naam = taakVan(m, taak);
+      const p = naam && DB.players.find(x => x.name === naam);
+      if (p && ps[p.id]) ps[p.id][taak]++;
+    });
     (m.squad||[]).forEach(pid => { if(ps[pid]) ps[pid].played++; });
     (m.events || []).forEach(ev => {
       if (ev.type==='goal' && ev.team==='home') {
@@ -3648,7 +3815,7 @@ function renderLeaderboard(ps, sortBy) {
   if (sortBy==='goals') sortFn = (a,b) => b[1].goals-a[1].goals || b[1].assists-a[1].assists;
   else if (sortBy==='assists') sortFn = (a,b) => b[1].assists-a[1].assists || b[1].goals-a[1].goals;
   else if (sortBy==='motm') sortFn = (a,b) => b[1].motm-a[1].motm || b[1].goals-a[1].goals;
-  else if (sortBy==='vlagger') sortFn = (a,b) => (b[1].vlagger||0)-(a[1].vlagger||0) || b[1].played-a[1].played;
+  else if (sortBy==='vlagger' || sortBy==='zaaldienst') sortFn = (a,b) => (b[1][sortBy]||0)-(a[1][sortBy]||0) || b[1].played-a[1].played;
   else sortFn = (a,b) => (b[1].greens+b[1].yellows+b[1].reds)-(a[1].greens+a[1].yellows+a[1].reds);
 
   const sorted = Object.entries(ps).filter(([id]) => getPlayer(id)).sort(sortFn);
@@ -3663,10 +3830,11 @@ function renderLeaderboard(ps, sortBy) {
   sorted.forEach(([id, s], i) => {
     const p = getPlayer(id);
     if (!p) return;
-    let stats = sortBy === 'vlagger'
-      ? `<span>&#128681; ${s.vlagger || 0}</span>`
+    const taakKolom = sortBy === 'vlagger' || sortBy === 'zaaldienst';
+    let stats = sortBy === 'vlagger' ? `<span>${vlagIcon(13)} ${s.vlagger || 0}</span>`
+      : sortBy === 'zaaldienst' ? `<span>&#128203; ${s.zaaldienst || 0}</span>`
       : `<span>${s.goals}</span><span>${s.assists}</span>`;
-    if (sortBy !== 'vlagger') {
+    if (!taakKolom) {
       if (s.motm) stats += `<span>${s.motm}</span>`;
       if (s.cleanSheets) stats += `<span>🧤 ${s.cleanSheets}</span>`;
       if (s.greens) stats += `<span>&#x1F7E2; ${s.greens}</span>`;
@@ -3740,6 +3908,7 @@ function renderHistoricalStats(seasonKey) {
       <button class="tab-btn" data-sort="assists">Assists</button>
       <button class="tab-btn" data-sort="ratio">G+A Ratio</button>
       ${(data.vlaggers || []).length ? '<button class="tab-btn" data-sort="vlagger">Vlaggen</button>' : ''}
+      ${(data.zaaldiensten || []).length ? '<button class="tab-btn" data-sort="zaaldienst">Zaaldienst</button>' : ''}
     </div>
     <div class="card" id="historyLeaderboard"></div>`;
 
@@ -3765,39 +3934,40 @@ function renderHistoricalStats(seasonKey) {
 function setupHistoricalLeaderboard(seasonKey) {
   const data = HISTORY[seasonKey];
   if (!data) return;
-  renderHistoricalPlayerList(data.players, 'goals', data.vlaggers);
+  renderHistoricalPlayerList(data.players, 'goals', data);
   document.querySelectorAll('#historyTabs .tab-btn').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('#historyTabs .tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderHistoricalPlayerList(data.players, btn.dataset.sort, data.vlaggers);
+      renderHistoricalPlayerList(data.players, btn.dataset.sort, data);
     };
   });
 }
 
-function renderVlaggerLijst(el, vlaggers) {
+function renderTaakLijst(el, rijen, taak) {
   let h = `<div class="leaderboard-item" style="border-bottom:2px solid var(--border);padding-bottom:8px">
     <span class="lb-rank" style="font-size:0.65rem">#</span>
     <span class="player-name" style="font-size:0.78rem;font-weight:700;color:var(--text-muted);flex:1">Naam</span>
-    <div class="lb-stats" style="color:var(--text-muted);font-size:0.68rem"><span>Gevlagd</span></div>
+    <div class="lb-stats" style="color:var(--text-muted);font-size:0.68rem"><span>${taak === 'vlagger' ? 'Gevlagd' : 'Zaaldienst'}</span></div>
   </div>`;
-  [...vlaggers].sort((a, b) => b.count - a.count).forEach((v, i) => {
+  [...rijen].sort((a, b) => b.count - a.count).forEach((v, i) => {
     const dbPlayer = DB.players.find(dp => dp.name === v.name);
     const avatar = dbPlayer ? avatarHTML(dbPlayer, 'avatar-sm') : `<div class="avatar avatar-sm">?</div>`;
     h += `<div class="leaderboard-item">
       <span class="lb-rank ${i===0?'top':''}">${i+1}</span>
       ${avatar}
       <span class="player-name">${v.name}</span>
-      <div class="lb-stats"><span>&#128681; ${v.count}</span></div>
+      <div class="lb-stats"><span>${taak === 'vlagger' ? vlagIcon(13) : '&#128203;'} ${v.count}</span></div>
     </div>`;
   });
   el.innerHTML = h;
 }
 
-function renderHistoricalPlayerList(players, sortBy, vlaggers) {
+function renderHistoricalPlayerList(players, sortBy, data) {
   const el = document.getElementById('historyLeaderboard');
   if (!el) return;
-  if (sortBy === 'vlagger') return renderVlaggerLijst(el, vlaggers || []);
+  if (sortBy === 'vlagger') return renderTaakLijst(el, (data||{}).vlaggers || [], 'vlagger');
+  if (sortBy === 'zaaldienst') return renderTaakLijst(el, (data||{}).zaaldiensten || [], 'zaaldienst');
   const sorted = [...players].sort((a, b) => {
     if (sortBy === 'goals') return b.goals - a.goals || b.assists - a.assists;
     if (sortBy === 'assists') return b.assists - a.assists || b.goals - a.goals;

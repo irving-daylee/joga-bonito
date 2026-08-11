@@ -9,6 +9,24 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.5.0] — 26 juli 2026
+
+### Toegevoegd
+- **Doelpuntenmakers bij historische wedstrijden.** De 45 wedstrijden van
+  2024/25 en 2025/26 tonen nu wie er scoorde, wie kaarten kreeg en wie er in de
+  selectie zat — overgenomen uit de seizoensadministratie. Assists staan er
+  apart bij: de administratie noteert aantallen per speler, niet welke assist
+  bij welk doelpunt hoorde, dus die worden niet aan een goal gekoppeld.
+- Seizoen 2024/25 heeft nu ook een uitslagenlijst.
+- **Zaaldienst** bijhouden, met dezelfde keuze- en lotingsknop als de vlagger,
+  en een eigen tabblad in Stats.
+
+### Gewijzigd
+- Het vlaggericoon is nu de geblokte rood-gele grensrechtersvlag in plaats van
+  een rode driehoek.
+
+---
+
 ## [2.4.0] — 26 juli 2026
 
 ### Toegevoegd

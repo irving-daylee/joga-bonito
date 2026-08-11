@@ -528,7 +528,20 @@ await check('de vlagger overleeft een rondje Firebase en staat op de historie', 
   assert(!loginError, `inloggen crasht: ${loginError}`);
 
   const metVlagger = Number(w8.eval('DB.matches.filter(m => m.vlaggerNaam).length'));
-  assert(metVlagger === 19, `${metVlagger} geseede wedstrijden met een vlagger in plaats van 19`);
+  assert(metVlagger === 39, `${metVlagger} geseede wedstrijden met een vlagger in plaats van 39`);
+  // Zaaldienst is historisch niet per wedstrijd bijgehouden maar per
+  // zaaldienstavond, dus die telling staat als seizoenstotaal in HISTORY.
+  const zaaldienstTotalen = Number(w8.eval("HISTORY['2025/26'].zaaldiensten.reduce((s,z) => s+z.count, 0)"));
+  assert(zaaldienstTotalen === 8, `${zaaldienstTotalen} zaaldiensten in 2025/26 in plaats van 8`);
+
+  // Doelpuntenmakers uit de administratie moeten optellen tot de uitslag.
+  const klopt = w8.eval(`(() => {
+    const fout = DB.matches.filter(m => m._seeded && (m.events||[]).some(e => e.type === 'goal'))
+      .filter(m => m.events.filter(e => e.type === 'goal' && e.team === 'home').length !== m.scoreHome);
+    return JSON.stringify(fout.map(m => m.date + ' ' + m.opponent));
+  })()`);
+  const mismatch = JSON.parse(klopt);
+  assert(mismatch.length === 0, `doelpuntenmakers tellen niet op tot de uitslag: ${mismatch.join(', ')}`);
 
   // Firebase stript null-velden; de vlagger moet daar tegen kunnen.
   const heen = JSON.parse(w8.eval('JSON.stringify(DB.matches.find(m => m.vlaggerNaam))'));
@@ -561,7 +574,7 @@ await check('de loting kiest wie het minst gevlagd heeft', async () => {
   // 25 lotingen: degene die al twee keer vlagde mag er geen enkele keer uitkomen.
   const uitkomsten = new Set();
   for (let i = 0; i < 25; i++) {
-    w9.eval('wijsVlaggerAan()');
+    w9.eval("wijsTaakAan('vlagger')");
     uitkomsten.add(w9.eval('vlaggerVan(DB.currentMatch)'));
   }
   assert(!uitkomsten.has(veelvlagger),
