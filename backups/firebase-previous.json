@@ -1,5 +1,29 @@
 {
-  "_seedVersion": 4,
+  "_seedVersion": 5,
+  "currentMatch": {
+    "comp": "comp",
+    "date": "2026-08-11",
+    "flyingKeeper": false,
+    "half": 1,
+    "id": "m27",
+    "opponent": "FC Test",
+    "scoreAway": 0,
+    "scoreHome": 0,
+    "sporthal": "Stedenwijk",
+    "squad": [
+      "p1",
+      "p7",
+      "p2",
+      "p3",
+      "p5",
+      "p4",
+      "p6",
+      "p8"
+    ],
+    "status": "squad",
+    "vlagger": "p5",
+    "vlaggerNaam": "Bobby"
+  },
   "matches": [
     {
       "_seeded": true,
@@ -13,7 +37,8 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -27,7 +52,8 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -41,7 +67,8 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Irving"
     },
     {
       "_seeded": true,
@@ -55,7 +82,8 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Irving"
     },
     {
       "_seeded": true,
@@ -69,7 +97,8 @@
       "scoreHome": 18,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -83,7 +112,8 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -97,7 +127,8 @@
       "scoreHome": 5,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Said"
     },
     {
       "_seeded": true,
@@ -111,7 +142,8 @@
       "scoreHome": 3,
       "season": "2025/26",
       "sporthal": "Haven",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Irving"
     },
     {
       "_seeded": true,
@@ -125,7 +157,8 @@
       "scoreHome": 15,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -139,7 +172,8 @@
       "scoreHome": 10,
       "season": "2025/26",
       "sporthal": "Haven",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -153,7 +187,8 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Haven",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -167,7 +202,8 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Kenneth"
     },
     {
       "_seeded": true,
@@ -181,7 +217,8 @@
       "scoreHome": 6,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -223,7 +260,8 @@
       "scoreHome": 6,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Kenneth"
     },
     {
       "_seeded": true,
@@ -251,7 +289,8 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Haven",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -265,7 +304,8 @@
       "scoreHome": 5,
       "season": "2025/26",
       "sporthal": "Haven",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Zakaria"
     },
     {
       "_seeded": true,
@@ -279,7 +319,8 @@
       "scoreHome": 3,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -293,7 +334,8 @@
       "scoreHome": 7,
       "season": "2025/26",
       "sporthal": "Buiten",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
@@ -321,10 +363,11 @@
       "scoreHome": 4,
       "season": "2025/26",
       "sporthal": "Stad",
-      "status": "finished"
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
     }
   ],
-  "nextMatchId": 27,
+  "nextMatchId": 28,
   "nextPlayerId": 13,
   "players": [
     {
@@ -426,5 +469,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1785244091372
+  "updatedAt": 1786429290024
 }
