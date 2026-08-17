@@ -619,6 +619,35 @@ await check('het versienummer staat in de topbar en is stempelbaar', () => {
   return `${getoond}, changelog gelijk`;
 });
 
+await check('een stand uit een andere poule wordt niet als actueel gepresenteerd', () => {
+  // srza publiceert de nieuwe poulestand pas bij de competitiestart en herziet
+  // ondertussen soms de oude. De app moet dan onze eigen eindstand aanhouden.
+  w.eval(`srzaData = {
+    programma: [{ date:'2026-09-03', opp:'Limako', comp:'1A', time:'20:24', hal:'BUITEN', home:true },
+                { date:'2026-09-09', opp:'Ally United', comp:'1A', time:'20:24', hal:'WATERWIJK', home:false }],
+    uitslagen: [],
+    standen: [{ pos:1, team:'As Sport Events', g:20, w:15, gl:3, v:2, dv:141, dt:76, ds:65, p:48 },
+              { pos:2, team:'Joga Bonito', g:20, w:14, gl:2, v:4, dv:130, dt:63, ds:67, p:44 },
+              { pos:3, team:'Old Legends', g:20, w:9, gl:3, v:8, dv:81, dt:73, ds:8, p:30 }],
+    team: { position: 2 }
+  };
+  DB.season = '2026/27'; DB.matches = []; DB._seedVersion = 0; seedMatchesFromHistory();
+  renderAnalysePage();`);
+
+  const t = w.document.getElementById('analyseContent').textContent.replace(/\s+/g, ' ');
+  assert(!/Podiumplaats: 2e|Positie 2 in de stand/.test(t),
+    'de app presenteert een stand uit een andere poule als de huidige positie');
+  assert(/3e/.test(t), `de vastgelegde eindstand (3e) komt niet terug: ${t.slice(0, 160)}`);
+
+  // Spiegelbeeld: hoort de stand wél bij het programma, dan is hij actueel.
+  const actueel = w.eval(`srzaStandVanDitSeizoen({
+    programma: [{ opp: 'Old Legends' }, { opp: 'As Sport Events' }],
+    standen: [{ team: 'As Sport Events' }, { team: 'Joga Bonito' }, { team: 'Old Legends' }]
+  })`);
+  assert(actueel === true, 'een stand die wél bij het programma hoort wordt onterecht als oud gezien');
+  return 'eindstand 2025/26 blijft 3e';
+});
+
 await check('srza-datums zijn ISO en renderen zonder NaN', () => {
   // new Date() struikelt over de Nederlandse maandnamen maart, mei en oktober,
   // dus de scraper moet alles als ISO wegschrijven.

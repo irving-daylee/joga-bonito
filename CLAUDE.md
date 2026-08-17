@@ -111,6 +111,10 @@ Geen spelersfoto's: avatars zijn het rugnummer. Bewust geen PII buiten voornaam,
 - [x] **Firebase migratie** — auth (e-mail + Google) en Realtime Database sync tussen devices.
 - [ ] **Seizoensoverzicht als share card** — op de roadmap, nog niet in scope.
 
+### Eindstand 2025/26 is 3e
+
+srza.nl toont die poule inmiddels met tien teams in plaats van elf (Mladost eruit) en Joga Bonito op 2. **Irving heeft besloten de klassering aan te houden zoals die aan het einde van het seizoen stond: 3e** (augustus 2026). Pas `HISTORY['2025/26']` daar dus niet op aan. `srzaStandVanDitSeizoen()` herkent dat een opgehaalde stand niet bij het huidige programma hoort en valt dan terug op onze eigen vastgelegde eindstand.
+
 ## Bij de start van een nieuw seizoen
 
 1. `TEAM_ID` en `COMP_NR` bovenaan `scripts/scrape-srza.js` bijwerken (test met `COMP_NR=<nr> node scripts/scrape-srza.js`; hij faalt luid bij het verkeerde nummer).

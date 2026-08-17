@@ -9,6 +9,17 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.5.2] — 17 augustus 2026
+
+### Opgelost
+- srza.nl toont de poule van vorig seizoen inmiddels zonder Mladost, waardoor
+  Joga Bonito daar op de 2e plaats staat. De app hield die stand voor de actuele
+  en sprak zichzelf tegen: Stats zei 3e, Analyse 2e. De app herkent nu dat een
+  opgehaalde stand niet bij het huidige programma hoort en houdt de eindstand
+  aan zoals die bij het afsluiten van het seizoen was: **3e**.
+
+---
+
 ## [2.5.1] — 17 augustus 2026
 
 ### Toegevoegd

@@ -1631,7 +1631,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.5.1';
+const APP_VERSION = '2.5.2';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -4635,6 +4635,22 @@ function generateSeasonInsights(matches) {
   return ins;
 }
 
+// Hoort de opgehaalde stand bij de poule waarin we nu spelen? Zo niet, dan is
+// het de eindstand van vorig seizoen en zegt hij niets over de huidige vorm.
+function srzaStandVanDitSeizoen(srza) {
+  const programma = srza?.programma || [];
+  const standen = srza?.standen || [];
+  if (!programma.length || !standen.length) return true;
+  const kaal = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const inStand = naam => standen.some(r => {
+    const a = kaal(r.team), b = kaal(naam);
+    return a && b && (a.includes(b) || b.includes(a));
+  });
+  const tegenstanders = [...new Set(programma.map(p => p.opp))];
+  const herkend = tegenstanders.filter(inStand).length;
+  return herkend >= tegenstanders.length / 2;
+}
+
 function generateCompetitieInsights() {
   const ins = [];
   const srza = srzaData;
@@ -4643,7 +4659,11 @@ function generateCompetitieInsights() {
   const all = HISTORY['all'];
 
   const results = srza?.uitslagen || hist?.results || [];
-  const standen = srza?.standen || hist?.standings || [];
+  // srza publiceert de stand van een nieuwe poule pas als de competitie begint.
+  // Tot die tijd staat er de eindstand van vorig seizoen, die daar soms nog
+  // herzien wordt. Dan houden we onze eigen vastgelegde eindstand aan.
+  const standActueel = srzaStandVanDitSeizoen(srza);
+  const standen = (standActueel && srza?.standen?.length) ? srza.standen : (hist?.standings || []);
   const players = hist?.players || [];
   const allPlayers = all?.players || [];
 
@@ -4659,10 +4679,13 @@ function generateCompetitieInsights() {
         body: `Joga Bonito staat op <span class="insight-stat">plek 1</span> met <span class="insight-stat">${jb.p} punten</span> uit ${jb.g} wedstrijden. ${jb.p - second.p} punten voorsprong op ${second.team}.`
       });
     } else {
+      const slot = standActueel ? '' : ' Dit is de eindstand van 2025/26; de nieuwe poule is nog niet gepubliceerd.';
       ins.push({
         tag: jb.pos <= 3 ? 'neutral' : 'warning', tagText: `#${jb.pos}`,
-        title: jb.pos <= 3 ? `Podiumplaats: ${jb.pos}e` : `Positie ${jb.pos} in de stand`,
-        body: `<span class="insight-stat">${jb.pos}e</span> met <span class="insight-stat">${jb.p} punten</span> uit ${jb.g} wedstrijden (${jb.w}W ${jb.gl}G ${jb.v}V). <span class="insight-stat">${gap} punten</span> achter koploper ${leader.team}. Doelsaldo: <strong>${jb.ds > 0 ? '+' : ''}${jb.ds}</strong> (${jb.dv} voor, ${jb.dt} tegen).`
+        title: standActueel
+          ? (jb.pos <= 3 ? `Podiumplaats: ${jb.pos}e` : `Positie ${jb.pos} in de stand`)
+          : `Vorig seizoen geëindigd als ${jb.pos}e`,
+        body: `<span class="insight-stat">${jb.pos}e</span> met <span class="insight-stat">${jb.p} punten</span> uit ${jb.g} wedstrijden (${jb.w}W ${jb.gl}G ${jb.v}V). <span class="insight-stat">${gap} punten</span> achter koploper ${leader.team}. Doelsaldo: <strong>${jb.ds > 0 ? '+' : ''}${jb.ds}</strong> (${jb.dv} voor, ${jb.dt} tegen).${slot}`
       });
     }
   }
