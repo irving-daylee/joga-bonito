@@ -1,34 +1,34 @@
 {
-  "_seedVersion": 5,
-  "currentMatch": {
-    "comp": "comp",
-    "date": "2026-08-11",
-    "flyingKeeper": false,
-    "half": 1,
-    "id": "m27",
-    "opponent": "FC Test",
-    "scoreAway": 0,
-    "scoreHome": 0,
-    "sporthal": "Stedenwijk",
-    "squad": [
-      "p1",
-      "p7",
-      "p2",
-      "p3",
-      "p5",
-      "p4",
-      "p6",
-      "p8"
-    ],
-    "status": "squad",
-    "vlagger": "p5",
-    "vlaggerNaam": "Bobby"
-  },
+  "_seedVersion": 6,
   "matches": [
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2025-09-11",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs1",
@@ -37,13 +37,100 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p1",
+        "p2",
+        "p9",
+        "p10",
+        "p3"
+      ],
+      "squadNamen": [
+        "Marco",
+        "Irving",
+        "Kenneth",
+        "Said",
+        "Lorenzo",
+        "Lyzairo"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          2
+        ],
+        [
+          "Jamal",
+          2
+        ],
+        [
+          "Irving",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Said",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2025-09-30",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs2",
@@ -52,13 +139,52 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p8",
+        "p2",
+        "p3",
+        "p9",
+        "p10",
+        "p5",
+        "p7"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Irving",
+        "Lyzairo",
+        "Kenneth",
+        "Said",
+        "Bobby",
+        "Lawin",
+        "Jamal"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lyzairo",
+          2
+        ]
+      ],
       "comp": "comp",
       "date": "2025-10-07",
+      "events": [
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs3",
@@ -67,13 +193,101 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p10",
+        "p3",
+        "p7",
+        "p9",
+        "p4",
+        "p1"
+      ],
+      "squadNamen": [
+        "Said",
+        "Lyzairo",
+        "Lawin",
+        "Kenneth",
+        "Rayvano",
+        "Marco"
+      ],
       "status": "finished",
       "vlaggerNaam": "Irving"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Erfan",
+          2
+        ],
+        [
+          "Kenneth",
+          2
+        ],
+        [
+          "Said",
+          1
+        ],
+        [
+          "Lyzairo",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ]
+      ],
       "comp": "beker",
       "date": "2025-10-09",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs4",
@@ -82,13 +296,165 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p8",
+        "p10",
+        "p3",
+        "p9",
+        "p4",
+        "p1"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Said",
+        "Lyzairo",
+        "Kenneth",
+        "Rayvano",
+        "Marco"
+      ],
       "status": "finished",
       "vlaggerNaam": "Irving"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lawin",
+          4
+        ],
+        [
+          "Kenneth",
+          2
+        ],
+        [
+          "Said",
+          2
+        ],
+        [
+          "Irving",
+          2
+        ],
+        [
+          "Amine",
+          1
+        ],
+        [
+          "Lyzairo",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2025-10-30",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs5",
@@ -97,13 +463,56 @@
       "scoreHome": 18,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p11",
+        "p7",
+        "p4",
+        "p1",
+        "p9",
+        "p10",
+        "p3",
+        "p2"
+      ],
+      "squadNamen": [
+        "Amine",
+        "Lawin",
+        "Rayvano",
+        "Marco",
+        "Kenneth",
+        "Said",
+        "Lyzairo",
+        "Irving"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lyzairo",
+          1
+        ],
+        [
+          "Jamal",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2025-11-06",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Jamal",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs6",
@@ -112,13 +521,76 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p4",
+        "p1",
+        "p9",
+        "p10",
+        "p3",
+        "p2"
+      ],
+      "squadNamen": [
+        "Rayvano",
+        "Marco",
+        "Kenneth",
+        "Said",
+        "Lyzairo",
+        "Irving",
+        "Jamal"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Rayvano",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Jamal",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2025-11-13",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs7",
@@ -127,13 +599,62 @@
       "scoreHome": 5,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p4",
+        "p1",
+        "p9",
+        "p3",
+        "p2"
+      ],
+      "squadNamen": [
+        "Rayvano",
+        "Marco",
+        "Kenneth",
+        "Lyzairo",
+        "Irving",
+        "Jamal"
+      ],
       "status": "finished",
       "vlaggerNaam": "Said"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Marco",
+          1
+        ],
+        [
+          "Lyzairo",
+          1
+        ],
+        [
+          "Bobby",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2025-11-24",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs8",
@@ -142,13 +663,150 @@
       "scoreHome": 3,
       "season": "2025/26",
       "sporthal": "Haven",
+      "squad": [
+        "p1",
+        "p10",
+        "p7",
+        "p9",
+        "p11",
+        "p3",
+        "p5"
+      ],
+      "squadNamen": [
+        "Marco",
+        "Jamal",
+        "Said",
+        "Lawin",
+        "Kenneth",
+        "Amine",
+        "Lyzairo",
+        "Bobby"
+      ],
       "status": "finished",
       "vlaggerNaam": "Irving"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          5
+        ],
+        [
+          "Lyzairo",
+          3
+        ],
+        [
+          "Said",
+          2
+        ],
+        [
+          "Kenneth",
+          2
+        ],
+        [
+          "Lawin",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ]
+      ],
       "comp": "beker",
       "date": "2025-11-27",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs9",
@@ -157,13 +815,115 @@
       "scoreHome": 15,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p1",
+        "p10",
+        "p7",
+        "p9",
+        "p3",
+        "p2",
+        "p4"
+      ],
+      "squadNamen": [
+        "Marco",
+        "Said",
+        "Lawin",
+        "Kenneth",
+        "Lyzairo",
+        "Irving",
+        "Rayvano"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lawin",
+          3
+        ],
+        [
+          "Kenneth",
+          3
+        ],
+        [
+          "Amine",
+          2
+        ],
+        [
+          "Said",
+          1
+        ],
+        [
+          "Lyzairo",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2025-12-15",
+      "events": [
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs10",
@@ -172,13 +932,49 @@
       "scoreHome": 10,
       "season": "2025/26",
       "sporthal": "Haven",
+      "squad": [
+        "p11",
+        "p10",
+        "p7",
+        "p9",
+        "p3",
+        "p1"
+      ],
+      "squadNamen": [
+        "Amine",
+        "Said",
+        "Lawin",
+        "Kenneth",
+        "Lyzairo",
+        "Marco"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lawin",
+          2
+        ]
+      ],
       "comp": "beker",
       "date": "2026-01-05",
+      "events": [
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs11",
@@ -187,13 +983,97 @@
       "scoreHome": 2,
       "season": "2025/26",
       "sporthal": "Haven",
+      "squad": [
+        "p1",
+        "p10",
+        "p7",
+        "p9",
+        "p3",
+        "p2"
+      ],
+      "squadNamen": [
+        "Marco",
+        "Said",
+        "Lawin",
+        "Kenneth",
+        "Lyzairo",
+        "Irving"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Amine",
+          3
+        ],
+        [
+          "Lawin",
+          2
+        ],
+        [
+          "Lyzairo",
+          1
+        ],
+        [
+          "Said",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-01-08",
+      "events": [
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs12",
@@ -202,13 +1082,79 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p11",
+        "p7",
+        "p1",
+        "p3",
+        "p10"
+      ],
+      "squadNamen": [
+        "Amine",
+        "Lawin",
+        "Marco",
+        "Lyzairo",
+        "Said"
+      ],
       "status": "finished",
       "vlaggerNaam": "Kenneth"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Amine",
+          3
+        ],
+        [
+          "Lawin",
+          1
+        ],
+        [
+          "Said",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-01-20",
+      "events": [
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs13",
@@ -217,6 +1163,24 @@
       "scoreHome": 6,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p11",
+        "p7",
+        "p1",
+        "p3",
+        "p10",
+        "p2",
+        "p8"
+      ],
+      "squadNamen": [
+        "Amine",
+        "Lawin",
+        "Marco",
+        "Lyzairo",
+        "Said",
+        "Irving",
+        "Erfan"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
@@ -236,8 +1200,92 @@
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          3
+        ],
+        [
+          "Lawin",
+          2
+        ],
+        [
+          "Amine",
+          1
+        ],
+        [
+          "Lyzairo",
+          1
+        ],
+        [
+          "Irving",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-02-19",
+      "events": [
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs15",
@@ -246,12 +1294,82 @@
       "scoreHome": 10,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p11",
+        "p7",
+        "p1",
+        "p3",
+        "p10",
+        "p2",
+        "p5"
+      ],
+      "squadNamen": [
+        "Amine",
+        "Lawin",
+        "Marco",
+        "Lyzairo",
+        "Said",
+        "Irving",
+        "Bobby"
+      ],
       "status": "finished"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Rayvano",
+          2
+        ],
+        [
+          "Irving",
+          1
+        ],
+        [
+          "Lyzairo",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-03-05",
+      "events": [
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs16",
@@ -260,13 +1378,105 @@
       "scoreHome": 6,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p2",
+        "p4",
+        "p7",
+        "p1",
+        "p3",
+        "p10"
+      ],
+      "squadNamen": [
+        "Irving",
+        "Rayvano",
+        "Lawin",
+        "Marco",
+        "Lyzairo",
+        "Said"
+      ],
       "status": "finished",
       "vlaggerNaam": "Kenneth"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lawin",
+          4
+        ],
+        [
+          "Irving",
+          3
+        ],
+        [
+          "Kenneth",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-03-16",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs17",
@@ -275,12 +1485,106 @@
       "scoreHome": 10,
       "season": "2025/26",
       "sporthal": "Haven",
+      "squad": [
+        "p2",
+        "p11",
+        "p9",
+        "p10",
+        "p7",
+        "p1",
+        "p3"
+      ],
+      "squadNamen": [
+        "Irving",
+        "Amine",
+        "Kenneth",
+        "Said",
+        "Lawin",
+        "Marco",
+        "Lyzairo"
+      ],
       "status": "finished"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          1
+        ],
+        [
+          "Amine",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Said",
+          1
+        ],
+        [
+          "Lawin",
+          1
+        ],
+        [
+          "Marco",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-03-23",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs18",
@@ -289,13 +1593,75 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Haven",
+      "squad": [
+        "p2",
+        "p11",
+        "p9",
+        "p10",
+        "p7",
+        "p1",
+        "p3",
+        "p5"
+      ],
+      "squadNamen": [
+        "Irving",
+        "Amine",
+        "Kenneth",
+        "Said",
+        "Lawin",
+        "Marco",
+        "Lyzairo",
+        "Bobby"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lawin",
+          2
+        ],
+        [
+          "Lyzairo",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-03-30",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p11",
+          "scorerNaam": "Amine",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs19",
@@ -304,13 +1670,59 @@
       "scoreHome": 5,
       "season": "2025/26",
       "sporthal": "Haven",
+      "squad": [
+        "p3",
+        "p2",
+        "p11",
+        "p10",
+        "p7",
+        "p1",
+        "p3",
+        "p4"
+      ],
+      "squadNamen": [
+        "Lyzairo",
+        "Irving",
+        "Amine",
+        "Said",
+        "Lawin",
+        "Marco",
+        "Lyzairo",
+        "Rayvano"
+      ],
       "status": "finished",
       "vlaggerNaam": "Zakaria"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Amine",
+          2
+        ]
+      ],
       "comp": "comp",
       "date": "2026-04-14",
+      "events": [
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs20",
@@ -319,13 +1731,86 @@
       "scoreHome": 3,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p11",
+        "p10",
+        "p7",
+        "p1",
+        "p3",
+        "p4"
+      ],
+      "squadNamen": [
+        "Amine",
+        "Said",
+        "Lawin",
+        "Marco",
+        "Lyzairo",
+        "Rayvano"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          2
+        ],
+        [
+          "Lawin",
+          1
+        ],
+        [
+          "Marco",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-04-23",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Eigen doelpunt",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs21",
@@ -334,6 +1819,23 @@
       "scoreHome": 7,
       "season": "2025/26",
       "sporthal": "Buiten",
+      "squad": [
+        "p10",
+        "p9",
+        "p7",
+        "p2",
+        "p3",
+        "p1"
+      ],
+      "squadNamen": [
+        "Said",
+        "Kenneth",
+        "Lawin",
+        "Irving",
+        "Lyzairo",
+        "Marco",
+        "Eigen doelpunt"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
     },
@@ -341,6 +1843,33 @@
       "_seeded": true,
       "comp": "comp",
       "date": "2026-05-21",
+      "events": [
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs22",
@@ -349,12 +1878,55 @@
       "scoreHome": 5,
       "season": "2025/26",
       "sporthal": "Waterwijk",
+      "squadNamen": [
+        "Reglementair"
+      ],
       "status": "finished"
     },
     {
       "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          1
+        ],
+        [
+          "Lawin",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ]
+      ],
       "comp": "comp",
       "date": "2026-06-01",
+      "events": [
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p7",
+          "scorerNaam": "Lawin",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
       "flyingKeeper": false,
       "half": 2,
       "id": "hs23",
@@ -363,11 +1935,1866 @@
       "scoreHome": 4,
       "season": "2025/26",
       "sporthal": "Stad",
+      "squad": [
+        "p5",
+        "p2",
+        "p7",
+        "p3",
+        "p9",
+        "p10",
+        "p1"
+      ],
+      "squadNamen": [
+        "Bobby",
+        "Irving",
+        "Lawin",
+        "Lyzairo",
+        "Kenneth",
+        "Said",
+        "Marco"
+      ],
       "status": "finished",
       "vlaggerNaam": "Erfan"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Said",
+          2
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Irving",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2024-09-09",
+      "events": [
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs24",
+      "opponent": "Tuinderij Groene Pluk",
+      "scoreAway": 1,
+      "scoreHome": 7,
+      "season": "2024/25",
+      "sporthal": "Haven",
+      "squad": [
+        "p5",
+        "p9",
+        "p2",
+        "p4",
+        "p1",
+        "p10"
+      ],
+      "squadNamen": [
+        "Bobby",
+        "Kenneth",
+        "Irving",
+        "Rayvano",
+        "Ahmed",
+        "Marco",
+        "Said"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Lorenzo",
+          1
+        ],
+        [
+          "Erfan",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2024-09-18",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "cardType": "green",
+          "playerId": "p8",
+          "playerNaam": "Erfan",
+          "type": "card"
+        },
+        {
+          "cardType": "red",
+          "playerId": "p8",
+          "playerNaam": "Erfan",
+          "type": "card"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs25",
+      "opponent": "Unicum v/d Voort",
+      "scoreAway": 3,
+      "scoreHome": 5,
+      "season": "2024/25",
+      "sporthal": "Waterwijk",
+      "squad": [
+        "p5",
+        "p9",
+        "p10",
+        "p8"
+      ],
+      "squadNamen": [
+        "Bobby",
+        "Kenneth",
+        "Ahmed",
+        "Said",
+        "Lorenzo",
+        "Erfan"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Marco"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          2
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2024-10-01",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Lorenzo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs26",
+      "opponent": "Van Eck Beenmode",
+      "scoreAway": 2,
+      "scoreHome": 7,
+      "season": "2024/25",
+      "sporthal": "Buiten",
+      "squad": [
+        "p5",
+        "p9",
+        "p1",
+        "p2",
+        "p4"
+      ],
+      "squadNamen": [
+        "Bobby",
+        "Kenneth",
+        "Ahmed",
+        "Lorenzo",
+        "Marco",
+        "Irving",
+        "Rayvano"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          3
+        ],
+        [
+          "Kenneth",
+          2
+        ],
+        [
+          "Said",
+          1
+        ],
+        [
+          "Bobby",
+          1
+        ],
+        [
+          "Ahmed",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2024-10-16",
+      "events": [
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs27",
+      "opponent": "FC Sacapuntas",
+      "scoreAway": 0,
+      "scoreHome": 9,
+      "season": "2024/25",
+      "sporthal": "Waterwijk",
+      "squad": [
+        "p10",
+        "p5",
+        "p9",
+        "p2",
+        "p8"
+      ],
+      "squadNamen": [
+        "Said",
+        "Bobby",
+        "Kenneth",
+        "Ahmed",
+        "Irving",
+        "Erfan",
+        "Zakaria"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Marco"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Erfan",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2024-11-05",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs28",
+      "opponent": "Salders Doet",
+      "scoreAway": 0,
+      "scoreHome": 5,
+      "season": "2024/25",
+      "sporthal": "Buiten",
+      "squad": [
+        "p10",
+        "p5",
+        "p9",
+        "p2",
+        "p8",
+        "p4"
+      ],
+      "squadNamen": [
+        "Said",
+        "Bobby",
+        "Kenneth",
+        "Irving",
+        "Erfan",
+        "Zakaria",
+        "Lorenzo",
+        "Rayvano"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Rayvano"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Irving",
+          1
+        ],
+        [
+          "Zakaria",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2024-11-20",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Eigen doelpunt",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs29",
+      "opponent": "Rif United",
+      "scoreAway": 4,
+      "scoreHome": 7,
+      "season": "2024/25",
+      "sporthal": "Waterwijk",
+      "squad": [
+        "p10",
+        "p5",
+        "p9",
+        "p2",
+        "p1",
+        "p4"
+      ],
+      "squadNamen": [
+        "Said",
+        "Bobby",
+        "Kenneth",
+        "Ahmed",
+        "Irving",
+        "Marco",
+        "Zakaria",
+        "Saber",
+        "Rayvano",
+        "Eigen doelpunt"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Kenneth",
+          3
+        ],
+        [
+          "Erfan",
+          2
+        ],
+        [
+          "Rayvano",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2024-12-02",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Lorenzo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs30",
+      "opponent": "Doko Kunststof Kozijnen BV",
+      "scoreAway": 2,
+      "scoreHome": 6,
+      "season": "2024/25",
+      "sporthal": "Stedenwijk",
+      "squad": [
+        "p10",
+        "p9",
+        "p2",
+        "p4",
+        "p8"
+      ],
+      "squadNamen": [
+        "Lorenzo",
+        "Said",
+        "Kenneth",
+        "Ahmed",
+        "Irving",
+        "Rayvano",
+        "Erfan"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Ahmed"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Kenneth",
+          3
+        ],
+        [
+          "Lorenzo",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ],
+        [
+          "Erfan",
+          1
+        ]
+      ],
+      "comp": "beker",
+      "date": "2024-12-17",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Lorenzo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs31",
+      "opponent": "Goud Wit (2B)",
+      "scoreAway": 5,
+      "scoreHome": 6,
+      "season": "2024/25",
+      "sporthal": "Buiten",
+      "squad": [
+        "p1",
+        "p10",
+        "p9",
+        "p4",
+        "p8"
+      ],
+      "squadNamen": [
+        "Marco",
+        "Zakaria",
+        "Lorenzo",
+        "Said",
+        "Kenneth",
+        "Ahmed",
+        "Rayvano",
+        "Erfan"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Erfan"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Kenneth",
+          2
+        ],
+        [
+          "Bobby",
+          1
+        ],
+        [
+          "Erfan",
+          1
+        ],
+        [
+          "Jamal",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-01-06",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p5",
+          "scorerNaam": "Bobby",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p8",
+          "scorerNaam": "Erfan",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Jamal",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "cardType": "green",
+          "playerId": "p10",
+          "playerNaam": "Said",
+          "type": "card"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs32",
+      "opponent": "Compañeros",
+      "scoreAway": 5,
+      "scoreHome": 5,
+      "season": "2024/25",
+      "sporthal": "Haven",
+      "squad": [
+        "p10",
+        "p9",
+        "p5",
+        "p8",
+        "p2"
+      ],
+      "squadNamen": [
+        "Lorenzo",
+        "Said",
+        "Kenneth",
+        "Bobby",
+        "Erfan",
+        "Irving",
+        "Jamal"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Kenneth"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-01-13",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Jamal",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs33",
+      "opponent": "Vag Specialist",
+      "scoreAway": 5,
+      "scoreHome": 3,
+      "season": "2024/25",
+      "sporthal": "Haven",
+      "squad": [
+        "p8",
+        "p10",
+        "p9",
+        "p5",
+        "p2",
+        "p4",
+        "p1"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Said",
+        "Kenneth",
+        "Bobby",
+        "Irving",
+        "Jamal",
+        "Zakaria",
+        "Rayvano",
+        "Marco"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Lorenzo"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Rayvano",
+          3
+        ],
+        [
+          "Lorenzo",
+          2
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-01-20",
+      "events": [
+        {
+          "scorerNaam": "Faissel",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Faissel",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Faissel",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Lorenzo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Jamal",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "cardType": "green",
+          "playerNaam": "Faissel",
+          "type": "card"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs34",
+      "opponent": "Tuinderij Groene Pluk",
+      "scoreAway": 3,
+      "scoreHome": 7,
+      "season": "2024/25",
+      "sporthal": "Stedenwijk",
+      "squad": [
+        "p10",
+        "p9",
+        "p2",
+        "p4"
+      ],
+      "squadNamen": [
+        "Lorenzo",
+        "Said",
+        "Kenneth",
+        "Irving",
+        "Jamal",
+        "Zakaria",
+        "Faissel",
+        "Rayvano",
+        "Ahmed"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Marco"
+    },
+    {
+      "_seeded": true,
+      "comp": "beker",
+      "date": "2025-01-30",
+      "events": [
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Reglementair",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs35",
+      "opponent": "Wsam (1A)",
+      "scoreAway": 0,
+      "scoreHome": 5,
+      "season": "2024/25",
+      "sporthal": "Buiten",
+      "squadNamen": [
+        "Reglementair"
+      ],
+      "status": "finished"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Lorenzo",
+          4
+        ],
+        [
+          "Rayvano",
+          1
+        ],
+        [
+          "Faissel",
+          1
+        ],
+        [
+          "Irving",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-02-10",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs36",
+      "opponent": "Unicum v/d Voort",
+      "scoreAway": 4,
+      "scoreHome": 9,
+      "season": "2024/25",
+      "sporthal": "Haven",
+      "squad": [
+        "p8",
+        "p4",
+        "p1",
+        "p10",
+        "p2"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Rayvano",
+        "Marco",
+        "Lorenzo",
+        "Said",
+        "Ahmed",
+        "Faissel",
+        "Irving"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Zakaria"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Erfan",
+          3
+        ],
+        [
+          "Lorenzo",
+          2
+        ],
+        [
+          "Kenneth",
+          2
+        ],
+        [
+          "Zakaria",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ],
+        [
+          "Irving",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-03-04",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Lorenzo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Lorenzo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Lorenzo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs37",
+      "opponent": "Van Eck Beenmode",
+      "scoreAway": 0,
+      "scoreHome": 11,
+      "season": "2024/25",
+      "sporthal": "Buiten",
+      "squad": [
+        "p8",
+        "p4",
+        "p10",
+        "p2",
+        "p9"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Zakaria",
+        "Rayvano",
+        "Lorenzo",
+        "Said",
+        "Ahmed",
+        "Irving",
+        "Kenneth"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Rayvano"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          2
+        ],
+        [
+          "Bobby",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ],
+        [
+          "Ahmed",
+          1
+        ]
+      ],
+      "comp": "beker",
+      "date": "2025-03-04",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs38",
+      "opponent": "Zinè Deluxe",
+      "scoreAway": 7,
+      "scoreHome": 5,
+      "season": "2024/25",
+      "sporthal": "Stedenwijk",
+      "squad": [
+        "p5",
+        "p9",
+        "p4",
+        "p10",
+        "p2"
+      ],
+      "squadNamen": [
+        "Bobby",
+        "Kenneth",
+        "Rayvano",
+        "Said",
+        "Ahmed",
+        "Faissel",
+        "Irving"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Irving"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-03-14",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs39",
+      "opponent": "FC Sacapuntas",
+      "scoreAway": 3,
+      "scoreHome": 2,
+      "season": "2024/25",
+      "sporthal": "Stedenwijk",
+      "squad": [
+        "p5",
+        "p4",
+        "p10",
+        "p9",
+        "p1"
+      ],
+      "squadNamen": [
+        "Bobby",
+        "Rayvano",
+        "Lorenzo",
+        "Said",
+        "Ahmed",
+        "Kenneth",
+        "Marco"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Ahmed"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Rayvano",
+          2
+        ],
+        [
+          "Erfan",
+          2
+        ],
+        [
+          "Said",
+          1
+        ],
+        [
+          "Kenneth",
+          1
+        ],
+        [
+          "Faissel",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-03-20",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Ahmed",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Faissel",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Faissel",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs40",
+      "opponent": "Salders Doet",
+      "scoreAway": 2,
+      "scoreHome": 9,
+      "season": "2024/25",
+      "sporthal": "Waterwijk",
+      "squad": [
+        "p4",
+        "p10",
+        "p9",
+        "p2",
+        "p8",
+        "p3"
+      ],
+      "squadNamen": [
+        "Rayvano",
+        "Lorenzo",
+        "Said",
+        "Ahmed",
+        "Kenneth",
+        "Irving",
+        "Erfan",
+        "Lyzairo",
+        "Faissel"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Marco"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          3
+        ],
+        [
+          "Said",
+          2
+        ],
+        [
+          "Bobby",
+          2
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-03-31",
+      "events": [
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Eigen doelpunt",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Eigen doelpunt",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Eigen doelpunt",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs41",
+      "opponent": "Rif United",
+      "scoreAway": 2,
+      "scoreHome": 10,
+      "season": "2024/25",
+      "sporthal": "Haven",
+      "squad": [
+        "p4",
+        "p10",
+        "p1",
+        "p9",
+        "p5",
+        "p2",
+        "p8"
+      ],
+      "squadNamen": [
+        "Rayvano",
+        "Said",
+        "Marco",
+        "Kenneth",
+        "Bobby",
+        "Irving",
+        "Zakaria",
+        "Erfan",
+        "Eigen doelpunt"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Ahmed"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Irving",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-04-07",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p10",
+          "scorerNaam": "Said",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs42",
+      "opponent": "Doko Kunststof Kozijnen BV",
+      "scoreAway": 0,
+      "scoreHome": 3,
+      "season": "2024/25",
+      "sporthal": "Haven",
+      "squad": [
+        "p8",
+        "p4",
+        "p2",
+        "p9",
+        "p3",
+        "p10"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Rayvano",
+        "Faissel",
+        "Irving",
+        "Kenneth",
+        "Jamal",
+        "Lyzairo",
+        "Said",
+        "Lorenzo"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Ahmed"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Erfan",
+          1
+        ],
+        [
+          "Rayvano",
+          1
+        ],
+        [
+          "Jamal",
+          1
+        ],
+        [
+          "Bobby",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-05-08",
+      "events": [
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p3",
+          "scorerNaam": "Lyzairo",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerNaam": "Faissel",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs43",
+      "opponent": "Compañeros",
+      "scoreAway": 2,
+      "scoreHome": 6,
+      "season": "2024/25",
+      "sporthal": "Waterwijk",
+      "squad": [
+        "p8",
+        "p4",
+        "p9",
+        "p3",
+        "p5"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Rayvano",
+        "Faissel",
+        "Kenneth",
+        "Jamal",
+        "Lyzairo",
+        "Bobby"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Marco"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Jamal",
+          1
+        ],
+        [
+          "Irving",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-05-27",
+      "events": [
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p2",
+          "scorerNaam": "Irving",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p9",
+          "scorerNaam": "Kenneth",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs44",
+      "opponent": "Vag Specialist",
+      "scoreAway": 2,
+      "scoreHome": 3,
+      "season": "2024/25",
+      "sporthal": "Buiten",
+      "squad": [
+        "p8",
+        "p4",
+        "p9",
+        "p3",
+        "p2",
+        "p10"
+      ],
+      "squadNamen": [
+        "Erfan",
+        "Rayvano",
+        "Kenneth",
+        "Jamal",
+        "Lyzairo",
+        "Irving",
+        "Said"
+      ],
+      "status": "finished",
+      "vlaggerNaam": "Marco"
+    },
+    {
+      "_seeded": true,
+      "assistsNamen": [
+        [
+          "Bobby",
+          1
+        ]
+      ],
+      "comp": "comp",
+      "date": "2025-06-20",
+      "events": [
+        {
+          "scorerNaam": "Saber",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "scorerId": "p4",
+          "scorerNaam": "Rayvano",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "hs45",
+      "opponent": "Compañeros",
+      "scoreAway": 4,
+      "scoreHome": 2,
+      "season": "2024/25",
+      "sporthal": "Stedenwijk",
+      "squad": [
+        "p5",
+        "p2",
+        "p4",
+        "p8",
+        "p1",
+        "p3",
+        "p9",
+        "p1"
+      ],
+      "squadNamen": [
+        "Saber",
+        "Bobby",
+        "Irving",
+        "Rayvano",
+        "Erfan",
+        "Marco",
+        "Lyzairo",
+        "Kenneth",
+        "Faissel",
+        "Marco",
+        "Zakaria"
+      ],
+      "status": "finished"
     }
   ],
-  "nextMatchId": 28,
+  "nextMatchId": 46,
   "nextPlayerId": 13,
   "players": [
     {
@@ -469,5 +3896,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1786429290024
+  "updatedAt": 1786437147450
 }
