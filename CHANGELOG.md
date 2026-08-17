@@ -9,6 +9,19 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.5.1] — 17 augustus 2026
+
+### Toegevoegd
+- Het wedstrijdprogramma van 2026/27 staat in de app: 22 wedstrijden, opgehaald
+  van srza.nl.
+
+### Opgelost
+- Data van het programma werden door srza.nl in woorden geschreven ("woensdag 7
+  oktober 2026"). De app kon maart, mei en oktober niet lezen, waardoor zeven
+  wedstrijden een onleesbare datum zouden tonen.
+
+---
+
 ## [2.5.0] — 26 juli 2026
 
 ### Toegevoegd

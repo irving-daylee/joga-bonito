@@ -619,6 +619,20 @@ await check('het versienummer staat in de topbar en is stempelbaar', () => {
   return `${getoond}, changelog gelijk`;
 });
 
+await check('srza-datums zijn ISO en renderen zonder NaN', () => {
+  // new Date() struikelt over de Nederlandse maandnamen maart, mei en oktober,
+  // dus de scraper moet alles als ISO wegschrijven.
+  const srza = JSON.parse(fs.readFileSync(path.join(path.dirname(HTML_PATH), 'data/srza.json'), 'utf8'));
+  const alle = [...(srza.programma || []), ...(srza.uitslagen || [])];
+  const nietIso = alle.filter(m => !/^\d{4}-\d{2}-\d{2}$/.test(String(m.date || '')));
+  assert(nietIso.length === 0,
+    `${nietIso.length} datum(s) niet als ISO weggeschreven, bijv. "${nietIso[0] && nietIso[0].date}"`);
+
+  const onleesbaar = alle.filter(m => isNaN(new Date(m.date)));
+  assert(onleesbaar.length === 0, `${onleesbaar.length} datum(s) die de app niet kan lezen`);
+  return `${(srza.programma||[]).length} aankomend, ${(srza.uitslagen||[]).length} uitslagen`;
+});
+
 await check('HISTORY uitslagen komen overeen met srza.json', () => {
   const srzaPad = path.join(path.dirname(HTML_PATH), 'data/srza.json');
   const srza = JSON.parse(fs.readFileSync(srzaPad, 'utf8'));

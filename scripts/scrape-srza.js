@@ -24,9 +24,25 @@ async function fetchPage(url) {
   return res.text();
 }
 
+const MAANDEN = ['januari','februari','maart','april','mei','juni',
+                 'juli','augustus','september','oktober','november','december'];
+
+// De uitslagenpagina geeft 11-09-2025, de programmapagina "donderdag 3
+// september 2026". Beide worden ISO, want new Date() struikelt over de
+// Nederlandse maandnamen maart, mei en oktober.
 function parseDate(str) {
-  const [d, m, y] = str.split('-');
-  if (!d || !m || !y) return str;
+  const tekst = String(str || '').trim();
+
+  const nl = tekst.toLowerCase().match(/(\d{1,2})\s+([a-zé]+)\s+(\d{4})/);
+  if (nl) {
+    const maand = MAANDEN.indexOf(nl[2]);
+    if (maand >= 0) {
+      return `${nl[3]}-${String(maand + 1).padStart(2, '0')}-${nl[1].padStart(2, '0')}`;
+    }
+  }
+
+  const [d, m, y] = tekst.split('-');
+  if (!d || !m || !y) return tekst;
   return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
 }
 

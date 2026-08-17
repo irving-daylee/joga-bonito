@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-18T13:17:11.254Z",
+  "lastUpdated": "2026-08-17T05:50:04.387Z",
   "team": {
     "played": 23,
     "wins": 16,
@@ -7,7 +7,7 @@
     "losses": 5,
     "goalsFor": 155,
     "goalsAgainst": 70,
-    "position": 3,
+    "position": 2,
     "points": 44
   },
   "standen": [
@@ -25,18 +25,6 @@
     },
     {
       "pos": 2,
-      "team": "Mladost",
-      "g": 20,
-      "w": 15,
-      "gl": 1,
-      "v": 4,
-      "dv": 117,
-      "dt": 77,
-      "ds": 40,
-      "p": 46
-    },
-    {
-      "pos": 3,
       "team": "Joga Bonito",
       "g": 20,
       "w": 14,
@@ -48,7 +36,7 @@
       "p": 44
     },
     {
-      "pos": 4,
+      "pos": 3,
       "team": "Jai Hanuman 1",
       "g": 20,
       "w": 9,
@@ -60,7 +48,7 @@
       "p": 30
     },
     {
-      "pos": 5,
+      "pos": 4,
       "team": "Old Legends",
       "g": 20,
       "w": 9,
@@ -72,7 +60,7 @@
       "p": 30
     },
     {
-      "pos": 6,
+      "pos": 5,
       "team": "Novia Facts",
       "g": 20,
       "w": 7,
@@ -84,7 +72,7 @@
       "p": 24
     },
     {
-      "pos": 7,
+      "pos": 6,
       "team": "Weddingcars By Dk",
       "g": 20,
       "w": 5,
@@ -96,7 +84,7 @@
       "p": 21
     },
     {
-      "pos": 8,
+      "pos": 7,
       "team": "Córdoba Concept",
       "g": 20,
       "w": 5,
@@ -108,7 +96,7 @@
       "p": 19
     },
     {
-      "pos": 9,
+      "pos": 8,
       "team": "Green Monday Energy",
       "g": 20,
       "w": 5,
@@ -120,7 +108,7 @@
       "p": 19
     },
     {
-      "pos": 10,
+      "pos": 9,
       "team": "Clk Engineering",
       "g": 20,
       "w": 4,
@@ -132,8 +120,8 @@
       "p": 16
     },
     {
-      "pos": 11,
-      "team": "Aps",
+      "pos": 10,
+      "team": "Arie Van De Raa",
       "g": 20,
       "w": 4,
       "gl": 3,
@@ -141,7 +129,7 @@
       "dv": 51,
       "dt": 95,
       "ds": -44,
-      "p": 12
+      "p": 15
     }
   ],
   "uitslagen": [
@@ -180,7 +168,7 @@
       "comp": "BK",
       "time": "20:24",
       "hal": "BUITEN",
-      "opp": "Wonam (2a)",
+      "opp": "Wonam (2b)",
       "home": false,
       "jb": 8,
       "opp_s": 2
@@ -260,7 +248,7 @@
       "comp": "1B",
       "time": "22:30",
       "hal": "BUITEN",
-      "opp": "Aps",
+      "opp": "Arie Van De Raa",
       "home": true,
       "jb": 8,
       "opp_s": 0
@@ -360,7 +348,7 @@
       "comp": "1B",
       "time": "19:00",
       "hal": "WATERWIJK",
-      "opp": "Aps",
+      "opp": "Arie Van De Raa",
       "home": true,
       "jb": 5,
       "opp_s": 0
@@ -376,5 +364,182 @@
       "opp_s": 3
     }
   ],
-  "programma": []
+  "programma": [
+    {
+      "date": "2026-09-03",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "BUITEN",
+      "opp": "Limako",
+      "home": true
+    },
+    {
+      "date": "2026-09-09",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "WATERWIJK",
+      "opp": "Ally United",
+      "home": false
+    },
+    {
+      "date": "2026-09-16",
+      "comp": "1A",
+      "time": "19:42",
+      "hal": "WATERWIJK",
+      "opp": "Novia Facts",
+      "home": false
+    },
+    {
+      "date": "2026-09-21",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "HAVEN",
+      "opp": "Ander Kallyber Fc",
+      "home": true
+    },
+    {
+      "date": "2026-09-29",
+      "comp": "1A",
+      "time": "22:30",
+      "hal": "BUITEN",
+      "opp": "Weddingcars By Dk",
+      "home": false
+    },
+    {
+      "date": "2026-10-07",
+      "comp": "1A",
+      "time": "21:48",
+      "hal": "WATERWIJK",
+      "opp": "As Sport Events",
+      "home": false
+    },
+    {
+      "date": "2026-10-26",
+      "comp": "1A",
+      "time": "19:00",
+      "hal": "STAD",
+      "opp": "Ter Laak Boomverzorging",
+      "home": false
+    },
+    {
+      "date": "2026-11-03",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "BUITEN",
+      "opp": "Novia Facts",
+      "home": true
+    },
+    {
+      "date": "2026-11-09",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "STAD",
+      "opp": "Galàcticos",
+      "home": true
+    },
+    {
+      "date": "2026-12-17",
+      "comp": "1A",
+      "time": "19:00",
+      "hal": "WATERWIJK",
+      "opp": "Weddingcars By Dk",
+      "home": true
+    },
+    {
+      "date": "2027-01-04",
+      "comp": "1A",
+      "time": "19:42",
+      "hal": "STAD",
+      "opp": "Fc Ada",
+      "home": false
+    },
+    {
+      "date": "2027-01-12",
+      "comp": "1A",
+      "time": "21:06",
+      "hal": "BUITEN",
+      "opp": "Ander Kallyber Fc",
+      "home": false
+    },
+    {
+      "date": "2027-01-18",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "HAVEN",
+      "opp": "Jai Hanuman 1",
+      "home": true
+    },
+    {
+      "date": "2027-02-03",
+      "comp": "1A",
+      "time": "19:42",
+      "hal": "WATERWIJK",
+      "opp": "Fc Ada",
+      "home": true
+    },
+    {
+      "date": "2027-03-01",
+      "comp": "1A",
+      "time": "22:30",
+      "hal": "STAD",
+      "opp": "Galàcticos",
+      "home": false
+    },
+    {
+      "date": "2027-03-11",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "WATERWIJK",
+      "opp": "As Sport Events",
+      "home": true
+    },
+    {
+      "date": "2027-03-22",
+      "comp": "1A",
+      "time": "19:00",
+      "hal": "HAVEN",
+      "opp": "De Onderste",
+      "home": false
+    },
+    {
+      "date": "2027-04-05",
+      "comp": "1A",
+      "time": "19:42",
+      "hal": "STAD",
+      "opp": "Ally United",
+      "home": true
+    },
+    {
+      "date": "2027-04-15",
+      "comp": "1A",
+      "time": "21:06",
+      "hal": "WATERWIJK",
+      "opp": "Ter Laak Boomverzorging",
+      "home": true
+    },
+    {
+      "date": "2027-04-22",
+      "comp": "1A",
+      "time": "21:48",
+      "hal": "WATERWIJK",
+      "opp": "Jai Hanuman 1",
+      "home": false
+    },
+    {
+      "date": "2027-05-12",
+      "comp": "1A",
+      "time": "21:48",
+      "hal": "WATERWIJK",
+      "opp": "De Onderste",
+      "home": true
+    },
+    {
+      "date": "2027-05-26",
+      "comp": "1A",
+      "time": "22:30",
+      "hal": "WATERWIJK",
+      "opp": "Limako",
+      "home": false
+    }
+  ]
 }
