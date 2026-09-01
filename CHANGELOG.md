@@ -9,6 +9,21 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.9.0] — 1 september 2026
+
+### Gewijzigd
+- **Matchday is een eigen functie geworden.** De knop staat nu bij elke
+  aankomende wedstrijd op de Wedstrijden-pagina, dus je kondigt een wedstrijd
+  aan zonder er eerst een aan te maken in de app.
+- In het Matchday-scherm tik je een speler rond: aanwezig → afwezig → niets.
+  De verzameltijd staat er ook, standaard een kwartier voor aanvang.
+
+### Toegevoegd
+- Start je later de wedstrijd, dan is de selectie al ingevuld met de aanwezigen
+  uit de Matchday. Late aanmeldingen tik je er in de zaal gewoon bij.
+
+---
+
 ## [2.8.0] — 1 september 2026
 
 ### Toegevoegd

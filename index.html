@@ -456,6 +456,7 @@ label {
 .vlagger-naam { font-weight: 700; font-size: 0.92rem; color: var(--navy); }
 .vlagger-naam.leeg { color: var(--text-muted); font-weight: 500; font-style: italic; }
 .vlagger-acties { display: flex; gap: 6px; }
+.matchday-btn { font-size: 1rem; line-height: 1; padding: 8px 12px; flex-shrink: 0; }
 .vlag-icon { vertical-align: -2px; }
 
 .squad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1631,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.8.0';
+const APP_VERSION = '2.9.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1675,7 +1676,8 @@ const defaultData = () => ({
   matches: [],
   currentMatch: null,
   nextPlayerId: 13,
-  nextMatchId: 1
+  nextMatchId: 1,
+  matchday: {}
 });
 
 let DB = loadDataLocal();
@@ -1701,6 +1703,14 @@ function normalizeDB(d) {
   // echt uit Firebase verdwijnen in plaats van alleen ongebruikt te blijven.
   d.players.forEach(p => { if (p && p.photo !== undefined) delete p.photo; });
   d.matches = toArray(d.matches).filter(Boolean).map(normalizeMatch);
+  // Aankondigingen staan los van de wedstrijden: je maakt er een op de dag
+  // van de poll, lang voordat er een wedstrijd in de app bestaat.
+  d.matchday = (d.matchday && typeof d.matchday === 'object') ? d.matchday : {};
+  Object.values(d.matchday).forEach(md => {
+    md.aanwezig = toArray(md.aanwezig);
+    md.afgemeld = toArray(md.afgemeld);
+    if (typeof md.verzameltijd !== 'string') md.verzameltijd = '';
+  });
   d.currentMatch = d.currentMatch ? normalizeMatch(d.currentMatch) : null;
   if (!d.nextPlayerId) d.nextPlayerId = d.players.length + 1;
   if (!d.nextMatchId) d.nextMatchId = d.matches.length + 1;
@@ -1954,40 +1964,79 @@ function wijsTaakAan(taak) {
   );
 }
 
-// Alleen wie zich echt afmeldt komt op de Matchday-kaart te staan. Wie nog
-// niets liet weten blijft ongenoemd.
-function toggleAfgemeld(id) {
-  const cm = DB.currentMatch;
-  if (!cm) return;
-  const lijst = toArray(cm.afgemeld);
-  cm.afgemeld = lijst.includes(id) ? lijst.filter(a => a !== id) : [...lijst, id];
-  if (cm.afgemeld.includes(id)) {
-    cm.squad = toArray(cm.squad).filter(s => s !== id);
-    cm.lineup = toArray(cm.lineup).filter(l => l !== id);
+// ===== MATCHDAY =====
+// Een aankondiging hoort bij een datum, niet bij een wedstrijd in de app: je
+// maakt hem als de poll binnenkomt, dagen voor de wedstrijd zelf.
+function matchdayVoor(datum) {
+  if (!DB.matchday) DB.matchday = {};
+  if (!DB.matchday[datum]) {
+    DB.matchday[datum] = { aanwezig: [], afgemeld: [], verzameltijd: standaardVerzameltijd(datum) };
   }
-  saveData(); renderAfmeldModal(); renderMatchView();
+  const md = DB.matchday[datum];
+  md.aanwezig = toArray(md.aanwezig);
+  md.afgemeld = toArray(md.afgemeld);
+  return md;
 }
 
-function openAfmeldModal() { renderAfmeldModal(); }
+function matchdayStatus(datum, playerId) {
+  const md = matchdayVoor(datum);
+  if (md.aanwezig.includes(playerId)) return 'aanwezig';
+  if (md.afgemeld.includes(playerId)) return 'afgemeld';
+  return 'onbekend';
+}
 
-function renderAfmeldModal() {
-  const cm = DB.currentMatch;
-  if (!cm) return;
-  const afgemeld = toArray(cm.afgemeld);
-  let h = `<h3>Wie heeft zich afgemeld?</h3>
-    <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
-      Alleen deze spelers komen als afwezig op de Matchday-kaart.</p>`;
+// Tikken loopt rond: aanwezig → afwezig → nog niets gehoord.
+function cycleMatchday(datum, playerId) {
+  const md = matchdayVoor(datum);
+  const nu = matchdayStatus(datum, playerId);
+  md.aanwezig = md.aanwezig.filter(i => i !== playerId);
+  md.afgemeld = md.afgemeld.filter(i => i !== playerId);
+  if (nu === 'onbekend') md.aanwezig.push(playerId);
+  else if (nu === 'aanwezig') md.afgemeld.push(playerId);
+  saveData(); renderMatchdayModal(datum);
+}
+
+function setVerzameltijd(datum, waarde) {
+  matchdayVoor(datum).verzameltijd = waarde;
+  saveData();
+}
+
+function openMatchdayModal(datum) { renderMatchdayModal(datum); }
+
+function renderMatchdayModal(datum) {
+  const md = matchdayVoor(datum);
+  const prog = (srzaData?.programma || []).find(p => p.date === datum);
+  const aantal = { aanwezig: md.aanwezig.length, afgemeld: md.afgemeld.length };
+
+  let h = `<h3>Matchday</h3>
+    <p style="text-align:center;font-size:0.82rem;color:var(--text-muted);margin-bottom:4px">
+      ${prog ? prog.opp : ''}</p>
+    <p style="text-align:center;font-size:0.72rem;color:var(--text-muted);margin-bottom:14px">
+      ${formatDate(datum)}${prog ? ` · aanvang ${prog.time}` : ''}</p>
+    <div class="form-group"><label>Verzameltijd</label>
+      <input type="time" value="${md.verzameltijd || ''}"
+        onchange="setVerzameltijd('${datum}', this.value)"></div>
+    <p style="font-size:0.76rem;color:var(--text-muted);margin:4px 0 10px">
+      Tik een speler aan: aanwezig → afwezig → niets. Wie op niets staat komt
+      niet op de kaart.</p>`;
+
   [...DB.players].sort((a, b) => a.number - b.number).forEach(p => {
-    const isAf = afgemeld.includes(p.id);
-    const isAanwezig = toArray(cm.squad).includes(p.id);
-    h += `<div class="squad-player ${isAf ? 'selected' : ''}" style="margin-bottom:6px"
-      onclick="toggleAfgemeld('${p.id}')">
+    const st = matchdayStatus(datum, p.id);
+    const badge = st === 'aanwezig' ? '<span class="sq-badge">aanwezig</span>'
+      : st === 'afgemeld' ? '<span class="sq-badge" style="color:var(--card-red)">afwezig</span>' : '';
+    h += `<div class="squad-player ${st === 'aanwezig' ? 'selected' : ''}"
+      style="margin-bottom:6px${st === 'afgemeld' ? ';opacity:0.45' : ''}"
+      onclick="cycleMatchday('${datum}', '${p.id}')">
       ${avatarHTML(p, 'avatar-sm')}
       <span class="sq-name">${p.name}</span>
-      ${isAanwezig ? '<span class="sq-badge">aanwezig</span>' : ''}
+      ${badge}
     </div>`;
   });
-  h += `<button class="modal-cancel" onclick="closeModal()">Sluiten</button>`;
+
+  h += `<button class="btn btn-primary btn-block" style="margin-top:14px"
+      onclick="shareMatchdayCard('${datum}')" ${aantal.aanwezig ? '' : 'disabled'}>
+      &#128241; Delen (${aantal.aanwezig} aanwezig, ${aantal.afgemeld} afwezig)</button>
+    <button class="modal-cancel" onclick="closeModal()">Sluiten</button>`;
   openModal(h);
 }
 
@@ -2852,8 +2901,7 @@ function renderMatchSetup(c) {
         </select></div>
       <div class="form-group"><label>Datum</label>
         <input type="date" id="dateInput" value="${cm.date}"></div>
-      <div class="form-group"><label>Verzameltijd</label>
-        <input type="time" id="verzamelInput" value="${cm.verzameltijd || standaardVerzameltijd(cm.date)}"></div>
+
       <button class="btn btn-primary btn-block btn-lg" onclick="proceedToSquad()">Volgende: Selectie &#10145;</button>
     </div>`;
 }
@@ -2865,8 +2913,18 @@ function proceedToSquad() {
   DB.currentMatch.sporthal = document.getElementById('hallInput').value.trim();
   DB.currentMatch.comp = document.getElementById('compInput').value;
   DB.currentMatch.date = document.getElementById('dateInput').value;
-  DB.currentMatch.verzameltijd = document.getElementById('verzamelInput').value;
   DB.currentMatch.status = 'squad';
+
+  // Is er voor deze datum een Matchday aangekondigd, neem die aanwezigen dan
+  // over. Je kunt er in de zaal gewoon spelers bij tikken of afhalen.
+  const md = DB.matchday && DB.matchday[DB.currentMatch.date];
+  if (md && !DB.currentMatch.squad.length) {
+    const aanwezig = toArray(md.aanwezig).filter(id => getPlayer(id));
+    if (aanwezig.length) {
+      DB.currentMatch.squad = [...aanwezig];
+      showToast(`${aanwezig.length} spelers overgenomen uit de Matchday`);
+    }
+  }
   saveData(); renderMatchView();
 }
 
@@ -2901,12 +2959,7 @@ function renderMatchSquad(c) {
       </div>
     </div>`;
   });
-  h += `<div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn btn-secondary btn-block" onclick="openAfmeldModal()">Afmeldingen (${toArray(cm.afgemeld).length})</button>
-      <button class="btn btn-outline btn-block" onclick="shareMatchdayCard()"
-        ${cm.squad.length ? '' : 'disabled'}>&#128241; Matchday</button>
-    </div>
-    <div style="margin-top:16px">
+  h += `<div style="margin-top:16px">
     <button class="btn btn-primary btn-block btn-lg" onclick="proceedToLineup()" ${cm.squad.length<5?'disabled':''}>
       Volgende: Opstelling &#10145;</button>
     ${cm.squad.length<5?'<p style="font-size:0.78rem;color:var(--text-muted);text-align:center;margin-top:6px">Min. 5 spelers nodig</p>':''}
@@ -4100,9 +4153,10 @@ function renderSchedulePage() {
         <div class="sched-date"><div class="sched-day">${d.getDate()}</div>${d.toLocaleDateString('nl-NL',{month:'short'})}</div>
         <div class="sched-info">
           <div class="sched-opponent">${m.opp} ${matchTypeHTML(m.comp)}</div>
-          <div class="sched-meta">${m.hal} · ${m.time} · ${m.home ? 'thuis' : 'uit'}</div>
+          <div class="sched-meta">${m.hal} · ${m.time}</div>
         </div>
-        <div class="sched-result upcoming">–</div>
+        <button class="btn btn-secondary btn-sm matchday-btn" onclick="openMatchdayModal('${m.date}')"
+          title="Matchday aankondigen">&#128227;</button>
       </div>`;
     });
     if (srzaData.programma.length > 5) {
@@ -5267,16 +5321,21 @@ function standaardVerzameltijd(datum) {
   return `${String(Math.floor(minuten / 60)).padStart(2, '0')}:${String(minuten % 60).padStart(2, '0')}`;
 }
 
-async function shareMatchdayCard() {
-  const cm = DB.currentMatch;
-  if (!cm) return;
+async function shareMatchdayCard(datum) {
+  const md = matchdayVoor(datum);
+  const prog = (srzaData?.programma || []).find(p => p.date === datum);
+  const eigen = toArray(DB.matches).find(m => m.date === datum && m.status !== 'finished');
 
-  const aanwezig = toArray(cm.squad).map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
-  const afwezig = toArray(cm.afgemeld).map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
+  const aanwezig = md.aanwezig.map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
+  const afwezig = md.afgemeld.map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
 
-  // De aanvangstijd staat niet op de wedstrijd zelf maar in het opgehaalde
-  // programma. Staat de wedstrijd daar niet in, dan laten we hem weg.
-  const prog = (srzaData?.programma || []).find(p => p.date === cm.date);
+  const cm = {
+    date: datum,
+    opponent: (prog && prog.opp) || (eigen && eigen.opponent) || '',
+    sporthal: (prog && prog.hal) || (eigen && eigen.sporthal) || '',
+    comp: (eigen && eigen.comp) || ((prog && prog.comp === 'BK') ? 'beker' : 'comp'),
+    verzameltijd: md.verzameltijd,
+  };
   const aanvang = prog && prog.time;
 
   const W = 390, PAD = 24;

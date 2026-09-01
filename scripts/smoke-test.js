@@ -490,46 +490,51 @@ await check('een rode kaart toont de speler als uitgesloten in het scorebord', a
   return 'uit in scorebord, geen countdown, verdwijnt bij terugdraaien';
 });
 
-await check('de Matchday-kaart is te delen vanaf het selectiescherm', async () => {
+await check('Matchday werkt zonder dat er een wedstrijd bestaat', async () => {
   const { w: w11 } = await loadAndLogin(fbShape({
     teamName: 'Joga Bonito', season: '2026/27', players: spelers,
     nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
   }));
-  w11.eval(`
-    startNewMatch();
-    DB.currentMatch.opponent = 'Limako';
-    DB.currentMatch.status = 'squad';
-    renderMatchView();
-  `);
-  const zonderSelectie = w11.document.querySelector('button[onclick="shareMatchdayCard()"]');
-  assert(zonderSelectie, 'de Matchday-knop staat niet op het selectiescherm');
-  assert(zonderSelectie.hasAttribute('disabled'),
-    'de Matchday-knop is bruikbaar terwijl er nog niemand geselecteerd is');
+  const datum = '2026-09-03';
+  w11.eval(`srzaData = { programma: [{ date: '${datum}', opp: 'Limako', time: '20:24', hal: 'BUITEN', home: true }],
+                         uitslagen: [], standen: [] };
+            renderSchedulePage();`);
 
-  w11.eval('DB.players.slice(0, 2).forEach(p => toggleSquad(p.id))');
-  const metSelectie = w11.document.querySelector('button[onclick="shareMatchdayCard()"]');
-  assert(!metSelectie.hasAttribute('disabled'), 'de Matchday-knop blijft uitgeschakeld met een selectie');
+  // De knop hoort bij het programma, niet in de wedstrijdflow.
+  const knop = w11.document.querySelector(`button[onclick="openMatchdayModal('${datum}')"]`);
+  assert(knop, 'geen Matchday-knop bij de aankomende wedstrijd');
+  assert(w11.eval('DB.currentMatch') === null, 'er is een wedstrijd aangemaakt terwijl dat niet hoeft');
 
-  // De kaart leest de selectie, dus een late aanmelding komt er vanzelf bij.
-  const aanwezig = Number(w11.eval('DB.currentMatch.squad.length'));
-  w11.eval('toggleSquad(DB.players[0].id)');
-  assert(Number(w11.eval('DB.currentMatch.squad.length')) === aanwezig - 1,
-    'de aanwezigheidslijst is niet aanpasbaar');
-
-  // Afmeldingen zijn een aparte lijst: wie niets liet weten hoort in geen van
-  // beide en komt dus niet op de kaart.
-  w11.eval('toggleAfgemeld(DB.players[0].id)');
-  assert(JSON.parse(w11.eval('JSON.stringify(DB.currentMatch.afgemeld)')).length === 1,
-    'de afmelding is niet vastgelegd');
-  w11.eval('DB.players.slice(0,1).forEach(p => toggleSquad(p.id))');
-  assert(JSON.parse(w11.eval('JSON.stringify(DB.currentMatch.afgemeld)')).length === 0,
-    'iemand staat tegelijk als aanwezig én afgemeld');
-
-  // De verzameltijd wordt afgeleid van de aanvang uit het programma.
-  w11.eval(`srzaData = { programma: [{ date: DB.currentMatch.date, opp: 'Limako', time: '20:24', hal: 'BUITEN', home: true }] }`);
-  const verzamel = w11.eval('standaardVerzameltijd(DB.currentMatch.date)');
+  // Verzameltijd wordt afgeleid van de aanvang.
+  const verzamel = w11.eval(`matchdayVoor('${datum}').verzameltijd`);
   assert(verzamel === '20:10', `verzameltijd werd ${verzamel} in plaats van 20:10 bij aanvang 20:24`);
-  return 'knop aanwezig, afmeldingen apart, verzameltijd 20:10';
+
+  // Tikken loopt rond: aanwezig → afwezig → niets gehoord.
+  const speler = w11.eval('DB.players[0].id');
+  const status = () => w11.eval(`matchdayStatus('${datum}', ${JSON.stringify(speler)})`);
+  assert(status() === 'onbekend', `begint op ${status()}`);
+  w11.eval(`cycleMatchday('${datum}', ${JSON.stringify(speler)})`);
+  assert(status() === 'aanwezig', `na één tik ${status()}`);
+  w11.eval(`cycleMatchday('${datum}', ${JSON.stringify(speler)})`);
+  assert(status() === 'afgemeld', `na twee tikken ${status()}`);
+  w11.eval(`cycleMatchday('${datum}', ${JSON.stringify(speler)})`);
+  assert(status() === 'onbekend', `na drie tikken ${status()}`);
+
+  // De selectie vult zich later vanuit deze lijst, en blijft aanpasbaar.
+  w11.eval(`cycleMatchday('${datum}', ${JSON.stringify(speler)});
+            startNewMatch();
+            DB.currentMatch.date = '${datum}';
+            document.getElementById('oppInput') || (() => { DB.currentMatch.status='setup'; renderMatchView(); })();
+            document.getElementById('oppInput').value = 'Limako';
+            document.getElementById('dateInput').value = '${datum}';
+            proceedToSquad();`);
+  const squad = JSON.parse(w11.eval('JSON.stringify(DB.currentMatch.squad)'));
+  assert(squad.length === 1 && squad[0] === speler,
+    `selectie is niet voorgevuld uit de Matchday (${squad.length} spelers)`);
+  w11.eval(`toggleSquad(DB.players[1].id)`);
+  assert(JSON.parse(w11.eval('JSON.stringify(DB.currentMatch.squad)')).length === 2,
+    'een late aanmelding is niet toe te voegen');
+  return 'knop bij het programma, voorgevuld en aanpasbaar';
 });
 
 await check('een wedstrijd blijft bij zijn eigen seizoen na de jaarwissel', async () => {
