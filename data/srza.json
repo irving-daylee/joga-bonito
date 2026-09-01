@@ -1,369 +1,162 @@
 {
-  "lastUpdated": "2026-08-17T05:50:04.387Z",
+  "lastUpdated": "2026-09-01T10:56:16.086Z",
   "team": {
-    "played": 23,
-    "wins": 16,
-    "draws": 2,
-    "losses": 5,
-    "goalsFor": 155,
-    "goalsAgainst": 70,
-    "position": 2,
-    "points": 44
+    "played": 0,
+    "wins": 0,
+    "draws": 0,
+    "losses": 0,
+    "goalsFor": 0,
+    "goalsAgainst": 0,
+    "position": 8,
+    "points": 0
   },
   "standen": [
     {
       "pos": 1,
       "team": "As Sport Events",
-      "g": 20,
-      "w": 15,
-      "gl": 3,
-      "v": 2,
-      "dv": 141,
-      "dt": 76,
-      "ds": 65,
-      "p": 48
+      "g": 1,
+      "w": 1,
+      "gl": 0,
+      "v": 0,
+      "dv": 6,
+      "dt": 0,
+      "ds": 6,
+      "p": 3
     },
     {
       "pos": 2,
-      "team": "Joga Bonito",
-      "g": 20,
-      "w": 14,
-      "gl": 2,
-      "v": 4,
-      "dv": 130,
-      "dt": 63,
-      "ds": 67,
-      "p": 44
+      "team": "Ally United",
+      "g": 1,
+      "w": 1,
+      "gl": 0,
+      "v": 0,
+      "dv": 5,
+      "dt": 3,
+      "ds": 2,
+      "p": 3
     },
     {
       "pos": 3,
-      "team": "Jai Hanuman 1",
-      "g": 20,
-      "w": 9,
-      "gl": 3,
-      "v": 8,
-      "dv": 81,
-      "dt": 73,
-      "ds": 8,
-      "p": 30
+      "team": "Ander Kallyber Fc",
+      "g": 1,
+      "w": 0,
+      "gl": 1,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 1
     },
     {
       "pos": 4,
-      "team": "Old Legends",
-      "g": 20,
-      "w": 9,
-      "gl": 3,
-      "v": 8,
-      "dv": 81,
-      "dt": 73,
-      "ds": 8,
-      "p": 30
+      "team": "De Onderste",
+      "g": 1,
+      "w": 0,
+      "gl": 1,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 1
     },
     {
       "pos": 5,
-      "team": "Novia Facts",
-      "g": 20,
-      "w": 7,
-      "gl": 3,
-      "v": 10,
-      "dv": 65,
-      "dt": 114,
-      "ds": -49,
-      "p": 24
+      "team": "Fc Ada",
+      "g": 0,
+      "w": 0,
+      "gl": 0,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 0
     },
     {
       "pos": 6,
-      "team": "Weddingcars By Dk",
-      "g": 20,
-      "w": 5,
-      "gl": 6,
-      "v": 9,
-      "dv": 56,
-      "dt": 81,
-      "ds": -25,
-      "p": 21
+      "team": "Galàcticos",
+      "g": 0,
+      "w": 0,
+      "gl": 0,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 0
     },
     {
       "pos": 7,
-      "team": "Córdoba Concept",
-      "g": 20,
-      "w": 5,
-      "gl": 4,
-      "v": 11,
-      "dv": 85,
-      "dt": 94,
-      "ds": -9,
-      "p": 19
+      "team": "Jai Hanuman 1",
+      "g": 0,
+      "w": 0,
+      "gl": 0,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 0
     },
     {
       "pos": 8,
-      "team": "Green Monday Energy",
-      "g": 20,
-      "w": 5,
-      "gl": 4,
-      "v": 11,
-      "dv": 64,
-      "dt": 94,
-      "ds": -30,
-      "p": 19
+      "team": "Joga Bonito",
+      "g": 0,
+      "w": 0,
+      "gl": 0,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 0
     },
     {
       "pos": 9,
-      "team": "Clk Engineering",
-      "g": 20,
-      "w": 4,
-      "gl": 4,
-      "v": 12,
-      "dv": 66,
-      "dt": 97,
-      "ds": -31,
-      "p": 16
+      "team": "Limako",
+      "g": 0,
+      "w": 0,
+      "gl": 0,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 0
     },
     {
       "pos": 10,
-      "team": "Arie Van De Raa",
-      "g": 20,
-      "w": 4,
-      "gl": 3,
-      "v": 13,
-      "dv": 51,
-      "dt": 95,
-      "ds": -44,
-      "p": 15
+      "team": "Ter Laak Boomverzorging",
+      "g": 0,
+      "w": 0,
+      "gl": 0,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 0
+    },
+    {
+      "pos": 11,
+      "team": "Novia Facts",
+      "g": 1,
+      "w": 0,
+      "gl": 0,
+      "v": 1,
+      "dv": 3,
+      "dt": 5,
+      "ds": -2,
+      "p": 0
+    },
+    {
+      "pos": 12,
+      "team": "Weddingcars By Dk",
+      "g": 1,
+      "w": 0,
+      "gl": 0,
+      "v": 1,
+      "dv": 0,
+      "dt": 6,
+      "ds": -6,
+      "p": 0
     }
   ],
-  "uitslagen": [
-    {
-      "date": "2025-09-11",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "BUITEN",
-      "opp": "Weddingcars By Dk",
-      "home": false,
-      "jb": 2,
-      "opp_s": 1
-    },
-    {
-      "date": "2025-09-30",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "BUITEN",
-      "opp": "Green Monday Energy",
-      "home": true,
-      "jb": 8,
-      "opp_s": 0
-    },
-    {
-      "date": "2025-10-07",
-      "comp": "1B",
-      "time": "19:42",
-      "hal": "BUITEN",
-      "opp": "Old Legends",
-      "home": false,
-      "jb": 2,
-      "opp_s": 3
-    },
-    {
-      "date": "2025-10-09",
-      "comp": "BK",
-      "time": "20:24",
-      "hal": "BUITEN",
-      "opp": "Wonam (2b)",
-      "home": false,
-      "jb": 8,
-      "opp_s": 2
-    },
-    {
-      "date": "2025-10-30",
-      "comp": "1B",
-      "time": "21:48",
-      "hal": "WATERWIJK",
-      "opp": "Novia Facts",
-      "home": true,
-      "jb": 18,
-      "opp_s": 1
-    },
-    {
-      "date": "2025-11-06",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "BUITEN",
-      "opp": "Mladost",
-      "home": false,
-      "jb": 2,
-      "opp_s": 6
-    },
-    {
-      "date": "2025-11-13",
-      "comp": "1B",
-      "time": "19:42",
-      "hal": "BUITEN",
-      "opp": "As Sport Events",
-      "home": true,
-      "jb": 5,
-      "opp_s": 6
-    },
-    {
-      "date": "2025-11-24",
-      "comp": "1B",
-      "time": "21:06",
-      "hal": "HAVEN",
-      "opp": "Jai Hanuman 1",
-      "home": true,
-      "jb": 3,
-      "opp_s": 3
-    },
-    {
-      "date": "2025-11-27",
-      "comp": "BK",
-      "time": "21:06",
-      "hal": "BUITEN",
-      "opp": "The Woo Fc (2b)",
-      "home": false,
-      "jb": 15,
-      "opp_s": 0
-    },
-    {
-      "date": "2025-12-15",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "HAVEN",
-      "opp": "Clk Engineering",
-      "home": false,
-      "jb": 10,
-      "opp_s": 5
-    },
-    {
-      "date": "2026-01-05",
-      "comp": "BK",
-      "time": "22:30",
-      "hal": "HAVEN",
-      "opp": "Rk Bouw & Project (hk)",
-      "home": false,
-      "jb": 2,
-      "opp_s": 5
-    },
-    {
-      "date": "2026-01-08",
-      "comp": "1B",
-      "time": "22:30",
-      "hal": "BUITEN",
-      "opp": "Arie Van De Raa",
-      "home": true,
-      "jb": 8,
-      "opp_s": 0
-    },
-    {
-      "date": "2026-01-20",
-      "comp": "1B",
-      "time": "22:30",
-      "hal": "BUITEN",
-      "opp": "Córdoba Concept",
-      "home": false,
-      "jb": 6,
-      "opp_s": 1
-    },
-    {
-      "date": "2026-02-02",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "HAVEN",
-      "opp": "Weddingcars By Dk",
-      "home": false,
-      "jb": 8,
-      "opp_s": 4
-    },
-    {
-      "date": "2026-02-19",
-      "comp": "1B",
-      "time": "21:48",
-      "hal": "BUITEN",
-      "opp": "Green Monday Energy",
-      "home": true,
-      "jb": 10,
-      "opp_s": 3
-    },
-    {
-      "date": "2026-03-05",
-      "comp": "1B",
-      "time": "20:24",
-      "hal": "BUITEN",
-      "opp": "Old Legends",
-      "home": false,
-      "jb": 6,
-      "opp_s": 6
-    },
-    {
-      "date": "2026-03-16",
-      "comp": "1B",
-      "time": "21:48",
-      "hal": "HAVEN",
-      "opp": "Novia Facts",
-      "home": true,
-      "jb": 10,
-      "opp_s": 3
-    },
-    {
-      "date": "2026-03-23",
-      "comp": "1B",
-      "time": "21:48",
-      "hal": "HAVEN",
-      "opp": "Mladost",
-      "home": false,
-      "jb": 8,
-      "opp_s": 6
-    },
-    {
-      "date": "2026-03-30",
-      "comp": "1B",
-      "time": "21:48",
-      "hal": "HAVEN",
-      "opp": "As Sport Events",
-      "home": true,
-      "jb": 5,
-      "opp_s": 7
-    },
-    {
-      "date": "2026-04-14",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "BUITEN",
-      "opp": "Jai Hanuman 1",
-      "home": true,
-      "jb": 3,
-      "opp_s": 1
-    },
-    {
-      "date": "2026-04-23",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "BUITEN",
-      "opp": "Clk Engineering",
-      "home": false,
-      "jb": 7,
-      "opp_s": 4
-    },
-    {
-      "date": "2026-05-21",
-      "comp": "1B",
-      "time": "19:00",
-      "hal": "WATERWIJK",
-      "opp": "Arie Van De Raa",
-      "home": true,
-      "jb": 5,
-      "opp_s": 0
-    },
-    {
-      "date": "2026-06-01",
-      "comp": "1B",
-      "time": "20:24",
-      "hal": "STAD",
-      "opp": "Córdoba Concept",
-      "home": false,
-      "jb": 4,
-      "opp_s": 3
-    }
-  ],
+  "uitslagen": [],
   "programma": [
     {
       "date": "2026-09-03",
@@ -540,6 +333,18 @@
       "hal": "WATERWIJK",
       "opp": "Limako",
       "home": false
+    }
+  ],
+  "zaaldiensten": [
+    {
+      "date": "2026-12-14",
+      "time": "19:00",
+      "hal": "HAVEN"
+    },
+    {
+      "date": "2027-05-10",
+      "time": "19:00",
+      "hal": "STAD"
     }
   ]
 }

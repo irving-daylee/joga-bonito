@@ -642,7 +642,7 @@ await check('een stand uit een andere poule wordt niet als actueel gepresenteerd
   // Spiegelbeeld: hoort de stand wél bij het programma, dan is hij actueel.
   const actueel = w.eval(`srzaStandVanDitSeizoen({
     programma: [{ opp: 'Old Legends' }, { opp: 'As Sport Events' }],
-    standen: [{ team: 'As Sport Events' }, { team: 'Joga Bonito' }, { team: 'Old Legends' }]
+    standen: [{ team: 'As Sport Events', g: 5 }, { team: 'Joga Bonito', g: 5 }, { team: 'Old Legends', g: 5 }]
   })`);
   assert(actueel === true, 'een stand die wél bij het programma hoort wordt onterecht als oud gezien');
   return 'eindstand 2025/26 blijft 3e';
@@ -666,8 +666,16 @@ await check('HISTORY uitslagen komen overeen met srza.json', () => {
   const srzaPad = path.join(path.dirname(HTML_PATH), 'data/srza.json');
   const srza = JSON.parse(fs.readFileSync(srzaPad, 'utf8'));
   const history = JSON.parse(w.eval("JSON.stringify(HISTORY['2025/26'].results)"));
+  // srza.json bevat het lopende seizoen. Zodra dat niet meer 2025/26 is, valt er
+  // niets te vergelijken — dat moet zichtbaar zijn en niet als "geslaagd" langs
+  // glippen met nul controles.
+  const overlap = srza.uitslagen.filter(s => history.some(r => r.date === s.date));
+  if (!overlap.length) {
+    return `overgeslagen — srza.json bevat geen wedstrijden uit 2025/26 (${srza.uitslagen.length} uitslagen)`;
+  }
+
   const fouten = [];
-  for (const s of srza.uitslagen) {
+  for (const s of overlap) {
     const h = history.find(r => r.date === s.date);
     if (!h) { fouten.push(`${s.date} ontbreekt in HISTORY`); continue; }
     if (h.jb !== s.jb || h.opp_s !== s.opp_s) {
@@ -676,7 +684,7 @@ await check('HISTORY uitslagen komen overeen met srza.json', () => {
     if (h.home !== s.home) fouten.push(`${s.date} ${s.opp}: thuis/uit wijkt af`);
   }
   assert(fouten.length === 0, fouten.join('; '));
-  return `${srza.uitslagen.length} uitslagen gecontroleerd`;
+  return `${overlap.length} uitslagen gecontroleerd`;
 });
 
 console.log('');

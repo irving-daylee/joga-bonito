@@ -1631,7 +1631,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.5.2';
+const APP_VERSION = '2.6.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -4640,6 +4640,9 @@ function generateSeasonInsights(matches) {
 function srzaStandVanDitSeizoen(srza) {
   const programma = srza?.programma || [];
   const standen = srza?.standen || [];
+  // Vóór de eerste speelronde staat iedereen op nul en zegt de volgorde niets.
+  const ons = standen.find(r => String(r.team || '').toUpperCase().includes('JOGA'));
+  if (ons && Number(ons.g) === 0) return false;
   if (!programma.length || !standen.length) return true;
   const kaal = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const inStand = naam => standen.some(r => {

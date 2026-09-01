@@ -9,6 +9,26 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.6.0] — 1 september 2026
+
+### Gewijzigd
+- srza.nl is verbouwd en levert zijn gegevens nu op een andere manier aan. De
+  koppeling is daarop aangepast, zodat stand, programma en uitslagen blijven
+  binnenkomen. Jullie spelen dit seizoen in de **Eerste Klasse A**.
+
+### Toegevoegd
+- De zaaldienst-avonden uit het competitieprogramma worden meegenomen
+  (14 december en 10 mei).
+
+### Opgelost
+- Vóór de eerste speelronde staat iedereen op nul punten. De app presenteerde
+  die volgorde als een echte klassering; nu toont hij tot de aftrap de eindstand
+  van vorig seizoen.
+- De koppeling probeert het opnieuw bij een tijdelijke storing, en overschrijft
+  goede gegevens niet meer met een lege oogst.
+
+---
+
 ## [2.5.2] — 17 augustus 2026
 
 ### Opgelost

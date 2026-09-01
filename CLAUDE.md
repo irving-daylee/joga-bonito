@@ -107,7 +107,11 @@ Geen spelersfoto's: avatars zijn het rugnummer. Bewust geen PII buiten voornaam,
 - [x] **Share-functie** — wedstrijdsamenvatting/stats delen via WhatsApp na een wedstrijd. Canvas-based match card, Web Share API op mobiel, download fallback op desktop.
 - [x] **Dynamische AI analyse** — `generateInsights()` berekent 10 insights uit SRZA + HISTORY data: positie, vorm, topscorer, afhankelijkheid, doelsaldo, thuis/uit, top-tegenstanders, x-factor, groei, beker.
 - [x] **Formatie-visualisatie** — navy half-pitch met 4-0 opstelling (2 achter, 2 voor). Keeper geel, veldspelers wit. Aspect-ratio 4:3.
-- [x] **srza.nl integratie** — `scripts/scrape-srza.js` (Node.js + cheerio), `.github/workflows/srza.yml` (daily cron 07:00 CET, sep–jun). Output `data/srza.json`. Config bovenaan scraper: `TEAM_ID=358`, `COMP_NR=3`, te overschrijven via env vars. De scraper stopt met exit 1 als Joga Bonito niet in de opgehaalde stand staat — een verkeerd poulenummer geeft namelijk gewoon HTTP 200 met andermans stand. App laadt srza.json async en toont SRZA programma + data footer op Wedstrijden page.
+- [x] **srza.nl integratie** — `scripts/scrape-srza.js` (Node.js + cheerio), `.github/workflows/srza.yml` (daily cron 07:00 CET, sep–jun). Output `data/srza.json`. App laadt dat async en toont programma + stand op Wedstrijden.
+
+  **srza.nl is in augustus 2026 verbouwd.** Team, seizoen en poule gaan nu via een POST (`srza_team`, `srza_seizoen`, `srza_poule`) in plaats van een parameter in de URL; de oude `?t=`/`?nr=` links geven een lege pagina. Config staat bovenaan de scraper: `TEAM_ID=358`, `SEIZOEN=2` (2026/2027), `POULE=2` (Eerste Klasse A). `node scripts/scrape-srza.js --opties` toont de actuele keuzelijsten. Kolommen worden op kopnaam gelezen, niet op positie, zodat een layoutwijziging niet stil verschuift. Datums komen als "do 3 sep 2026" binnen en worden ISO — `new Date()` struikelt over maart, mei en oktober.
+
+  Twee vangnetten: de scraper stopt met exit 1 als de stand gevuld is maar Joga Bonito er niet in staat (verkeerde poule geeft gewoon HTTP 200 met andermans stand), en hij weigert een gevuld `srza.json` te overschrijven met een lege oogst. Een lege stand aan het begin van het seizoen is alleen een waarschuwing.
 - [x] **Firebase migratie** — auth (e-mail + Google) en Realtime Database sync tussen devices.
 - [ ] **Seizoensoverzicht als share card** — op de roadmap, nog niet in scope.
 
@@ -117,7 +121,7 @@ srza.nl toont die poule inmiddels met tien teams in plaats van elf (Mladost erui
 
 ## Bij de start van een nieuw seizoen
 
-1. `TEAM_ID` en `COMP_NR` bovenaan `scripts/scrape-srza.js` bijwerken (test met `COMP_NR=<nr> node scripts/scrape-srza.js`; hij faalt luid bij het verkeerde nummer).
+1. `SEIZOEN` en `POULE` bovenaan `scripts/scrape-srza.js` bijwerken. `node scripts/scrape-srza.js --opties` toont de nummers; testen met `POULE=<nr> FORCE=1 node scripts/scrape-srza.js`, hij faalt luid bij de verkeerde poule.
 2. `DB.season` aanpassen via Team → seizoen.
 3. Afgelopen seizoen verschijnt vanzelf als tabblad op Stats, berekend uit de eigen wedstrijden. Wil je er poulestand en eindpositie bij, voeg dan een `HISTORY`-blok toe.
 
