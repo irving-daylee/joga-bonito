@@ -1,5 +1,19 @@
 {
   "_seedVersion": 6,
+  "currentMatch": {
+    "comp": "comp",
+    "date": "2026-09-01",
+    "flyingKeeper": false,
+    "half": 1,
+    "id": "m46",
+    "opponent": "",
+    "scoreAway": 0,
+    "scoreHome": 0,
+    "season": "2026/27",
+    "sporthal": "",
+    "status": "setup",
+    "verzameltijd": ""
+  },
   "matches": [
     {
       "_seeded": true,
@@ -53,6 +67,7 @@
         "Lyzairo"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -159,6 +174,7 @@
         "Jamal"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -210,6 +226,7 @@
         "Marco"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Irving"
     },
     {
@@ -313,6 +330,7 @@
         "Marco"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Irving"
     },
     {
@@ -484,6 +502,7 @@
         "Irving"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -539,6 +558,7 @@
         "Jamal"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -615,6 +635,7 @@
         "Jamal"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Said"
     },
     {
@@ -683,6 +704,7 @@
         "Bobby"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Irving"
     },
     {
@@ -834,6 +856,7 @@
         "Rayvano"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -949,6 +972,7 @@
         "Marco"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -1000,6 +1024,7 @@
         "Irving"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -1097,6 +1122,7 @@
         "Said"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Kenneth"
     },
     {
@@ -1182,6 +1208,7 @@
         "Erfan"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -1196,7 +1223,8 @@
       "scoreHome": 8,
       "season": "2025/26",
       "sporthal": "Haven",
-      "status": "finished"
+      "status": "finished",
+      "verzameltijd": ""
     },
     {
       "_seeded": true,
@@ -1312,7 +1340,8 @@
         "Irving",
         "Bobby"
       ],
-      "status": "finished"
+      "status": "finished",
+      "verzameltijd": ""
     },
     {
       "_seeded": true,
@@ -1395,6 +1424,7 @@
         "Said"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Kenneth"
     },
     {
@@ -1503,7 +1533,8 @@
         "Marco",
         "Lyzairo"
       ],
-      "status": "finished"
+      "status": "finished",
+      "verzameltijd": ""
     },
     {
       "_seeded": true,
@@ -1614,6 +1645,7 @@
         "Bobby"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -1691,6 +1723,7 @@
         "Rayvano"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Zakaria"
     },
     {
@@ -1748,6 +1781,7 @@
         "Rayvano"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -1837,6 +1871,7 @@
         "Eigen doelpunt"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -1881,7 +1916,8 @@
       "squadNamen": [
         "Reglementair"
       ],
-      "status": "finished"
+      "status": "finished",
+      "verzameltijd": ""
     },
     {
       "_seeded": true,
@@ -1954,6 +1990,7 @@
         "Marco"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -2043,6 +2080,7 @@
         "Said"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -2134,6 +2172,7 @@
         "Erfan"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Marco"
     },
     {
@@ -2222,6 +2261,7 @@
         "Rayvano"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -2330,6 +2370,7 @@
         "Zakaria"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Marco"
     },
     {
@@ -2413,6 +2454,7 @@
         "Rayvano"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Rayvano"
     },
     {
@@ -2505,6 +2547,7 @@
         "Eigen doelpunt"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -2587,6 +2630,7 @@
         "Erfan"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Ahmed"
     },
     {
@@ -2673,6 +2717,7 @@
         "Erfan"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Erfan"
     },
     {
@@ -2759,6 +2804,7 @@
         "Jamal"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Kenneth"
     },
     {
@@ -2823,6 +2869,7 @@
         "Marco"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Lorenzo"
     },
     {
@@ -2909,6 +2956,7 @@
         "Ahmed"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Marco"
     },
     {
@@ -2953,7 +3001,8 @@
       "squadNamen": [
         "Reglementair"
       ],
-      "status": "finished"
+      "status": "finished",
+      "verzameltijd": ""
     },
     {
       "_seeded": true,
@@ -3058,6 +3107,7 @@
         "Irving"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Zakaria"
     },
     {
@@ -3180,6 +3230,7 @@
         "Kenneth"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Rayvano"
     },
     {
@@ -3260,6 +3311,7 @@
         "Irving"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Irving"
     },
     {
@@ -3311,6 +3363,7 @@
         "Marco"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Ahmed"
     },
     {
@@ -3419,6 +3472,7 @@
         "Faissel"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Marco"
     },
     {
@@ -3527,6 +3581,7 @@
         "Eigen doelpunt"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Ahmed"
     },
     {
@@ -3587,6 +3642,7 @@
         "Lorenzo"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Ahmed"
     },
     {
@@ -3673,6 +3729,7 @@
         "Bobby"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Marco"
     },
     {
@@ -3735,6 +3792,7 @@
         "Said"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlaggerNaam": "Marco"
     },
     {
@@ -3791,10 +3849,11 @@
         "Marco",
         "Zakaria"
       ],
-      "status": "finished"
+      "status": "finished",
+      "verzameltijd": ""
     }
   ],
-  "nextMatchId": 46,
+  "nextMatchId": 47,
   "nextPlayerId": 13,
   "players": [
     {
@@ -3896,5 +3955,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1788293339254
+  "updatedAt": 1788296152743
 }
