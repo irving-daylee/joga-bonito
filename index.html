@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.9.0';
+const APP_VERSION = '2.9.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -5321,6 +5321,24 @@ function standaardVerzameltijd(datum) {
   return `${String(Math.floor(minuten / 60)).padStart(2, '0')}:${String(minuten % 60).padStart(2, '0')}`;
 }
 
+// srza schrijft hallen in kapitalen; op de kaart staat dat te schreeuwerig.
+function titelHal(naam) {
+  const s = String(naam || '').trim();
+  if (!s) return '';
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
+// Hulpje voor de panelen op de kaart; ctx.roundRect bestaat niet overal.
+function rondeRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
 async function shareMatchdayCard(datum) {
   const md = matchdayVoor(datum);
   const prog = (srzaData?.programma || []).find(p => p.date === datum);
@@ -5329,101 +5347,132 @@ async function shareMatchdayCard(datum) {
   const aanwezig = md.aanwezig.map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
   const afwezig = md.afgemeld.map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
 
-  const cm = {
-    date: datum,
-    opponent: (prog && prog.opp) || (eigen && eigen.opponent) || '',
-    sporthal: (prog && prog.hal) || (eigen && eigen.sporthal) || '',
-    comp: (eigen && eigen.comp) || ((prog && prog.comp === 'BK') ? 'beker' : 'comp'),
-    verzameltijd: md.verzameltijd,
-  };
-  const aanvang = prog && prog.time;
+  const tegenstander = (prog && prog.opp) || (eigen && eigen.opponent) || 'Tegenstander';
+  const locatie = (prog && prog.hal) || (eigen && eigen.sporthal) || '';
+  const beker = (eigen && eigen.comp === 'beker') || (prog && prog.comp === 'BK');
 
-  const W = 390, PAD = 24;
-  const kolommen = 2;
+  const info = [
+    ['Datum', formatDate(datum)],
+    ['Locatie', titelHal(locatie)],
+    ['Verzamelen', md.verzameltijd],
+    ['Aanvang', prog && prog.time],
+  ].filter(([, waarde]) => waarde);
+
+  const W = 390, PAD = 22, kolommen = 2;
   const rijenAanwezig = Math.ceil(aanwezig.length / kolommen);
   const rijenAfwezig = Math.ceil(afwezig.length / kolommen);
 
-  // De hoogte volgt exact dezelfde stappen als het tekenen hieronder, anders
-  // loopt de voettekst over de laatste namen heen.
-  const tijdenRegel = cm.verzameltijd || aanvang;
-  const yStart = tijdenRegel ? 262 : 240;
-  const H = yStart
-    + (aanwezig.length ? 20 + rijenAanwezig * 26 + 10 : 0)
-    + (afwezig.length ? 18 + rijenAfwezig * 22 : 0)
-    + 44;
+  const paneelY = 214;
+  const paneelH = 14 + info.length * 26;
+  const lijstY = paneelY + paneelH + 30;
+  const hoogteAanwezig = aanwezig.length ? 22 + rijenAanwezig * 27 + 14 : 0;
+  const hoogteAfwezig = afwezig.length ? 20 + rijenAfwezig * 23 : 0;
+  const H = lijstY + hoogteAanwezig + hoogteAfwezig + 42;
 
+  // Op een telefoonscherm wordt de kaart flink uitvergroot, dus tekenen we hem
+  // op drie keer de maat. De coördinaten hieronder blijven de ontwerpmaten.
+  const SCHAAL = 3;
   const { canvas, ctx } = createShareCanvas(W);
-  canvas.height = H;
+  canvas.width = W * SCHAAL;
+  canvas.height = H * SCHAAL;
+  ctx.scale(SCHAAL, SCHAAL);
+
   ctx.fillStyle = '#0A0A0A';
   ctx.fillRect(0, 0, W, H);
-  drawCardHeader(ctx, W, cm.comp === 'beker' ? 'Bekerwedstrijd' : 'Competitie');
+  drawCardHeader(ctx, W, beker ? 'Bekerwedstrijd' : 'Competitie');
 
-  // MATCHDAY
   ctx.textAlign = 'center';
-  ctx.font = '900 30px "Montserrat", sans-serif';
+  ctx.font = '900 32px "Montserrat", sans-serif';
   ctx.fillStyle = '#C4922E';
-  ctx.letterSpacing = '4px';
-  ctx.fillText('MATCHDAY', W / 2, 142);
+  ctx.letterSpacing = '5px';
+  ctx.fillText('MATCHDAY', W / 2, 146);
   ctx.letterSpacing = '0px';
 
-  // Tegenstander
-  ctx.font = '400 11px "Nunito", sans-serif';
+  // Streepje onder de kop
+  ctx.fillStyle = 'rgba(196,146,46,0.45)';
+  ctx.fillRect(W / 2 - 26, 158, 52, 2);
+
+  ctx.font = '400 10px "Nunito", sans-serif';
   ctx.fillStyle = '#888888';
-  ctx.fillText('TEGEN', W / 2, 166);
-  ctx.font = '800 19px "Montserrat", sans-serif';
+  ctx.letterSpacing = '2px';
+  ctx.fillText('TEGEN', W / 2, 180);
+  ctx.letterSpacing = '0px';
+
+  ctx.font = '800 22px "Montserrat", sans-serif';
   ctx.fillStyle = '#E8E4DE';
-  ctx.fillText((cm.opponent || 'Tegenstander').toUpperCase(), W / 2, 190);
+  ctx.fillText(tegenstander.toUpperCase(), W / 2, 204);
 
-  const wanneer = [formatDate(cm.date), cm.sporthal].filter(Boolean).join('  ·  ');
-  ctx.font = '600 11px "Nunito", sans-serif';
-  ctx.fillStyle = '#C4922E';
-  ctx.fillText(wanneer, W / 2, 210);
+  // Wedstrijdgegevens in een eigen kaartje
+  rondeRect(ctx, PAD, paneelY, W - PAD * 2, paneelH, 12);
+  ctx.fillStyle = '#141414';
+  ctx.fill();
+  ctx.strokeStyle = '#2A2A2A';
+  ctx.lineWidth = 1;
+  ctx.stroke();
 
-  const tijden = [
-    cm.verzameltijd ? `Verzamelen ${cm.verzameltijd}` : null,
-    aanvang ? `Aanvang ${aanvang}` : null,
-  ].filter(Boolean).join('   ·   ');
-  if (tijden) {
-    ctx.font = '700 12px "Nunito", sans-serif';
-    ctx.fillStyle = '#E8E4DE';
-    ctx.fillText(tijden, W / 2, 232);
-  }
+  info.forEach(([label, waarde], i) => {
+    const ry = paneelY + 24 + i * 26;
+    ctx.textAlign = 'left';
+    ctx.font = '600 10px "Montserrat", sans-serif';
+    ctx.fillStyle = '#888888';
+    ctx.letterSpacing = '1px';
+    ctx.fillText(label.toUpperCase(), PAD + 16, ry);
+    ctx.letterSpacing = '0px';
+    ctx.textAlign = 'right';
+    ctx.font = '700 13px "Nunito", sans-serif';
+    ctx.fillStyle = label === 'Verzamelen' ? '#C4922E' : '#E8E4DE';
+    ctx.fillText(waarde, W - PAD - 16, ry);
+    if (i < info.length - 1) {
+      ctx.fillStyle = 'rgba(255,255,255,0.05)';
+      ctx.fillRect(PAD + 16, ry + 8, W - PAD * 2 - 32, 1);
+    }
+  });
 
-  let y = yStart;
+  let y = lijstY;
   const kolomBreedte = (W - PAD * 2) / kolommen;
 
   if (aanwezig.length) {
     ctx.textAlign = 'left';
     ctx.font = '800 10px "Montserrat", sans-serif';
     ctx.fillStyle = '#C4922E';
-    ctx.fillText(`AANWEZIG (${aanwezig.length})`, PAD, y);
-    y += 20;
+    ctx.letterSpacing = '1px';
+    ctx.fillText(`AANWEZIG · ${aanwezig.length}`, PAD, y);
+    ctx.letterSpacing = '0px';
+    y += 22;
     aanwezig.forEach((p, i) => {
-      const kol = i % kolommen, rij = Math.floor(i / kolommen);
-      const x = PAD + kol * kolomBreedte;
-      const ry = y + rij * 26;
-      ctx.font = '800 11px "Montserrat", sans-serif';
+      const x = PAD + (i % kolommen) * kolomBreedte;
+      const ry = y + Math.floor(i / kolommen) * 27;
+      ctx.beginPath();
+      ctx.arc(x + 9, ry - 4, 9, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(196,146,46,0.18)';
+      ctx.fill();
+      ctx.textAlign = 'center';
+      ctx.font = '800 9px "Montserrat", sans-serif';
       ctx.fillStyle = '#C4922E';
-      ctx.fillText(String(p.number), x, ry);
-      ctx.font = '600 13px "Nunito", sans-serif';
+      ctx.fillText(String(p.number), x + 9, ry - 1);
+      ctx.textAlign = 'left';
+      ctx.font = '700 13px "Nunito", sans-serif';
       ctx.fillStyle = '#E8E4DE';
       ctx.fillText(p.name, x + 26, ry);
     });
-    y += rijenAanwezig * 26 + 10;
+    y += rijenAanwezig * 27 + 14;
   }
 
   if (afwezig.length) {
+    ctx.textAlign = 'left';
     ctx.font = '800 10px "Montserrat", sans-serif';
-    ctx.fillStyle = '#888888';
-    ctx.fillText(`AFWEZIG (${afwezig.length})`, PAD, y);
-    y += 18;
+    ctx.fillStyle = '#666666';
+    ctx.letterSpacing = '1px';
+    ctx.fillText(`AFWEZIG · ${afwezig.length}`, PAD, y);
+    ctx.letterSpacing = '0px';
+    y += 20;
     afwezig.forEach((p, i) => {
-      const kol = i % kolommen, rij = Math.floor(i / kolommen);
       ctx.font = '400 12px "Nunito", sans-serif';
-      ctx.fillStyle = '#666666';
-      ctx.fillText(p.name, PAD + kol * kolomBreedte, y + rij * 22);
+      ctx.fillStyle = '#5A5A5A';
+      ctx.fillText(p.name, PAD + (i % kolommen) * kolomBreedte,
+        y + Math.floor(i / kolommen) * 23);
     });
-    y += rijenAfwezig * 22;
+    y += rijenAfwezig * 23;
   }
 
   drawCardFooter(ctx, W, H);

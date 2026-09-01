@@ -9,6 +9,17 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.9.1] — 1 september 2026
+
+### Gewijzigd
+- De Matchday-kaart is strakker: datum, locatie, verzameltijd en aanvang staan
+  in een eigen kaartje, de aanwezigen krijgen hun rugnummer in een rondje, en de
+  kop heeft meer lucht.
+- De kaart wordt op drie keer de maat geëxporteerd (1170 pixels breed in plaats
+  van 390), zodat hij scherp blijft als WhatsApp hem uitvergroot.
+
+---
+
 ## [2.9.0] — 1 september 2026
 
 ### Gewijzigd
