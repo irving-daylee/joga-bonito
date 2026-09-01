@@ -513,9 +513,23 @@ await check('de Matchday-kaart is te delen vanaf het selectiescherm', async () =
   // De kaart leest de selectie, dus een late aanmelding komt er vanzelf bij.
   const aanwezig = Number(w11.eval('DB.currentMatch.squad.length'));
   w11.eval('toggleSquad(DB.players[0].id)');
-  const naAfmelden = Number(w11.eval('DB.currentMatch.squad.length'));
-  assert(naAfmelden === aanwezig - 1, 'de aanwezigheidslijst is niet aanpasbaar');
-  return 'knop aanwezig, lijst aanpasbaar';
+  assert(Number(w11.eval('DB.currentMatch.squad.length')) === aanwezig - 1,
+    'de aanwezigheidslijst is niet aanpasbaar');
+
+  // Afmeldingen zijn een aparte lijst: wie niets liet weten hoort in geen van
+  // beide en komt dus niet op de kaart.
+  w11.eval('toggleAfgemeld(DB.players[0].id)');
+  assert(JSON.parse(w11.eval('JSON.stringify(DB.currentMatch.afgemeld)')).length === 1,
+    'de afmelding is niet vastgelegd');
+  w11.eval('DB.players.slice(0,1).forEach(p => toggleSquad(p.id))');
+  assert(JSON.parse(w11.eval('JSON.stringify(DB.currentMatch.afgemeld)')).length === 0,
+    'iemand staat tegelijk als aanwezig én afgemeld');
+
+  // De verzameltijd wordt afgeleid van de aanvang uit het programma.
+  w11.eval(`srzaData = { programma: [{ date: DB.currentMatch.date, opp: 'Limako', time: '20:24', hal: 'BUITEN', home: true }] }`);
+  const verzamel = w11.eval('standaardVerzameltijd(DB.currentMatch.date)');
+  assert(verzamel === '20:10', `verzameltijd werd ${verzamel} in plaats van 20:10 bij aanvang 20:24`);
+  return 'knop aanwezig, afmeldingen apart, verzameltijd 20:10';
 });
 
 await check('een wedstrijd blijft bij zijn eigen seizoen na de jaarwissel', async () => {

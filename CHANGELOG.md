@@ -9,6 +9,19 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.8.0] — 1 september 2026
+
+### Toegevoegd
+- **Verzameltijd** op de wedstrijd en op de Matchday-kaart. Hij staat standaard
+  een kwartier voor aanvang, afgerond op vijf minuten, en is aan te passen.
+- **Afmeldingen** als aparte lijst. Alleen wie zich echt afmeldt komt onder
+  Afwezig te staan; wie nog niets liet weten wordt niet genoemd.
+
+### Gewijzigd
+- Thuis of uit staat niet meer op de Matchday-kaart.
+
+---
+
 ## [2.7.0] — 1 september 2026
 
 ### Toegevoegd

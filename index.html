@@ -1631,7 +1631,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.7.0';
+const APP_VERSION = '2.8.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1725,6 +1725,8 @@ function normalizeMatch(m) {
   if (m.vlaggerNaam === undefined) m.vlaggerNaam = null;
   if (m.zaaldienst === undefined) m.zaaldienst = null;
   if (m.zaaldienstNaam === undefined) m.zaaldienstNaam = null;
+  if (m.verzameltijd === undefined) m.verzameltijd = '';
+  m.afgemeld = toArray(m.afgemeld);
   m.squadNamen = toArray(m.squadNamen);
   m.assistsNamen = toArray(m.assistsNamen).filter(Boolean);
   if (typeof m.scoreHome !== 'number') m.scoreHome = 0;
@@ -1950,6 +1952,43 @@ function wijsTaakAan(taak) {
     `${gekozen.name} ${t.werkwoord}${minimum === 0 ? ' (nog niet aan de beurt geweest)' : ` (${minimum}x dit seizoen)`}`,
     () => { setTaak(taak, vorige); }
   );
+}
+
+// Alleen wie zich echt afmeldt komt op de Matchday-kaart te staan. Wie nog
+// niets liet weten blijft ongenoemd.
+function toggleAfgemeld(id) {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+  const lijst = toArray(cm.afgemeld);
+  cm.afgemeld = lijst.includes(id) ? lijst.filter(a => a !== id) : [...lijst, id];
+  if (cm.afgemeld.includes(id)) {
+    cm.squad = toArray(cm.squad).filter(s => s !== id);
+    cm.lineup = toArray(cm.lineup).filter(l => l !== id);
+  }
+  saveData(); renderAfmeldModal(); renderMatchView();
+}
+
+function openAfmeldModal() { renderAfmeldModal(); }
+
+function renderAfmeldModal() {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+  const afgemeld = toArray(cm.afgemeld);
+  let h = `<h3>Wie heeft zich afgemeld?</h3>
+    <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:16px">
+      Alleen deze spelers komen als afwezig op de Matchday-kaart.</p>`;
+  [...DB.players].sort((a, b) => a.number - b.number).forEach(p => {
+    const isAf = afgemeld.includes(p.id);
+    const isAanwezig = toArray(cm.squad).includes(p.id);
+    h += `<div class="squad-player ${isAf ? 'selected' : ''}" style="margin-bottom:6px"
+      onclick="toggleAfgemeld('${p.id}')">
+      ${avatarHTML(p, 'avatar-sm')}
+      <span class="sq-name">${p.name}</span>
+      ${isAanwezig ? '<span class="sq-badge">aanwezig</span>' : ''}
+    </div>`;
+  });
+  h += `<button class="modal-cancel" onclick="closeModal()">Sluiten</button>`;
+  openModal(h);
 }
 
 function openTaakModal(taak) {
@@ -2785,6 +2824,8 @@ function startNewMatch() {
     motm: null,
     vlagger: null,
     vlaggerNaam: null,
+    afgemeld: [],
+    verzameltijd: '',
     status: 'setup'
   };
   saveData(); renderMatchView();
@@ -2811,6 +2852,8 @@ function renderMatchSetup(c) {
         </select></div>
       <div class="form-group"><label>Datum</label>
         <input type="date" id="dateInput" value="${cm.date}"></div>
+      <div class="form-group"><label>Verzameltijd</label>
+        <input type="time" id="verzamelInput" value="${cm.verzameltijd || standaardVerzameltijd(cm.date)}"></div>
       <button class="btn btn-primary btn-block btn-lg" onclick="proceedToSquad()">Volgende: Selectie &#10145;</button>
     </div>`;
 }
@@ -2822,6 +2865,7 @@ function proceedToSquad() {
   DB.currentMatch.sporthal = document.getElementById('hallInput').value.trim();
   DB.currentMatch.comp = document.getElementById('compInput').value;
   DB.currentMatch.date = document.getElementById('dateInput').value;
+  DB.currentMatch.verzameltijd = document.getElementById('verzamelInput').value;
   DB.currentMatch.status = 'squad';
   saveData(); renderMatchView();
 }
@@ -2857,8 +2901,11 @@ function renderMatchSquad(c) {
       </div>
     </div>`;
   });
-  h += `<button class="btn btn-outline btn-block" style="margin-top:14px" onclick="shareMatchdayCard()"
-      ${cm.squad.length ? '' : 'disabled'}>&#128241; Matchday delen</button>
+  h += `<div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-secondary btn-block" onclick="openAfmeldModal()">Afmeldingen (${toArray(cm.afgemeld).length})</button>
+      <button class="btn btn-outline btn-block" onclick="shareMatchdayCard()"
+        ${cm.squad.length ? '' : 'disabled'}>&#128241; Matchday</button>
+    </div>
     <div style="margin-top:16px">
     <button class="btn btn-primary btn-block btn-lg" onclick="proceedToLineup()" ${cm.squad.length<5?'disabled':''}>
       Volgende: Opstelling &#10145;</button>
@@ -2871,7 +2918,7 @@ function toggleSquad(id) {
   const cm = DB.currentMatch;
   const i = cm.squad.indexOf(id);
   if (i >= 0) { cm.squad.splice(i,1); cm.lineup = cm.lineup.filter(l=>l!==id); }
-  else cm.squad.push(id);
+  else { cm.squad.push(id); cm.afgemeld = toArray(cm.afgemeld).filter(a => a !== id); }
   saveData(); renderMatchView();
 }
 
@@ -5206,27 +5253,45 @@ async function shareStatsCard() {
   await doShare(canvas, 'joga-bonito-stats');
 }
 
-// De aanwezigheidslijst is gewoon de selectie: wie aangetikt staat is er, de
-// rest niet. Zo kun je een late aanmelding tot het laatste moment toevoegen.
+// Aanwezig is de selectie, afwezig zijn de afmeldingen. Wie niets liet weten
+// komt niet op de kaart.
+// Standaard een kwartier voor aanvang, afgerond op vijf minuten. Aan te passen
+// op het wedstrijdscherm, want dat verschilt per avond.
+function standaardVerzameltijd(datum) {
+  const prog = (srzaData?.programma || []).find(p => p.date === datum);
+  if (!prog || !/^\d{1,2}:\d{2}$/.test(prog.time || '')) return '';
+  const [u, m] = prog.time.split(':').map(Number);
+  let minuten = u * 60 + m - 15;
+  minuten = Math.round(minuten / 5) * 5;
+  if (minuten < 0) return '';
+  return `${String(Math.floor(minuten / 60)).padStart(2, '0')}:${String(minuten % 60).padStart(2, '0')}`;
+}
+
 async function shareMatchdayCard() {
   const cm = DB.currentMatch;
   if (!cm) return;
 
   const aanwezig = toArray(cm.squad).map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
-  // Wie niet is aangetikt, staat als afwezig op de kaart. Late aanmeldingen tik
-  // je er tot het laatste moment alsnog bij.
-  const rest = DB.players.filter(p => !cm.squad.includes(p.id)).sort((a, b) => a.number - b.number);
+  const afwezig = toArray(cm.afgemeld).map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
 
-  // Aanvangstijd en thuis/uit staan niet op de wedstrijd zelf; die komen uit het
-  // opgehaalde programma. Staat de wedstrijd daar niet in, dan laten we ze weg.
+  // De aanvangstijd staat niet op de wedstrijd zelf maar in het opgehaalde
+  // programma. Staat de wedstrijd daar niet in, dan laten we hem weg.
   const prog = (srzaData?.programma || []).find(p => p.date === cm.date);
+  const aanvang = prog && prog.time;
 
   const W = 390, PAD = 24;
   const kolommen = 2;
   const rijenAanwezig = Math.ceil(aanwezig.length / kolommen);
-  const rijenRest = Math.ceil(rest.length / kolommen);
-  const H = 210 + (aanwezig.length ? 24 + rijenAanwezig * 26 : 0)
-                + (rest.length ? 30 + rijenRest * 22 : 0) + 46;
+  const rijenAfwezig = Math.ceil(afwezig.length / kolommen);
+
+  // De hoogte volgt exact dezelfde stappen als het tekenen hieronder, anders
+  // loopt de voettekst over de laatste namen heen.
+  const tijdenRegel = cm.verzameltijd || aanvang;
+  const yStart = tijdenRegel ? 262 : 240;
+  const H = yStart
+    + (aanwezig.length ? 20 + rijenAanwezig * 26 + 10 : 0)
+    + (afwezig.length ? 18 + rijenAfwezig * 22 : 0)
+    + 44;
 
   const { canvas, ctx } = createShareCanvas(W);
   canvas.height = H;
@@ -5245,18 +5310,27 @@ async function shareMatchdayCard() {
   // Tegenstander
   ctx.font = '400 11px "Nunito", sans-serif';
   ctx.fillStyle = '#888888';
-  ctx.fillText(prog && prog.home === false ? 'UIT TEGEN' : 'THUIS TEGEN', W / 2, 166);
+  ctx.fillText('TEGEN', W / 2, 166);
   ctx.font = '800 19px "Montserrat", sans-serif';
   ctx.fillStyle = '#E8E4DE';
   ctx.fillText((cm.opponent || 'Tegenstander').toUpperCase(), W / 2, 190);
 
-  // Datum, tijd, hal
-  const wanneer = [formatDate(cm.date), prog && prog.time, cm.sporthal].filter(Boolean).join('  ·  ');
+  const wanneer = [formatDate(cm.date), cm.sporthal].filter(Boolean).join('  ·  ');
   ctx.font = '600 11px "Nunito", sans-serif';
   ctx.fillStyle = '#C4922E';
   ctx.fillText(wanneer, W / 2, 210);
 
-  let y = 238;
+  const tijden = [
+    cm.verzameltijd ? `Verzamelen ${cm.verzameltijd}` : null,
+    aanvang ? `Aanvang ${aanvang}` : null,
+  ].filter(Boolean).join('   ·   ');
+  if (tijden) {
+    ctx.font = '700 12px "Nunito", sans-serif';
+    ctx.fillStyle = '#E8E4DE';
+    ctx.fillText(tijden, W / 2, 232);
+  }
+
+  let y = yStart;
   const kolomBreedte = (W - PAD * 2) / kolommen;
 
   if (aanwezig.length) {
@@ -5279,18 +5353,18 @@ async function shareMatchdayCard() {
     y += rijenAanwezig * 26 + 10;
   }
 
-  if (rest.length) {
+  if (afwezig.length) {
     ctx.font = '800 10px "Montserrat", sans-serif';
     ctx.fillStyle = '#888888';
-    ctx.fillText(`AFWEZIG (${rest.length})`, PAD, y);
+    ctx.fillText(`AFWEZIG (${afwezig.length})`, PAD, y);
     y += 18;
-    rest.forEach((p, i) => {
+    afwezig.forEach((p, i) => {
       const kol = i % kolommen, rij = Math.floor(i / kolommen);
       ctx.font = '400 12px "Nunito", sans-serif';
       ctx.fillStyle = '#666666';
       ctx.fillText(p.name, PAD + kol * kolomBreedte, y + rij * 22);
     });
-    y += rijenRest * 22;
+    y += rijenAfwezig * 22;
   }
 
   drawCardFooter(ctx, W, H);
