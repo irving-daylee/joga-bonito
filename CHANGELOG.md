@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.9.2] — 1 september 2026
+
+### Gewijzigd
+- Het gegevenskaartje op de Matchday-kaart leest nu als een ticket: datum en
+  locatie op één regel, met daaronder de verzameltijd en de aanvang als twee
+  grote tijden naast elkaar.
+
+---
+
 ## [2.9.1] — 1 september 2026
 
 ### Gewijzigd
