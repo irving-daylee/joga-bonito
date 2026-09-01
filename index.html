@@ -1631,7 +1631,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.6.0';
+const APP_VERSION = '2.6.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2765,6 +2765,10 @@ function renderMatchIdle(c) {
 function startNewMatch() {
   DB.currentMatch = {
     id: 'm' + DB.nextMatchId++,
+    // Het seizoen wordt hier vastgelegd. Zonder dat zou een wedstrijd bij de
+    // jaarwissel meeverhuizen naar het nieuwe seizoen, want dan valt hij terug
+    // op DB.season op het moment dat je ernaar kijkt.
+    season: DB.season,
     date: new Date().toISOString().split('T')[0],
     opponent: '',
     sporthal: '',
@@ -4411,6 +4415,7 @@ function saveRetroMatch() {
   } else {
     DB.matches.push({
       id: 'm' + DB.nextMatchId++,
+      season: DB.season,
       date: rs.date, opponent: rs.opponent.trim(), sporthal: rs.sporthal,
       comp: rs.comp || 'comp',
       squad: [], lineup: [], keeper: null, captain: null, flyingKeeper: false,

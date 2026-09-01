@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.6.1] — 1 september 2026
+
+### Opgelost
+- Een wedstrijd legde het seizoen niet vast. Bij de jaarwissel zouden alle
+  wedstrijden van dit seizoen meeverhuizen naar het nieuwe, waardoor 2026/27
+  leeg zou lijken. Vanaf nu draagt elke wedstrijd zijn eigen seizoen mee.
+
+---
+
 ## [2.6.0] — 1 september 2026
 
 ### Gewijzigd

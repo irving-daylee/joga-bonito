@@ -490,6 +490,37 @@ await check('een rode kaart toont de speler als uitgesloten in het scorebord', a
   return 'uit in scorebord, geen countdown, verdwijnt bij terugdraaien';
 });
 
+await check('een wedstrijd blijft bij zijn eigen seizoen na de jaarwissel', async () => {
+  const { w: w10 } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
+  }));
+  // Speel een wedstrijd zoals de app dat doet, en zet daarna het seizoen door.
+  w10.eval(`
+    startNewMatch();
+    DB.currentMatch.opponent = 'Limako';
+    DB.currentMatch.squad = DB.players.map(p => p.id);
+    DB.currentMatch.keeper = DB.players[0].id;
+    DB.currentMatch.lineup = DB.players.slice(0, 5).map(p => p.id);
+    startMatch();
+    DB.currentMatch.scoreHome = 2; DB.currentMatch.scoreAway = 1;
+    DB.currentMatch.status = 'fulltime';
+    finishMatch();
+  `);
+  const gespeeld = JSON.parse(w10.eval("JSON.stringify(DB.matches.find(m => m.opponent === 'Limako'))"));
+  assert(gespeeld, 'de gespeelde wedstrijd staat niet in de lijst');
+  assert(gespeeld.season === '2026/27',
+    `de wedstrijd draagt geen seizoen mee (season = ${JSON.stringify(gespeeld.season)})`);
+
+  w10.eval("DB.season = '2027/28'");
+  const naWissel = w10.eval("matchSeason(DB.matches.find(m => m.opponent === 'Limako'))");
+  assert(naWissel === '2026/27',
+    `na de jaarwissel hoort de wedstrijd ineens bij ${naWissel} in plaats van 2026/27`);
+  const ditSeizoen = Number(w10.eval("seasonMatches('2027/28').length"));
+  assert(ditSeizoen === 0, `${ditSeizoen} wedstrijd(en) meeverhuisd naar het nieuwe seizoen`);
+  return 'blijft bij 2026/27';
+});
+
 await check('een afgelopen seizoen krijgt vanzelf een eigen tabblad', () => {
   const lees = () => w.document.getElementById('statsContent').textContent.replace(/\s+/g, ' ');
 
