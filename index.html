@@ -1631,7 +1631,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.6.1';
+const APP_VERSION = '2.7.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2857,7 +2857,9 @@ function renderMatchSquad(c) {
       </div>
     </div>`;
   });
-  h += `<div style="margin-top:16px">
+  h += `<button class="btn btn-outline btn-block" style="margin-top:14px" onclick="shareMatchdayCard()"
+      ${cm.squad.length ? '' : 'disabled'}>&#128241; Matchday delen</button>
+    <div style="margin-top:16px">
     <button class="btn btn-primary btn-block btn-lg" onclick="proceedToLineup()" ${cm.squad.length<5?'disabled':''}>
       Volgende: Opstelling &#10145;</button>
     ${cm.squad.length<5?'<p style="font-size:0.78rem;color:var(--text-muted);text-align:center;margin-top:6px">Min. 5 spelers nodig</p>':''}
@@ -5202,6 +5204,97 @@ async function shareStatsCard() {
 
   drawCardFooter(ctx, W, H);
   await doShare(canvas, 'joga-bonito-stats');
+}
+
+// De aanwezigheidslijst is gewoon de selectie: wie aangetikt staat is er, de
+// rest niet. Zo kun je een late aanmelding tot het laatste moment toevoegen.
+async function shareMatchdayCard() {
+  const cm = DB.currentMatch;
+  if (!cm) return;
+
+  const aanwezig = toArray(cm.squad).map(getPlayer).filter(Boolean).sort((a, b) => a.number - b.number);
+  // Wie niet is aangetikt, staat als afwezig op de kaart. Late aanmeldingen tik
+  // je er tot het laatste moment alsnog bij.
+  const rest = DB.players.filter(p => !cm.squad.includes(p.id)).sort((a, b) => a.number - b.number);
+
+  // Aanvangstijd en thuis/uit staan niet op de wedstrijd zelf; die komen uit het
+  // opgehaalde programma. Staat de wedstrijd daar niet in, dan laten we ze weg.
+  const prog = (srzaData?.programma || []).find(p => p.date === cm.date);
+
+  const W = 390, PAD = 24;
+  const kolommen = 2;
+  const rijenAanwezig = Math.ceil(aanwezig.length / kolommen);
+  const rijenRest = Math.ceil(rest.length / kolommen);
+  const H = 210 + (aanwezig.length ? 24 + rijenAanwezig * 26 : 0)
+                + (rest.length ? 30 + rijenRest * 22 : 0) + 46;
+
+  const { canvas, ctx } = createShareCanvas(W);
+  canvas.height = H;
+  ctx.fillStyle = '#0A0A0A';
+  ctx.fillRect(0, 0, W, H);
+  drawCardHeader(ctx, W, cm.comp === 'beker' ? 'Bekerwedstrijd' : 'Competitie');
+
+  // MATCHDAY
+  ctx.textAlign = 'center';
+  ctx.font = '900 30px "Montserrat", sans-serif';
+  ctx.fillStyle = '#C4922E';
+  ctx.letterSpacing = '4px';
+  ctx.fillText('MATCHDAY', W / 2, 142);
+  ctx.letterSpacing = '0px';
+
+  // Tegenstander
+  ctx.font = '400 11px "Nunito", sans-serif';
+  ctx.fillStyle = '#888888';
+  ctx.fillText(prog && prog.home === false ? 'UIT TEGEN' : 'THUIS TEGEN', W / 2, 166);
+  ctx.font = '800 19px "Montserrat", sans-serif';
+  ctx.fillStyle = '#E8E4DE';
+  ctx.fillText((cm.opponent || 'Tegenstander').toUpperCase(), W / 2, 190);
+
+  // Datum, tijd, hal
+  const wanneer = [formatDate(cm.date), prog && prog.time, cm.sporthal].filter(Boolean).join('  ·  ');
+  ctx.font = '600 11px "Nunito", sans-serif';
+  ctx.fillStyle = '#C4922E';
+  ctx.fillText(wanneer, W / 2, 210);
+
+  let y = 238;
+  const kolomBreedte = (W - PAD * 2) / kolommen;
+
+  if (aanwezig.length) {
+    ctx.textAlign = 'left';
+    ctx.font = '800 10px "Montserrat", sans-serif';
+    ctx.fillStyle = '#C4922E';
+    ctx.fillText(`AANWEZIG (${aanwezig.length})`, PAD, y);
+    y += 20;
+    aanwezig.forEach((p, i) => {
+      const kol = i % kolommen, rij = Math.floor(i / kolommen);
+      const x = PAD + kol * kolomBreedte;
+      const ry = y + rij * 26;
+      ctx.font = '800 11px "Montserrat", sans-serif';
+      ctx.fillStyle = '#C4922E';
+      ctx.fillText(String(p.number), x, ry);
+      ctx.font = '600 13px "Nunito", sans-serif';
+      ctx.fillStyle = '#E8E4DE';
+      ctx.fillText(p.name, x + 26, ry);
+    });
+    y += rijenAanwezig * 26 + 10;
+  }
+
+  if (rest.length) {
+    ctx.font = '800 10px "Montserrat", sans-serif';
+    ctx.fillStyle = '#888888';
+    ctx.fillText(`AFWEZIG (${rest.length})`, PAD, y);
+    y += 18;
+    rest.forEach((p, i) => {
+      const kol = i % kolommen, rij = Math.floor(i / kolommen);
+      ctx.font = '400 12px "Nunito", sans-serif';
+      ctx.fillStyle = '#666666';
+      ctx.fillText(p.name, PAD + kol * kolomBreedte, y + rij * 22);
+    });
+    y += rijenRest * 22;
+  }
+
+  drawCardFooter(ctx, W, H);
+  await doShare(canvas, 'joga-bonito-matchday');
 }
 
 async function shareScheduleCard() {

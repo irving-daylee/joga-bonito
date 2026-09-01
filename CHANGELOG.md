@@ -9,6 +9,17 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.7.0] — 1 september 2026
+
+### Toegevoegd
+- **Matchday-kaart** om op wedstrijddag in de groep te delen: tegenstander,
+  datum, tijd, hal, thuis of uit, en wie er wel en niet bij is. De knop staat op
+  het selectiescherm.
+- De aanwezigheidslijst is gewoon de selectie: tik iemand aan of uit en de kaart
+  volgt, dus een late aanmelding voeg je tot het laatste moment toe.
+
+---
+
 ## [2.6.1] — 1 september 2026
 
 ### Opgelost

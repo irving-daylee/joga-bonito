@@ -490,6 +490,34 @@ await check('een rode kaart toont de speler als uitgesloten in het scorebord', a
   return 'uit in scorebord, geen countdown, verdwijnt bij terugdraaien';
 });
 
+await check('de Matchday-kaart is te delen vanaf het selectiescherm', async () => {
+  const { w: w11 } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
+  }));
+  w11.eval(`
+    startNewMatch();
+    DB.currentMatch.opponent = 'Limako';
+    DB.currentMatch.status = 'squad';
+    renderMatchView();
+  `);
+  const zonderSelectie = w11.document.querySelector('button[onclick="shareMatchdayCard()"]');
+  assert(zonderSelectie, 'de Matchday-knop staat niet op het selectiescherm');
+  assert(zonderSelectie.hasAttribute('disabled'),
+    'de Matchday-knop is bruikbaar terwijl er nog niemand geselecteerd is');
+
+  w11.eval('DB.players.slice(0, 2).forEach(p => toggleSquad(p.id))');
+  const metSelectie = w11.document.querySelector('button[onclick="shareMatchdayCard()"]');
+  assert(!metSelectie.hasAttribute('disabled'), 'de Matchday-knop blijft uitgeschakeld met een selectie');
+
+  // De kaart leest de selectie, dus een late aanmelding komt er vanzelf bij.
+  const aanwezig = Number(w11.eval('DB.currentMatch.squad.length'));
+  w11.eval('toggleSquad(DB.players[0].id)');
+  const naAfmelden = Number(w11.eval('DB.currentMatch.squad.length'));
+  assert(naAfmelden === aanwezig - 1, 'de aanwezigheidslijst is niet aanpasbaar');
+  return 'knop aanwezig, lijst aanpasbaar';
+});
+
 await check('een wedstrijd blijft bij zijn eigen seizoen na de jaarwissel', async () => {
   const { w: w10 } = await loadAndLogin(fbShape({
     teamName: 'Joga Bonito', season: '2026/27', players: spelers,
