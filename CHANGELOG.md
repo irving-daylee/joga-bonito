@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.10.1] — 3 september 2026
+
+### Gewijzigd
+- De 2–1 tegen Limako staat op naam van Irving, zoals srza hem registreert, met
+  de toelichting "eigen goal tegenstander" erbij. Zo klopt het doelpuntentotaal
+  met de officiële uitslag én is te zien hoe de bal viel.
+
+---
+
 ## [2.10.0] — 3 september 2026
 
 ### Toegevoegd

@@ -554,9 +554,27 @@ await check('een achteraf vastgelegde wedstrijd komt er één keer in', async ()
   assert(voor === 4 && tegen === 1, `${voor} voor en ${tegen} tegen in de tijdlijn`);
   assert(m[0].events.some(e => e.type === 'card' && e.cardType === 'green'), 'de groene kaart ontbreekt');
 
+  // De 2-1 staat op naam van Irving met de toelichting hoe hij viel.
+  const tweede = m[0].events.find(e => e.minute === 25);
+  assert(tweede.scorerId, 'de 2-1 heeft geen doelpuntenmaker');
+  assert(tweede.notitie === 'eigen goal tegenstander',
+    `toelichting bij de 2-1 ontbreekt: ${JSON.stringify(tweede.notitie)}`);
+
   // Nog een keer draaien mag geen duplicaat opleveren.
   w12.eval('importeerWedstrijden(); importeerWedstrijden();');
   assert(limako().length === 1, 'de wedstrijd is dubbel toegevoegd bij een tweede import');
+
+  // Een correctie met een hoger versienummer werkt de wedstrijd wél bij.
+  const index25 = m[0].events.findIndex(e => e.minute === 25);
+  w12.eval(`
+    DB.matches.find(m => m._import).events[${index25}].notitie = 'verminkt';
+    IMPORT_WEDSTRIJDEN[0].versie = 99;
+    importeerWedstrijden();
+  `);
+  assert(limako().length === 1, 'de bijgewerkte wedstrijd staat er dubbel in');
+  assert(limako()[0].events[index25].notitie === 'eigen goal tegenstander',
+    `de correctie is niet doorgevoerd: ${limako()[0].events[index25].notitie}`);
+  w12.eval('IMPORT_WEDSTRIJDEN[0].versie = 2');
 
   // En hij telt mee in de stats van dit seizoen.
   w12.eval('renderStatsPage()');

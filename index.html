@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.10.0';
+const APP_VERSION = '2.10.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1884,7 +1884,7 @@ function seedMatchesFromHistory() {
 // kunt aanpassen; een latere versie raakt ze niet meer aan.
 const IMPORT_WEDSTRIJDEN = [
   {
-    sleutel: '2026-09-03|Limako',
+    sleutel: '2026-09-03|Limako', versie: 2,
     date: '2026-09-03', opponent: 'Limako', sporthal: 'Buiten', comp: 'comp',
     season: '2026/27', scoreHome: 4, scoreAway: 1,
     squad: ['Marco', 'Irving', 'Said', 'Lyzairo', 'Kenneth', 'Amine', 'Gregory'],
@@ -1893,7 +1893,8 @@ const IMPORT_WEDSTRIJDEN = [
     events: [
       { type: 'goal', minute: 18, half: 1, team: 'home', scorer: 'Amine', assist: 'Said' },
       { type: 'goal', minute: 21, half: 2, team: 'away' },
-      { type: 'goal', minute: 25, half: 2, team: 'home', scorer: 'Irving' },
+      { type: 'goal', minute: 25, half: 2, team: 'home', scorer: 'Irving',
+        notitie: 'eigen goal tegenstander' },
       { type: 'goal', minute: 33, half: 2, team: 'home', scorer: 'Irving', assist: 'Gregory' },
       { type: 'goal', minute: 36, half: 2, team: 'home', scorer: 'Gregory', assist: 'Amine' },
       { type: 'card', minute: 37, half: 2, cardType: 'green', player: 'Amine' },
@@ -1905,11 +1906,19 @@ function importeerWedstrijden() {
   const gedaan = toArray(DB._geimporteerd);
   let nieuw = 0;
   IMPORT_WEDSTRIJDEN.forEach(w => {
-    if (gedaan.includes(w.sleutel)) return;
-    // Al met de hand ingevoerd? Dan niet nog een keer.
-    if (toArray(DB.matches).some(m => m.date === w.date && m.opponent === w.opponent)) {
-      gedaan.push(w.sleutel);
-      return;
+    const bestaand = toArray(DB.matches).find(m => m._import === w.sleutel);
+    if (bestaand) {
+      // Alleen bijwerken als hier een correctie is doorgevoerd. Let op: dat
+      // overschrijft wat er in de app aan die wedstrijd is aangepast.
+      if ((bestaand._importVersie || 1) >= (w.versie || 1)) return;
+      DB.matches = DB.matches.filter(m => m !== bestaand);
+    } else {
+      if (gedaan.includes(w.sleutel)) return;
+      // Al met de hand ingevoerd? Dan niet nog een keer.
+      if (toArray(DB.matches).some(m => m.date === w.date && m.opponent === w.opponent)) {
+        gedaan.push(w.sleutel);
+        return;
+      }
     }
     const idVan = naam => (DB.players.find(p => p.name === naam) || {}).id || null;
     let hs = 0, as = 0;
@@ -1921,10 +1930,11 @@ function importeerWedstrijden() {
       if (e.team === 'away') as++; else hs++;
       return { type: 'goal', minute: e.minute, half: e.half, team: e.team,
         ownGoal: !!e.ownGoal, scorerId: idVan(e.scorer), assistId: idVan(e.assist),
-        scoreAfter: `${hs}\u2013${as}` };
+        notitie: e.notitie || null, scoreAfter: `${hs}\u2013${as}` };
     });
     DB.matches.push({
       id: 'm' + DB.nextMatchId++, season: w.season,
+      _import: w.sleutel, _importVersie: w.versie || 1,
       date: w.date, opponent: w.opponent, sporthal: w.sporthal, comp: w.comp,
       squad: w.squad.map(idVan).filter(Boolean), lineup: [],
       keeper: idVan(w.keeper), captain: idVan(w.captain), flyingKeeper: false,
@@ -3264,7 +3274,12 @@ function renderTimelineEvent(ev, m, evIdx) {
     } else if (isOurs && (scorer || ev.scorerNaam)) {
       // scorerNaam vangt oud-spelers op die geen speler-id meer hebben.
       detail = `<strong>${scorer ? scorer.name : ev.scorerNaam}</strong>`;
-      if (ev.assistId) detail += ` <span class="sub-text">(${getPlayerName(ev.assistId)})</span>`;
+      // Naast de assist kan er een toelichting staan, bijvoorbeeld als de bal er
+      // via een tegenstander in ging maar het doelpunt op naam van onze speler staat.
+      const bijschrift = [];
+      if (ev.assistId) bijschrift.push(getPlayerName(ev.assistId));
+      if (ev.notitie) bijschrift.push(ev.notitie);
+      if (bijschrift.length) detail += ` <span class="sub-text">(${bijschrift.join(' · ')})</span>`;
     } else {
       detail = `<strong>${m.opponent}</strong>`;
     }
