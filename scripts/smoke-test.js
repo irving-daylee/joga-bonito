@@ -537,6 +537,34 @@ await check('Matchday werkt zonder dat er een wedstrijd bestaat', async () => {
   return 'knop bij het programma, voorgevuld en aanpasbaar';
 });
 
+await check('een achteraf vastgelegde wedstrijd komt er één keer in', async () => {
+  const { w: w12 } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
+  }));
+  const limako = () => JSON.parse(w12.eval("JSON.stringify(DB.matches.filter(m => m.opponent === 'Limako'))"));
+  const m = limako();
+  assert(m.length === 1, `${m.length} keer Limako in de lijst`);
+  assert(m[0].scoreHome === 4 && m[0].scoreAway === 1, `stand ${m[0].scoreHome}-${m[0].scoreAway}`);
+  assert(m[0].season === '2026/27', `seizoen ${m[0].season}`);
+
+  // De doelpunten moeten optellen tot de uitslag.
+  const voor = m[0].events.filter(e => e.type === 'goal' && e.team === 'home').length;
+  const tegen = m[0].events.filter(e => e.type === 'goal' && e.team === 'away').length;
+  assert(voor === 4 && tegen === 1, `${voor} voor en ${tegen} tegen in de tijdlijn`);
+  assert(m[0].events.some(e => e.type === 'card' && e.cardType === 'green'), 'de groene kaart ontbreekt');
+
+  // Nog een keer draaien mag geen duplicaat opleveren.
+  w12.eval('importeerWedstrijden(); importeerWedstrijden();');
+  assert(limako().length === 1, 'de wedstrijd is dubbel toegevoegd bij een tweede import');
+
+  // En hij telt mee in de stats van dit seizoen.
+  w12.eval('renderStatsPage()');
+  const stats = w12.document.getElementById('statsContent').textContent.replace(/\s+/g, ' ');
+  assert(/1\s*Gespeeld/.test(stats), `stats tonen de wedstrijd niet: ${stats.slice(0, 90)}`);
+  return '4-1, 6 gebeurtenissen, niet dubbel';
+});
+
 await check('een wedstrijd blijft bij zijn eigen seizoen na de jaarwissel', async () => {
   const { w: w10 } = await loadAndLogin(fbShape({
     teamName: 'Joga Bonito', season: '2026/27', players: spelers,

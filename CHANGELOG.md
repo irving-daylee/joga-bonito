@@ -9,6 +9,16 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.10.0] — 3 september 2026
+
+### Toegevoegd
+- **Limako 4–1 staat in de app.** De wedstrijd van donderdag is achteraf
+  vastgelegd met doelpuntenmakers, assists, de groene kaart en de selectie —
+  niemand hoefde live mee te lezen. Hij verschijnt vanzelf op je telefoon en is
+  daarna gewoon aan te passen.
+
+---
+
 ## [2.9.2] — 1 september 2026
 
 ### Gewijzigd

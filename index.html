@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.9.2';
+const APP_VERSION = '2.10.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1879,6 +1879,66 @@ function seedMatchesFromHistory() {
   DB._seedVersion = SEED_VERSION;
 }
 
+// Wedstrijden die achteraf zijn vastgelegd omdat er niemand live meelas. Ze
+// worden één keer toegevoegd en zijn daarna gewone wedstrijden die je gewoon
+// kunt aanpassen; een latere versie raakt ze niet meer aan.
+const IMPORT_WEDSTRIJDEN = [
+  {
+    sleutel: '2026-09-03|Limako',
+    date: '2026-09-03', opponent: 'Limako', sporthal: 'Buiten', comp: 'comp',
+    season: '2026/27', scoreHome: 4, scoreAway: 1,
+    squad: ['Marco', 'Irving', 'Said', 'Lyzairo', 'Kenneth', 'Amine', 'Gregory'],
+    keeper: 'Marco', captain: 'Irving',
+    // Tijden van srza lopen op van 1 naar 40; 17:17 is dus de 18e minuut.
+    events: [
+      { type: 'goal', minute: 18, half: 1, team: 'home', scorer: 'Amine', assist: 'Said' },
+      { type: 'goal', minute: 21, half: 2, team: 'away' },
+      { type: 'goal', minute: 25, half: 2, team: 'home', scorer: 'Irving' },
+      { type: 'goal', minute: 33, half: 2, team: 'home', scorer: 'Irving', assist: 'Gregory' },
+      { type: 'goal', minute: 36, half: 2, team: 'home', scorer: 'Gregory', assist: 'Amine' },
+      { type: 'card', minute: 37, half: 2, cardType: 'green', player: 'Amine' },
+    ],
+  },
+];
+
+function importeerWedstrijden() {
+  const gedaan = toArray(DB._geimporteerd);
+  let nieuw = 0;
+  IMPORT_WEDSTRIJDEN.forEach(w => {
+    if (gedaan.includes(w.sleutel)) return;
+    // Al met de hand ingevoerd? Dan niet nog een keer.
+    if (toArray(DB.matches).some(m => m.date === w.date && m.opponent === w.opponent)) {
+      gedaan.push(w.sleutel);
+      return;
+    }
+    const idVan = naam => (DB.players.find(p => p.name === naam) || {}).id || null;
+    let hs = 0, as = 0;
+    const events = w.events.map(e => {
+      if (e.type !== 'goal') {
+        return { type: 'card', minute: e.minute, half: e.half,
+          playerId: idVan(e.player), playerNaam: e.player, cardType: e.cardType };
+      }
+      if (e.team === 'away') as++; else hs++;
+      return { type: 'goal', minute: e.minute, half: e.half, team: e.team,
+        ownGoal: !!e.ownGoal, scorerId: idVan(e.scorer), assistId: idVan(e.assist),
+        scoreAfter: `${hs}\u2013${as}` };
+    });
+    DB.matches.push({
+      id: 'm' + DB.nextMatchId++, season: w.season,
+      date: w.date, opponent: w.opponent, sporthal: w.sporthal, comp: w.comp,
+      squad: w.squad.map(idVan).filter(Boolean), lineup: [],
+      keeper: idVan(w.keeper), captain: idVan(w.captain), flyingKeeper: false,
+      events, scoreHome: w.scoreHome, scoreAway: w.scoreAway,
+      half: 2, motm: null, vlagger: null, vlaggerNaam: null,
+      zaaldienst: null, zaaldienstNaam: null, status: 'finished',
+    });
+    gedaan.push(w.sleutel);
+    nieuw++;
+  });
+  DB._geimporteerd = gedaan;
+  return nieuw;
+}
+
 function needsSeed() {
   return !DB.matches || DB.matches.length === 0 || (DB._seedVersion || 0) < SEED_VERSION;
 }
@@ -2080,6 +2140,7 @@ fbAuth.onAuthStateChanged(user => {
       // saveData() moet ná fbReady staan, anders belandt de correctie alleen
       // in localStorage en laadt elke login opnieuw de foute data.
       if (needsSeed()) seedMatchesFromHistory();
+      importeerWedstrijden();
       saveData();
       refreshApp();
     });
