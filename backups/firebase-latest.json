@@ -2,16 +2,26 @@
   "_seedVersion": 6,
   "currentMatch": {
     "comp": "comp",
-    "date": "2026-09-01",
+    "date": "2026-09-03",
     "flyingKeeper": false,
     "half": 1,
     "id": "m46",
-    "opponent": "",
+    "opponent": "LIMAKO",
     "scoreAway": 0,
     "scoreHome": 0,
     "season": "2026/27",
-    "sporthal": "",
-    "status": "setup",
+    "sporthal": "Buiten",
+    "squad": [
+      "p1",
+      "p7",
+      "p2",
+      "p3",
+      "p9",
+      "p10",
+      "p11",
+      "p6"
+    ],
+    "status": "squad",
     "verzameltijd": ""
   },
   "matchday": {
@@ -22,12 +32,9 @@
         "p2",
         "p3",
         "p9",
-        "p10"
-      ],
-      "afgemeld": [
-        "p4",
+        "p10",
         "p11",
-        "p12"
+        "p6"
       ],
       "verzameltijd": "20:10"
     }
@@ -3973,5 +3980,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1788296984119
+  "updatedAt": 1788464336867
 }
