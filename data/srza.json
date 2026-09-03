@@ -1,14 +1,14 @@
 {
-  "lastUpdated": "2026-09-02T09:12:52.381Z",
+  "lastUpdated": "2026-09-03T09:20:25.145Z",
   "team": {
-    "played": 0,
+    "played": 1,
     "wins": 0,
-    "draws": 0,
+    "draws": 1,
     "losses": 0,
     "goalsFor": 0,
     "goalsAgainst": 0,
-    "position": 8,
-    "points": 0
+    "position": 6,
+    "points": 1
   },
   "standen": [
     {
@@ -61,6 +61,54 @@
     },
     {
       "pos": 5,
+      "team": "Jai Hanuman 1",
+      "g": 1,
+      "w": 0,
+      "gl": 1,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 1
+    },
+    {
+      "pos": 6,
+      "team": "Joga Bonito",
+      "g": 1,
+      "w": 0,
+      "gl": 1,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 1
+    },
+    {
+      "pos": 7,
+      "team": "Limako",
+      "g": 1,
+      "w": 0,
+      "gl": 1,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 1
+    },
+    {
+      "pos": 8,
+      "team": "Ter Laak Boomverzorging",
+      "g": 1,
+      "w": 0,
+      "gl": 1,
+      "v": 0,
+      "dv": 0,
+      "dt": 0,
+      "ds": 0,
+      "p": 1
+    },
+    {
+      "pos": 9,
       "team": "Fc Ada",
       "g": 0,
       "w": 0,
@@ -72,56 +120,8 @@
       "p": 0
     },
     {
-      "pos": 6,
-      "team": "Galàcticos",
-      "g": 0,
-      "w": 0,
-      "gl": 0,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 0
-    },
-    {
-      "pos": 7,
-      "team": "Jai Hanuman 1",
-      "g": 0,
-      "w": 0,
-      "gl": 0,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 0
-    },
-    {
-      "pos": 8,
-      "team": "Joga Bonito",
-      "g": 0,
-      "w": 0,
-      "gl": 0,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 0
-    },
-    {
-      "pos": 9,
-      "team": "Limako",
-      "g": 0,
-      "w": 0,
-      "gl": 0,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 0
-    },
-    {
       "pos": 10,
-      "team": "Ter Laak Boomverzorging",
+      "team": "Galàcticos",
       "g": 0,
       "w": 0,
       "gl": 0,
@@ -156,7 +156,18 @@
       "p": 0
     }
   ],
-  "uitslagen": [],
+  "uitslagen": [
+    {
+      "date": "2026-09-03",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "BUITEN",
+      "opp": "Limako",
+      "home": true,
+      "jb": 0,
+      "opp_s": 0
+    }
+  ],
   "programma": [
     {
       "date": "2026-09-03",
