@@ -707,6 +707,53 @@ await check('de loting kiest wie het minst gevlagd heeft', async () => {
   return `altijd ${[...uitkomsten][0]}, nooit ${veelvlagger}`;
 });
 
+await check('het spelersprofiel telt de historie niet dubbel', async () => {
+  // De geseede historie staat óók in DB.matches. Berekent het profiel het
+  // lopende seizoen uit álle wedstrijden, dan telt elke historische wedstrijd
+  // een tweede keer mee en verdubbelt de all-time stand.
+  const { w: pw, loginError: fout } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 5, currentMatch: null,
+    matches: [wedstrijd('m1', '2026-09-10', 'Nieuwe Tegenstander', 3, 1, {
+      squad: ['p2'],
+      events: [{ type: 'goal', minute: 5, half: 1, team: 'home', ownGoal: false,
+        scorerId: 'p2', assistId: null }],
+    })],
+  }));
+  assert(!fout, `inloggen crasht de app: ${fout}`);
+
+  const hist = JSON.parse(pw.eval('JSON.stringify(HISTORY)'));
+  const geseed = JSON.parse(pw.eval('JSON.stringify(SEEDED_SEASONS)'));
+
+  // Alles van vóór 1 juli 2026 hoort bij een afgesloten seizoen en komt uit
+  // HISTORY; alleen wat daarna is gespeeld telt onder het lopende seizoen.
+  const ditSeizoen = getDB(pw).matches.filter(m =>
+    m.status === 'finished' && m.date >= '2026-07-01' && (m.squad || []).includes('p2'));
+  let wed = ditSeizoen.length;
+  let g = ditSeizoen.reduce((n, m) => n + (m.events || []).filter(ev =>
+    ev.type === 'goal' && ev.team === 'home' && !ev.ownGoal && ev.scorerId === 'p2').length, 0);
+  let a = 0;
+  geseed.forEach(key => {
+    const hp = ((hist[key] || {}).players || []).find(p => p.name === 'Irving');
+    if (hp && hp.played > 0) { wed += hp.played; g += hp.goals; a += hp.assists; }
+  });
+  assert(wed > ditSeizoen.length, 'testopzet klopt niet: geen historie voor Irving');
+
+  pw.showPlayerProfile('p2');
+  const tekst = (pw.document.getElementById('playerProfileContent').textContent || '')
+    .replace(/\s+/g, ' ');
+  const alltime = /All-time (\d+) wed (\d+) G (\d+) A/.exec(tekst);
+  assert(alltime, `kon de all-time regel niet vinden: ${tekst.slice(0, 200)}`);
+  assert(Number(alltime[1]) === wed && Number(alltime[2]) === g && Number(alltime[3]) === a,
+    `all-time toont ${alltime[1]} wed / ${alltime[2]} G / ${alltime[3]} A, verwacht ${wed} / ${g} / ${a}`);
+
+  const dit = /2026\/27 (\d+) wed/.exec(tekst);
+  assert(dit, 'kon de rij van het lopende seizoen niet vinden');
+  assert(Number(dit[1]) === ditSeizoen.length,
+    `2026/27 toont ${dit[1]} wedstrijden terwijl er dit seizoen ${ditSeizoen.length} gespeeld zijn`);
+  return `${wed} wed, ${g} G, ${a} A; ${ditSeizoen.length} dit seizoen`;
+});
+
 await check('het versienummer staat in de topbar en is stempelbaar', () => {
   const el = w.document.getElementById('appVersion');
   assert(el, 'er staat geen versie-element in de topbar');

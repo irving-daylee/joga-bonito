@@ -9,6 +9,22 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.10.2] — 4 september 2026
+
+### Opgelost
+- Op een spelersprofiel telden de wedstrijden van vorige seizoenen dubbel: ze
+  stonden nog een keer onder het lopende seizoen. Irving kwam daardoor op 66
+  wedstrijden en 115 goals in plaats van 34 en 60, en onder "Wedstrijden
+  2026/27" stond de hele historie. De carrièrelijst en de totalen kloppen nu,
+  en de lijst eronder toont alleen wedstrijden van dit seizoen.
+- Assists uit de seizoensadministratie tellen weer mee op het profiel.
+
+### Gewijzigd
+- Het vakje dat "G/A ratio" heette telde goals én assists per wedstrijd op,
+  geen verhouding tussen de twee. Het heet nu "G+A / wed.".
+
+---
+
 ## [2.10.1] — 3 september 2026
 
 ### Gewijzigd

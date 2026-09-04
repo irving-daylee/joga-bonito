@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.10.1';
+const APP_VERSION = '2.10.2';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2727,9 +2727,14 @@ function getPlayerCareerStats(name, id) {
   const seasons = [];
   let totalGoals = 0, totalAssists = 0, totalPlayed = 0;
 
-  ['2024/25', '2025/26'].forEach(key => {
+  // De geseede historie staat óók in DB.matches, dus een seizoen dat uit
+  // HISTORY komt mag niet nog eens uit de wedstrijden berekend worden —
+  // anders telt elke historische wedstrijd dubbel.
+  const uitHistorie = new Set();
+  [...SEEDED_SEASONS].sort().forEach(key => {
     const hist = HISTORY[key];
-    if (!hist) return;
+    if (!hist || !hist.players) return;
+    uitHistorie.add(key);
     const hp = hist.players.find(p => p.name === name);
     if (hp && hp.played > 0) {
       seasons.push({ season: key, goals: hp.goals, assists: hp.assists, played: hp.played });
@@ -2739,9 +2744,13 @@ function getPlayerCareerStats(name, id) {
     }
   });
 
-  const finished = DB.matches.filter(m => m.status === 'finished');
-  const played = finished.filter(m => (m.squad || []).includes(id));
-  if (played.length > 0) {
+  const eigenSeizoenen = [...new Set(toArray(DB.matches)
+    .filter(m => m && m.status === 'finished')
+    .map(matchSeason))].filter(s => !uitHistorie.has(s)).sort();
+
+  eigenSeizoenen.forEach(season => {
+    const played = seasonMatches(season).filter(m => (m.squad || []).includes(id));
+    if (played.length === 0) return;
     let cg = 0, ca = 0;
     const matchDetails = [];
     played.forEach(m => {
@@ -2751,15 +2760,19 @@ function getPlayerCareerStats(name, id) {
         if (ev.team === 'home' && !ev.ownGoal && ev.scorerId === id) { cg++; mg++; }
         if (ev.assistId === id) { ca++; ma++; }
       });
+      // Uit de administratie overgenomen wedstrijden koppelen een assist niet
+      // aan een doelpunt; die staan als aantal per naam op de wedstrijd.
+      const losseAssists = (m.assistsNamen || []).find(a => a && a[0] === name);
+      if (losseAssists) { ca += losseAssists[1]; ma += losseAssists[1]; }
       matchDetails.push({ m, goals: mg, assists: ma });
     });
-    seasons.push({ season: DB.season, goals: cg, assists: ca, played: played.length, matchDetails });
+    seasons.push({ season, goals: cg, assists: ca, played: played.length, matchDetails });
     totalGoals += cg;
     totalAssists += ca;
     totalPlayed += played.length;
-  }
+  });
 
-  const motm = finished.filter(m => m.motm === id).length;
+  const motm = toArray(DB.matches).filter(m => m && m.status === 'finished' && m.motm === id).length;
   return { seasons, totalGoals, totalAssists, totalPlayed, motm };
 }
 
@@ -2808,7 +2821,7 @@ function showPlayerProfile(id) {
       const ratio = ((career.totalGoals + career.totalAssists) / career.totalPlayed).toFixed(1);
       const gpw = career.totalGoals ? (career.totalGoals / career.totalPlayed).toFixed(1) : '0';
       h += `<div class="pp-stats" style="margin-top:1px">
-        <div class="pp-stat"><div class="pp-stat-val">${ratio}</div><div class="pp-stat-label">G/A ratio</div></div>
+        <div class="pp-stat"><div class="pp-stat-val">${ratio}</div><div class="pp-stat-label">G+A / wed.</div></div>
         <div class="pp-stat"><div class="pp-stat-val">${gpw}</div><div class="pp-stat-label">Goals / wed.</div></div>
         <div class="pp-stat"><div class="pp-stat-val">${career.motm}</div><div class="pp-stat-label">MOTM</div></div>
       </div>`;
@@ -2840,7 +2853,7 @@ function showPlayerProfile(id) {
     h += `</div>`;
   }
 
-  const currentSeason = career.seasons.find(s => s.matchDetails);
+  const currentSeason = career.seasons.find(s => s.season === DB.season && s.matchDetails);
   if (currentSeason && currentSeason.matchDetails.length > 0) {
     h += `<div class="pp-matches"><h3 style="font-size:0.88rem;font-weight:700;margin-bottom:8px">Wedstrijden ${DB.season}</h3>`;
     [...currentSeason.matchDetails].reverse().forEach(({ m, goals: mg, assists: ma }) => {
@@ -5748,7 +5761,7 @@ async function sharePlayerCard(id) {
     const ratio = ((career.totalGoals + career.totalAssists) / career.totalPlayed).toFixed(1);
     const gpw = career.totalGoals ? (career.totalGoals / career.totalPlayed).toFixed(1) : '0';
     const extra = [
-      { val: ratio, label: 'G/A ratio' },
+      { val: ratio, label: 'G+A / wed.' },
       { val: gpw, label: 'Goals / wed.' },
       { val: String(career.motm), label: 'MOTM' },
     ];
