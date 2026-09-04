@@ -1,29 +1,8 @@
 {
+  "_geimporteerd": [
+    "2026-09-03|Limako"
+  ],
   "_seedVersion": 6,
-  "currentMatch": {
-    "comp": "comp",
-    "date": "2026-09-03",
-    "flyingKeeper": false,
-    "half": 1,
-    "id": "m46",
-    "opponent": "LIMAKO",
-    "scoreAway": 0,
-    "scoreHome": 0,
-    "season": "2026/27",
-    "sporthal": "Buiten",
-    "squad": [
-      "p1",
-      "p7",
-      "p2",
-      "p3",
-      "p9",
-      "p10",
-      "p11",
-      "p6"
-    ],
-    "status": "squad",
-    "verzameltijd": ""
-  },
   "matchday": {
     "2026-09-03": {
       "aanwezig": [
@@ -3876,9 +3855,90 @@
       ],
       "status": "finished",
       "verzameltijd": ""
+    },
+    {
+      "captain": "p2",
+      "comp": "comp",
+      "date": "2026-09-03",
+      "events": [
+        {
+          "assistId": "p10",
+          "half": 1,
+          "minute": 18,
+          "ownGoal": false,
+          "scoreAfter": "1–0",
+          "scorerId": "p11",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 21,
+          "ownGoal": false,
+          "scoreAfter": "1–1",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 25,
+          "ownGoal": false,
+          "scoreAfter": "2–1",
+          "scorerId": "p2",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p6",
+          "half": 2,
+          "minute": 33,
+          "ownGoal": false,
+          "scoreAfter": "3–1",
+          "scorerId": "p2",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p11",
+          "half": 2,
+          "minute": 36,
+          "ownGoal": false,
+          "scoreAfter": "4–1",
+          "scorerId": "p6",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "cardType": "green",
+          "half": 2,
+          "minute": 37,
+          "playerId": "p11",
+          "playerNaam": "Amine",
+          "type": "card"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "m47",
+      "keeper": "p1",
+      "opponent": "Limako",
+      "scoreAway": 1,
+      "scoreHome": 4,
+      "season": "2026/27",
+      "sporthal": "Buiten",
+      "squad": [
+        "p1",
+        "p2",
+        "p10",
+        "p3",
+        "p9",
+        "p11",
+        "p6"
+      ],
+      "status": "finished"
     }
   ],
-  "nextMatchId": 47,
+  "nextMatchId": 48,
   "nextPlayerId": 13,
   "players": [
     {
@@ -3980,5 +4040,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1788464336867
+  "updatedAt": 1788471368519
 }

@@ -3935,7 +3935,8 @@
         "p11",
         "p6"
       ],
-      "status": "finished"
+      "status": "finished",
+      "verzameltijd": ""
     }
   ],
   "nextMatchId": 48,
@@ -4040,5 +4041,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1788471368519
+  "updatedAt": 1788508810308
 }
