@@ -1,18 +1,30 @@
 {
-  "lastUpdated": "2026-09-03T09:20:25.145Z",
+  "lastUpdated": "2026-09-04T09:17:58.333Z",
   "team": {
     "played": 1,
-    "wins": 0,
-    "draws": 1,
+    "wins": 1,
+    "draws": 0,
     "losses": 0,
-    "goalsFor": 0,
-    "goalsAgainst": 0,
-    "position": 6,
-    "points": 1
+    "goalsFor": 4,
+    "goalsAgainst": 1,
+    "position": 3,
+    "points": 3
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Jai Hanuman 1",
+      "g": 1,
+      "w": 1,
+      "gl": 0,
+      "v": 0,
+      "dv": 10,
+      "dt": 2,
+      "ds": 8,
+      "p": 3
+    },
+    {
+      "pos": 2,
       "team": "As Sport Events",
       "g": 1,
       "w": 1,
@@ -24,7 +36,19 @@
       "p": 3
     },
     {
-      "pos": 2,
+      "pos": 3,
+      "team": "Joga Bonito",
+      "g": 1,
+      "w": 1,
+      "gl": 0,
+      "v": 0,
+      "dv": 4,
+      "dt": 1,
+      "ds": 3,
+      "p": 3
+    },
+    {
+      "pos": 4,
       "team": "Ally United",
       "g": 1,
       "w": 1,
@@ -36,7 +60,7 @@
       "p": 3
     },
     {
-      "pos": 3,
+      "pos": 5,
       "team": "Ander Kallyber Fc",
       "g": 1,
       "w": 0,
@@ -48,7 +72,7 @@
       "p": 1
     },
     {
-      "pos": 4,
+      "pos": 6,
       "team": "De Onderste",
       "g": 1,
       "w": 0,
@@ -60,55 +84,7 @@
       "p": 1
     },
     {
-      "pos": 5,
-      "team": "Jai Hanuman 1",
-      "g": 1,
-      "w": 0,
-      "gl": 1,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 1
-    },
-    {
-      "pos": 6,
-      "team": "Joga Bonito",
-      "g": 1,
-      "w": 0,
-      "gl": 1,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 1
-    },
-    {
       "pos": 7,
-      "team": "Limako",
-      "g": 1,
-      "w": 0,
-      "gl": 1,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 1
-    },
-    {
-      "pos": 8,
-      "team": "Ter Laak Boomverzorging",
-      "g": 1,
-      "w": 0,
-      "gl": 1,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 1
-    },
-    {
-      "pos": 9,
       "team": "Fc Ada",
       "g": 0,
       "w": 0,
@@ -120,7 +96,7 @@
       "p": 0
     },
     {
-      "pos": 10,
+      "pos": 8,
       "team": "Galàcticos",
       "g": 0,
       "w": 0,
@@ -132,7 +108,7 @@
       "p": 0
     },
     {
-      "pos": 11,
+      "pos": 9,
       "team": "Novia Facts",
       "g": 1,
       "w": 0,
@@ -144,7 +120,19 @@
       "p": 0
     },
     {
-      "pos": 12,
+      "pos": 10,
+      "team": "Limako",
+      "g": 1,
+      "w": 0,
+      "gl": 0,
+      "v": 1,
+      "dv": 1,
+      "dt": 4,
+      "ds": -3,
+      "p": 0
+    },
+    {
+      "pos": 11,
       "team": "Weddingcars By Dk",
       "g": 1,
       "w": 0,
@@ -153,6 +141,18 @@
       "dv": 0,
       "dt": 6,
       "ds": -6,
+      "p": 0
+    },
+    {
+      "pos": 12,
+      "team": "Ter Laak Boomverzorging",
+      "g": 1,
+      "w": 0,
+      "gl": 0,
+      "v": 1,
+      "dv": 2,
+      "dt": 10,
+      "ds": -8,
       "p": 0
     }
   ],
@@ -164,19 +164,11 @@
       "hal": "BUITEN",
       "opp": "Limako",
       "home": true,
-      "jb": 0,
-      "opp_s": 0
+      "jb": 4,
+      "opp_s": 1
     }
   ],
   "programma": [
-    {
-      "date": "2026-09-03",
-      "comp": "1A",
-      "time": "20:24",
-      "hal": "BUITEN",
-      "opp": "Limako",
-      "home": true
-    },
     {
       "date": "2026-09-09",
       "comp": "1A",
