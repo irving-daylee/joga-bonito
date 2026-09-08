@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-07T09:52:02.118Z",
+  "lastUpdated": "2026-09-08T09:16:31.359Z",
   "team": {
     "played": 1,
     "wins": 1,
@@ -7,7 +7,7 @@
     "losses": 0,
     "goalsFor": 4,
     "goalsAgainst": 1,
-    "position": 3,
+    "position": 4,
     "points": 3
   },
   "standen": [
@@ -37,6 +37,18 @@
     },
     {
       "pos": 3,
+      "team": "Fc Ada",
+      "g": 1,
+      "w": 1,
+      "gl": 0,
+      "v": 0,
+      "dv": 5,
+      "dt": 1,
+      "ds": 4,
+      "p": 3
+    },
+    {
+      "pos": 4,
       "team": "Joga Bonito",
       "g": 1,
       "w": 1,
@@ -48,7 +60,7 @@
       "p": 3
     },
     {
-      "pos": 4,
+      "pos": 5,
       "team": "Ally United",
       "g": 1,
       "w": 1,
@@ -60,7 +72,7 @@
       "p": 3
     },
     {
-      "pos": 5,
+      "pos": 6,
       "team": "Ander Kallyber Fc",
       "g": 1,
       "w": 0,
@@ -72,7 +84,7 @@
       "p": 1
     },
     {
-      "pos": 6,
+      "pos": 7,
       "team": "De Onderste",
       "g": 1,
       "w": 0,
@@ -82,18 +94,6 @@
       "dt": 2,
       "ds": 0,
       "p": 1
-    },
-    {
-      "pos": 7,
-      "team": "Fc Ada",
-      "g": 0,
-      "w": 0,
-      "gl": 0,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 0
     },
     {
       "pos": 8,
@@ -109,18 +109,6 @@
     },
     {
       "pos": 9,
-      "team": "Novia Facts",
-      "g": 1,
-      "w": 0,
-      "gl": 0,
-      "v": 1,
-      "dv": 3,
-      "dt": 5,
-      "ds": -2,
-      "p": 0
-    },
-    {
-      "pos": 10,
       "team": "Limako",
       "g": 1,
       "w": 0,
@@ -132,7 +120,7 @@
       "p": 0
     },
     {
-      "pos": 11,
+      "pos": 10,
       "team": "Weddingcars By Dk",
       "g": 1,
       "w": 0,
@@ -144,7 +132,7 @@
       "p": 0
     },
     {
-      "pos": 12,
+      "pos": 11,
       "team": "Ter Laak Boomverzorging",
       "g": 1,
       "w": 0,
@@ -153,6 +141,18 @@
       "dv": 2,
       "dt": 10,
       "ds": -8,
+      "p": 0
+    },
+    {
+      "pos": 12,
+      "team": "Novia Facts",
+      "g": 2,
+      "w": 0,
+      "gl": 0,
+      "v": 2,
+      "dv": 4,
+      "dt": 10,
+      "ds": -6,
       "p": 0
     }
   ],
