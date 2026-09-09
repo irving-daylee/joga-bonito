@@ -576,11 +576,28 @@ await check('een achteraf vastgelegde wedstrijd komt er één keer in', async ()
     `de correctie is niet doorgevoerd: ${limako()[0].events[index25].notitie}`);
   w12.eval('IMPORT_WEDSTRIJDEN[0].versie = 2');
 
-  // En hij telt mee in de stats van dit seizoen.
+  // Elke achteraf vastgelegde wedstrijd hoort in de tijdlijn op te tellen tot
+  // de uitslag; een overgetypte minuut of doelpuntenmaker valt hier door de mand.
+  const tijdlijnen = JSON.parse(w12.eval("JSON.stringify(DB.matches.filter(m => m._import).map(m => ({ opponent: m.opponent, scoreHome: m.scoreHome, scoreAway: m.scoreAway, voor: m.events.filter(e => e.type === 'goal' && e.team === 'home').length, tegen: m.events.filter(e => e.type === 'goal' && e.team === 'away').length })))"));
+  assert(tijdlijnen.length > 0, 'er is geen enkele wedstrijd geïmporteerd');
+  const fout = tijdlijnen
+    .filter(t => t.voor !== t.scoreHome || t.tegen !== t.scoreAway)
+    .map(t => `${t.opponent}: ${t.voor}-${t.tegen} in de tijdlijn, uitslag ${t.scoreHome}-${t.scoreAway}`);
+  assert(fout.length === 0, fout.join('; '));
+
+  // Wie vlagde staat als naam op de wedstrijd, ook als hij niet meespeelde.
+  const ally = JSON.parse(w12.eval("JSON.stringify(DB.matches.find(m => m.opponent === 'Ally United'))"));
+  assert(ally, 'Ally United ontbreekt');
+  assert(ally.vlaggerNaam === 'Erfan', `vlagger is ${ally.vlaggerNaam} in plaats van Erfan`);
+  assert(!(ally.squad || []).includes(ally.vlagger), 'de vlagger staat ten onrechte in de selectie');
+
+  // En ze tellen mee in de stats van dit seizoen.
+  const aantal = Number(w12.eval('IMPORT_WEDSTRIJDEN.length'));
   w12.eval('renderStatsPage()');
   const stats = w12.document.getElementById('statsContent').textContent.replace(/\s+/g, ' ');
-  assert(/1\s*Gespeeld/.test(stats), `stats tonen de wedstrijd niet: ${stats.slice(0, 90)}`);
-  return '4-1, 6 gebeurtenissen, niet dubbel';
+  assert(new RegExp(`${aantal}\\s*Gespeeld`).test(stats),
+    `stats tonen niet alle ${aantal} wedstrijden: ${stats.slice(0, 90)}`);
+  return `${aantal} wedstrijden, tijdlijnen kloppen, niet dubbel`;
 });
 
 await check('een wedstrijd blijft bij zijn eigen seizoen na de jaarwissel', async () => {
@@ -651,7 +668,7 @@ await check('de vlagger overleeft een rondje Firebase en staat op de historie', 
   }));
   assert(!loginError, `inloggen crasht: ${loginError}`);
 
-  const metVlagger = Number(w8.eval('DB.matches.filter(m => m.vlaggerNaam).length'));
+  const metVlagger = Number(w8.eval('DB.matches.filter(m => m._seeded && m.vlaggerNaam).length'));
   assert(metVlagger === 39, `${metVlagger} geseede wedstrijden met een vlagger in plaats van 39`);
   // Zaaldienst is historisch niet per wedstrijd bijgehouden maar per
   // zaaldienstavond, dus die telling staat als seizoenstotaal in HISTORY.
@@ -732,7 +749,8 @@ await check('het spelersprofiel telt de historie niet dubbel', async () => {
   let wed = ditSeizoen.length;
   let g = ditSeizoen.reduce((n, m) => n + (m.events || []).filter(ev =>
     ev.type === 'goal' && ev.team === 'home' && !ev.ownGoal && ev.scorerId === 'p2').length, 0);
-  let a = 0;
+  let a = ditSeizoen.reduce((n, m) => n + (m.events || []).filter(ev =>
+    ev.type === 'goal' && ev.assistId === 'p2').length, 0);
   geseed.forEach(key => {
     const hp = ((hist[key] || {}).players || []).find(p => p.name === 'Irving');
     if (hp && hp.played > 0) { wed += hp.played; g += hp.goals; a += hp.assists; }

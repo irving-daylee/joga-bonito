@@ -9,6 +9,19 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.11.0] — 9 september 2026
+
+### Toegevoegd
+- **Ally United 7–2 staat in de app.** De wedstrijd van woensdag is achteraf
+  vastgelegd: de negen doelpunten met de minuten uit srza, de assists zoals ze
+  in de app-groep werden bijgehouden, de selectie van negen man en Erfan als
+  vlagger. Hij verschijnt vanzelf op je telefoon en is daarna gewoon aan te
+  passen.
+- Bij een achteraf vastgelegde wedstrijd kan nu ook meteen genoteerd worden wie
+  er gevlagd heeft, ook als diegene zelf niet meespeelde.
+
+---
+
 ## [2.10.2] — 4 september 2026
 
 ### Opgelost
