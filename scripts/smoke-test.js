@@ -566,6 +566,7 @@ await check('een achteraf vastgelegde wedstrijd komt er één keer in', async ()
 
   // Een correctie met een hoger versienummer werkt de wedstrijd wél bij.
   const index25 = m[0].events.findIndex(e => e.minute === 25);
+  const echteVersie = Number(w12.eval('IMPORT_WEDSTRIJDEN[0].versie'));
   w12.eval(`
     DB.matches.find(m => m._import).events[${index25}].notitie = 'verminkt';
     IMPORT_WEDSTRIJDEN[0].versie = 99;
@@ -574,7 +575,7 @@ await check('een achteraf vastgelegde wedstrijd komt er één keer in', async ()
   assert(limako().length === 1, 'de bijgewerkte wedstrijd staat er dubbel in');
   assert(limako()[0].events[index25].notitie === 'eigen goal tegenstander',
     `de correctie is niet doorgevoerd: ${limako()[0].events[index25].notitie}`);
-  w12.eval('IMPORT_WEDSTRIJDEN[0].versie = 2');
+  w12.eval(`IMPORT_WEDSTRIJDEN[0].versie = ${echteVersie}`);
 
   // Elke achteraf vastgelegde wedstrijd hoort in de tijdlijn op te tellen tot
   // de uitslag; een overgetypte minuut of doelpuntenmaker valt hier door de mand.

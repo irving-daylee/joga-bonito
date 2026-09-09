@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.11.0';
+const APP_VERSION = '2.11.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1884,11 +1884,11 @@ function seedMatchesFromHistory() {
 // kunt aanpassen; een latere versie raakt ze niet meer aan.
 const IMPORT_WEDSTRIJDEN = [
   {
-    sleutel: '2026-09-03|Limako', versie: 2,
+    sleutel: '2026-09-03|Limako', versie: 3,
     date: '2026-09-03', opponent: 'Limako', sporthal: 'Buiten', comp: 'comp',
     season: '2026/27', scoreHome: 4, scoreAway: 1,
     squad: ['Marco', 'Irving', 'Said', 'Lyzairo', 'Kenneth', 'Amine', 'Gregory'],
-    keeper: 'Marco', captain: 'Irving',
+    keeper: 'Marco', captain: 'Irving', vlagger: 'Amine',
     // Tijden van srza lopen op van 1 naar 40; 17:17 is dus de 18e minuut.
     events: [
       { type: 'goal', minute: 18, half: 1, team: 'home', scorer: 'Amine', assist: 'Said' },
