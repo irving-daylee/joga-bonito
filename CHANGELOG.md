@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.11.1] — 9 september 2026
+
+### Opgelost
+- Amine stond niet als vlagger bij Limako, terwijl hij die avond gevlagd heeft.
+  Dat is bijgewerkt, dus de loting voor de volgende vlagger houdt er weer
+  rekening mee wie er al aan de beurt is geweest.
+
+---
+
 ## [2.11.0] — 9 september 2026
 
 ### Toegevoegd
