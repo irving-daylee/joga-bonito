@@ -1,18 +1,30 @@
 {
-  "lastUpdated": "2026-09-09T09:19:48.830Z",
+  "lastUpdated": "2026-09-10T09:18:24.627Z",
   "team": {
-    "played": 1,
-    "wins": 1,
+    "played": 2,
+    "wins": 2,
     "draws": 0,
     "losses": 0,
-    "goalsFor": 4,
-    "goalsAgainst": 1,
-    "position": 4,
-    "points": 3
+    "goalsFor": 11,
+    "goalsAgainst": 3,
+    "position": 1,
+    "points": 6
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Joga Bonito",
+      "g": 2,
+      "w": 2,
+      "gl": 0,
+      "v": 0,
+      "dv": 11,
+      "dt": 3,
+      "ds": 8,
+      "p": 6
+    },
+    {
+      "pos": 2,
       "team": "Jai Hanuman 1",
       "g": 1,
       "w": 1,
@@ -24,7 +36,7 @@
       "p": 3
     },
     {
-      "pos": 2,
+      "pos": 3,
       "team": "As Sport Events",
       "g": 1,
       "w": 1,
@@ -36,7 +48,7 @@
       "p": 3
     },
     {
-      "pos": 3,
+      "pos": 4,
       "team": "Fc Ada",
       "g": 1,
       "w": 1,
@@ -48,27 +60,15 @@
       "p": 3
     },
     {
-      "pos": 4,
-      "team": "Joga Bonito",
-      "g": 1,
-      "w": 1,
-      "gl": 0,
-      "v": 0,
-      "dv": 4,
-      "dt": 1,
-      "ds": 3,
-      "p": 3
-    },
-    {
       "pos": 5,
       "team": "Ally United",
-      "g": 1,
+      "g": 2,
       "w": 1,
       "gl": 0,
-      "v": 0,
-      "dv": 5,
-      "dt": 3,
-      "ds": 2,
+      "v": 1,
+      "dv": 7,
+      "dt": 10,
+      "ds": -3,
       "p": 3
     },
     {
@@ -158,6 +158,16 @@
   ],
   "uitslagen": [
     {
+      "date": "2026-09-09",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "WATERWIJK",
+      "opp": "Ally United",
+      "home": false,
+      "jb": 7,
+      "opp_s": 2
+    },
+    {
       "date": "2026-09-03",
       "comp": "1A",
       "time": "20:24",
@@ -169,14 +179,6 @@
     }
   ],
   "programma": [
-    {
-      "date": "2026-09-09",
-      "comp": "1A",
-      "time": "20:24",
-      "hal": "WATERWIJK",
-      "opp": "Ally United",
-      "home": false
-    },
     {
       "date": "2026-09-16",
       "comp": "1A",
