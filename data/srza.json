@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-10T09:18:24.627Z",
+  "lastUpdated": "2026-09-11T09:17:09.831Z",
   "team": {
     "played": 2,
     "wins": 2,
@@ -61,6 +61,18 @@
     },
     {
       "pos": 5,
+      "team": "Galàcticos",
+      "g": 1,
+      "w": 1,
+      "gl": 0,
+      "v": 0,
+      "dv": 2,
+      "dt": 1,
+      "ds": 1,
+      "p": 3
+    },
+    {
+      "pos": 6,
       "team": "Ally United",
       "g": 2,
       "w": 1,
@@ -72,7 +84,7 @@
       "p": 3
     },
     {
-      "pos": 6,
+      "pos": 7,
       "team": "Ander Kallyber Fc",
       "g": 1,
       "w": 0,
@@ -84,7 +96,7 @@
       "p": 1
     },
     {
-      "pos": 7,
+      "pos": 8,
       "team": "De Onderste",
       "g": 1,
       "w": 0,
@@ -96,31 +108,7 @@
       "p": 1
     },
     {
-      "pos": 8,
-      "team": "Galàcticos",
-      "g": 0,
-      "w": 0,
-      "gl": 0,
-      "v": 0,
-      "dv": 0,
-      "dt": 0,
-      "ds": 0,
-      "p": 0
-    },
-    {
       "pos": 9,
-      "team": "Limako",
-      "g": 1,
-      "w": 0,
-      "gl": 0,
-      "v": 1,
-      "dv": 1,
-      "dt": 4,
-      "ds": -3,
-      "p": 0
-    },
-    {
-      "pos": 10,
       "team": "Weddingcars By Dk",
       "g": 1,
       "w": 0,
@@ -132,7 +120,7 @@
       "p": 0
     },
     {
-      "pos": 11,
+      "pos": 10,
       "team": "Ter Laak Boomverzorging",
       "g": 1,
       "w": 0,
@@ -141,6 +129,18 @@
       "dv": 2,
       "dt": 10,
       "ds": -8,
+      "p": 0
+    },
+    {
+      "pos": 11,
+      "team": "Limako",
+      "g": 2,
+      "w": 0,
+      "gl": 0,
+      "v": 2,
+      "dv": 2,
+      "dt": 6,
+      "ds": -4,
       "p": 0
     },
     {
