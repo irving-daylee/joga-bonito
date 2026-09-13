@@ -9,6 +9,20 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.12.0] — 13 september 2026
+
+### Toegevoegd
+- **De poulestand staat weer op Stats**, nu bij het lopende seizoen en met de
+  stand die srza dagelijks ophaalt. Tot nu toe hing hij alleen onder 2025/26,
+  dus sinds de overstap naar het nieuwe seizoen was hij nergens te zien. De
+  tabel toont de poule waarin we nu spelen (1A) en Joga Bonito staat er
+  uitgelicht in.
+- Hoort de opgehaalde stand niet bij onze poule — wat aan het begin van een
+  seizoen gebeurt, als srza de oude stand nog toont — dan blijft de tabel weg
+  in plaats van een verkeerde positie te suggereren.
+
+---
+
 ## [2.11.1] — 9 september 2026
 
 ### Opgelost

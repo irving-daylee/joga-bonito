@@ -809,6 +809,37 @@ await check('het versienummer staat in de topbar en is stempelbaar', () => {
   return `${getoond}, changelog gelijk`;
 });
 
+await check('de poulestand van dit seizoen staat op Stats', async () => {
+  // De stand komt van srza en die is er meestal pas ná de eerste render; het
+  // tabblad van het lopende seizoen moet hem daarna alsnog tonen.
+  const { w: ws, loginError: fout } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 5, currentMatch: null,
+    matches: [wedstrijd('m1', '2026-09-10', 'Nieuwe Tegenstander', 3, 1)],
+  }));
+  assert(!fout, `inloggen crasht de app: ${fout}`);
+
+  ws.eval(`srzaData = {
+    programma: [{ date:'2026-09-16', opp:'Novia Facts', comp:'1A', time:'19:42', hal:'WATERWIJK', home:false }],
+    uitslagen: [],
+    standen: [{ pos:1, team:'Jai Hanuman 1', g:2, w:2, gl:0, v:0, dv:19, dt:4, ds:15, p:6 },
+              { pos:2, team:'Joga Bonito', g:2, w:2, gl:0, v:0, dv:11, dt:3, ds:8, p:6 },
+              { pos:3, team:'Novia Facts', g:2, w:0, gl:0, v:2, dv:2, dt:12, ds:-10, p:0 }]
+  };
+  selectedStatsSeason = 'current'; renderStatsPage();`);
+  const stand = ws.document.getElementById('statsContent').textContent.replace(/\s+/g, ' ');
+  assert(/Stand Poule 1A/.test(stand), `de poulestand ontbreekt op het lopende seizoen: ${stand.slice(-160)}`);
+  assert(/Jai Hanuman 1/.test(stand) && /Joga Bonito/.test(stand), 'de tabel is leeg');
+
+  // Hoort de stand niet bij deze poule, dan hoort hij hier ook niet te staan.
+  ws.eval(`srzaData.standen = [{ pos:1, team:'Old Legends', g:20, w:15, gl:3, v:2, dv:141, dt:76, ds:65, p:48 },
+                               { pos:2, team:'Joga Bonito', g:20, w:14, gl:2, v:4, dv:130, dt:63, ds:67, p:44 }];
+    renderStatsPage();`);
+  const oud = ws.document.getElementById('statsContent').textContent;
+  assert(!/Stand Poule/.test(oud), 'een stand uit een andere poule staat op het lopende seizoen');
+  return 'Poule 1A, verdwijnt bij een stand uit een andere poule';
+});
+
 await check('een stand uit een andere poule wordt niet als actueel gepresenteerd', () => {
   // srza publiceert de nieuwe poulestand pas bij de competitiestart en herziet
   // ondertussen soms de oude. De app moet dan onze eigen eindstand aanhouden.

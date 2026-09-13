@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.11.1';
+const APP_VERSION = '2.12.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2450,6 +2450,8 @@ async function loadSRZA() {
     srzaData = await res.json();
     const active = document.querySelector('.bottomnav .active');
     if (active && active.dataset.page === 'pageSchedule') renderSchedulePage();
+    // De stand staat ook op Stats, en die is meestal al getekend voor srza binnen is.
+    if (active && active.dataset.page === 'pageStats') renderStatsPage();
   } catch(e) {}
 }
 
@@ -3925,6 +3927,12 @@ function renderSeasonStats(season) {
     <div class="stat-box"><div class="stat-value">${((totalFor-totalAgainst)/n).toFixed(1)}</div><div class="stat-label">Doelsaldo</div></div>
   </div>`;
 
+  // De poulestand komt van srza en hoort bij het lopende seizoen; een afgesloten
+  // seizoen heeft zijn eigen vastgelegde eindstand in HISTORY.
+  if (season === DB.season && srzaStandVanDitSeizoen(srzaData)) {
+    h += standTabel(srzaData?.standen, srzaPouleLabel());
+  }
+
   const phaseKeys = ['0-5','5-10','10-15','15-20','20-25','25-30','30-35','35-40'];
   const phases = {};
   phaseKeys.forEach(k => { phases[k] = { for:0, against:0 }; });
@@ -4068,6 +4076,30 @@ function renderLeaderboard(ps, sortBy) {
   el.innerHTML = h;
 }
 
+function standTabel(rows, titel) {
+  if (!rows || !rows.length) return '';
+  let h = `<div class="card" style="margin-top:4px">
+    <h3 style="font-size:0.88rem;margin-bottom:12px">${titel}</h3>
+    <div class="standings-wrap"><table class="standings-table">
+      <tr><th>#</th><th>Team</th><th>G</th><th>W</th><th>GL</th><th>V</th><th>DV</th><th>DT</th><th>+/-</th><th>P</th></tr>`;
+  rows.forEach(r => {
+    const hl = String(r.team || '').toUpperCase().includes('JOGA') ? ' class="highlight"' : '';
+    const dsClass = r.ds > 0 ? 'ds-pos' : (r.ds < 0 ? 'ds-neg' : '');
+    h += `<tr${hl}>
+      <td>${r.pos}</td><td>${r.team}</td><td>${r.g}</td><td>${r.w}</td><td>${r.gl}</td><td>${r.v}</td>
+      <td>${r.dv}</td><td>${r.dt}</td><td class="${dsClass}">${r.ds > 0 ? '+' : ''}${r.ds}</td><td class="pts">${r.p}</td>
+    </tr>`;
+  });
+  return h + `</table></div></div>`;
+}
+
+// De poule waarin we nu spelen staat niet in de stand zelf, maar wel bij elke
+// wedstrijd van het programma.
+function srzaPouleLabel() {
+  const comp = ((srzaData?.programma || [])[0] || {}).comp;
+  return comp ? `Stand Poule ${comp}` : 'Stand';
+}
+
 function renderHistoricalStats(seasonKey) {
   const data = HISTORY[seasonKey];
   if (!data) return `<div class="empty-state"><p>Geen data beschikbaar</p></div>`;
@@ -4100,21 +4132,7 @@ function renderHistoricalStats(seasonKey) {
     </div>`;
   }
 
-  if (data.standings) {
-    h += `<div class="card" style="margin-top:4px">
-      <h3 style="font-size:0.88rem;margin-bottom:12px">Stand Poule 1B</h3>
-      <div class="standings-wrap"><table class="standings-table">
-        <tr><th>#</th><th>Team</th><th>G</th><th>W</th><th>GL</th><th>V</th><th>DV</th><th>DT</th><th>+/-</th><th>P</th></tr>`;
-    data.standings.forEach(r => {
-      const hl = r.team === 'Joga Bonito' ? ' class="highlight"' : '';
-      const dsClass = r.ds > 0 ? 'ds-pos' : (r.ds < 0 ? 'ds-neg' : '');
-      h += `<tr${hl}>
-        <td>${r.pos}</td><td>${r.team}</td><td>${r.g}</td><td>${r.w}</td><td>${r.gl}</td><td>${r.v}</td>
-        <td>${r.dv}</td><td>${r.dt}</td><td class="${dsClass}">${r.ds > 0 ? '+' : ''}${r.ds}</td><td class="pts">${r.p}</td>
-      </tr>`;
-    });
-    h += `</table></div></div>`;
-  }
+  if (data.standings) h += standTabel(data.standings, 'Stand Poule 1B');
 
   h += `<div class="section-header" style="margin-top:8px"><h2 class="section-title">Spelers</h2>
     <button class="share-btn-sm" onclick="shareStatsCard()">
