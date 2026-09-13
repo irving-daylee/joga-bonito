@@ -1,6 +1,7 @@
 {
   "_geimporteerd": [
-    "2026-09-03|Limako"
+    "2026-09-03|Limako",
+    "2026-09-09|Ally United"
   ],
   "_seedVersion": 6,
   "matchday": {
@@ -3937,9 +3938,127 @@
       ],
       "status": "finished",
       "verzameltijd": ""
+    },
+    {
+      "_import": "2026-09-09|Ally United",
+      "_importVersie": 1,
+      "captain": "p2",
+      "comp": "comp",
+      "date": "2026-09-09",
+      "events": [
+        {
+          "half": 1,
+          "minute": 7,
+          "ownGoal": false,
+          "scoreAfter": "1–0",
+          "scorerId": "p7",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p7",
+          "half": 1,
+          "minute": 7,
+          "ownGoal": false,
+          "scoreAfter": "2–0",
+          "scorerId": "p9",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p6",
+          "half": 1,
+          "minute": 12,
+          "ownGoal": false,
+          "scoreAfter": "3–0",
+          "scorerId": "p11",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 1,
+          "minute": 18,
+          "ownGoal": false,
+          "scoreAfter": "3–1",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "assistId": "p7",
+          "half": 1,
+          "minute": 19,
+          "ownGoal": false,
+          "scoreAfter": "4–1",
+          "scorerId": "p2",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p2",
+          "half": 1,
+          "minute": 20,
+          "ownGoal": false,
+          "scoreAfter": "5–1",
+          "scorerId": "p9",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p11",
+          "half": 2,
+          "minute": 29,
+          "ownGoal": false,
+          "scoreAfter": "6–1",
+          "scorerId": "p6",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 31,
+          "ownGoal": false,
+          "scoreAfter": "6–2",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "assistId": "p11",
+          "half": 2,
+          "minute": 38,
+          "ownGoal": false,
+          "scoreAfter": "7–2",
+          "scorerId": "p2",
+          "team": "home",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "m48",
+      "keeper": "p1",
+      "opponent": "Ally United",
+      "scoreAway": 2,
+      "scoreHome": 7,
+      "season": "2026/27",
+      "sporthal": "Waterwijk",
+      "squad": [
+        "p1",
+        "p10",
+        "p2",
+        "p7",
+        "p9",
+        "p6",
+        "p4",
+        "p11",
+        "p3"
+      ],
+      "status": "finished",
+      "verzameltijd": "",
+      "vlagger": "p8",
+      "vlaggerNaam": "Erfan"
     }
   ],
-  "nextMatchId": 48,
+  "nextMatchId": 49,
   "nextPlayerId": 13,
   "players": [
     {
@@ -4041,5 +4160,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1788509020341
+  "updatedAt": 1788991976233
 }
