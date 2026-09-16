@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.13.0';
+const APP_VERSION = '2.13.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1923,7 +1923,7 @@ const IMPORT_WEDSTRIJDEN = [
     ],
   },
   {
-    sleutel: '2026-09-16|Novia Facts', versie: 1,
+    sleutel: '2026-09-16|Novia Facts', versie: 2,
     date: '2026-09-16', opponent: 'Novia Facts', sporthal: 'Waterwijk', comp: 'comp',
     season: '2026/27', scoreHome: 8, scoreAway: 1,
     squad: ['Marco', 'Kenneth', 'Lawin', 'Said', 'Rayvano', 'Irving', 'Lyzairo', 'Gregory'],
@@ -1934,7 +1934,7 @@ const IMPORT_WEDSTRIJDEN = [
     events: [
       { type: 'goal', minute: 14, half: 1, team: 'home', scorer: 'Rayvano',
         notitie: 'van eigen helft' },
-      { type: 'goal', minute: 16, half: 1, team: 'home', scorer: 'Rayvano', assist: 'Gregory' },
+      { type: 'goal', minute: 16, half: 1, team: 'home', scorer: 'Rayvano', assist: 'Kenneth' },
       { type: 'goal', minute: 19, half: 1, team: 'home', scorer: 'Kenneth',
         notitie: 'van eigen helft' },
       { type: 'goal', minute: 25, half: 2, team: 'away' },

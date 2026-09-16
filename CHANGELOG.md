@@ -9,6 +9,14 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.13.1] — 16 september 2026
+
+### Opgelost
+- De assist bij de 0–2 tegen Novia Facts stond op naam van Gregory; die was van
+  Kenneth. De wedstrijd werkt zichzelf bij op je telefoon.
+
+---
+
 ## [2.13.0] — 16 september 2026
 
 ### Toegevoegd
