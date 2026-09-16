@@ -538,8 +538,11 @@ await check('Matchday werkt zonder dat er een wedstrijd bestaat', async () => {
 });
 
 await check('een achteraf vastgelegde wedstrijd komt er één keer in', async () => {
+  // Rayvano hoort erbij: hij was man of the match tegen Novia Facts, en zonder
+  // speler in de selectie kan de import die niet koppelen.
   const { w: w12 } = await loadAndLogin(fbShape({
-    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    teamName: 'Joga Bonito', season: '2026/27',
+    players: [...spelers, { id: 'p9', name: 'Rayvano', number: 9, isKeeper: false, isCaptain: false, foot: 'R', photo: null }],
     nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
   }));
   const limako = () => JSON.parse(w12.eval("JSON.stringify(DB.matches.filter(m => m.opponent === 'Limako'))"));
@@ -587,10 +590,18 @@ await check('een achteraf vastgelegde wedstrijd komt er één keer in', async ()
   assert(fout.length === 0, fout.join('; '));
 
   // Wie vlagde staat als naam op de wedstrijd, ook als hij niet meespeelde.
-  const ally = JSON.parse(w12.eval("JSON.stringify(DB.matches.find(m => m.opponent === 'Ally United'))"));
+  // Op importsleutel zoeken, niet op tegenstander: dezelfde clubs komen in de
+  // geseede historie voor en dan pak je de verkeerde wedstrijd te pakken.
+  const ally = JSON.parse(w12.eval("JSON.stringify(DB.matches.find(m => m._import === '2026-09-09|Ally United'))"));
   assert(ally, 'Ally United ontbreekt');
   assert(ally.vlaggerNaam === 'Erfan', `vlagger is ${ally.vlaggerNaam} in plaats van Erfan`);
   assert(!(ally.squad || []).includes(ally.vlagger), 'de vlagger staat ten onrechte in de selectie');
+
+  // En de man of the match hoort mee te komen, uit de selectie van die avond.
+  const novia = JSON.parse(w12.eval("JSON.stringify(DB.matches.find(m => m._import === '2026-09-16|Novia Facts'))"));
+  assert(novia, 'Novia Facts ontbreekt');
+  assert(novia.motm, 'Novia Facts heeft geen man of the match');
+  assert((novia.squad || []).includes(novia.motm), 'de man of the match speelde niet mee');
 
   // En ze tellen mee in de stats van dit seizoen.
   const aantal = Number(w12.eval('IMPORT_WEDSTRIJDEN.length'));

@@ -9,6 +9,18 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.13.0] — 16 september 2026
+
+### Toegevoegd
+- **Novia Facts 8–1 staat in de app.** De uitwedstrijd van woensdag is
+  vastgelegd met de acht doelpunten, de assists die zijn doorgegeven, de
+  selectie van acht man en Rayvano als man of the match. Bij de twee treffers
+  van eigen helft staat dat als toelichting in de tijdlijn.
+- Bij een achteraf vastgelegde wedstrijd kan nu ook meteen de man of the match
+  worden meegegeven.
+
+---
+
 ## [2.12.0] — 13 september 2026
 
 ### Toegevoegd

@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.12.0';
+const APP_VERSION = '2.13.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1922,6 +1922,29 @@ const IMPORT_WEDSTRIJDEN = [
       { type: 'goal', minute: 38, half: 2, team: 'home', scorer: 'Irving', assist: 'Amine' },
     ],
   },
+  {
+    sleutel: '2026-09-16|Novia Facts', versie: 1,
+    date: '2026-09-16', opponent: 'Novia Facts', sporthal: 'Waterwijk', comp: 'comp',
+    season: '2026/27', scoreHome: 8, scoreAway: 1,
+    squad: ['Marco', 'Kenneth', 'Lawin', 'Said', 'Rayvano', 'Irving', 'Lyzairo', 'Gregory'],
+    keeper: 'Marco', captain: 'Irving', motm: 'Rayvano',
+    // Minuten uit srza, waar de klok van 1 naar 40 loopt; doelpuntenmakers en
+    // assists zoals ze na afloop zijn doorgegeven. Bij de 1-4 wist niemand meer
+    // wie de assist gaf, dus die blijft leeg in plaats van een gok.
+    events: [
+      { type: 'goal', minute: 14, half: 1, team: 'home', scorer: 'Rayvano',
+        notitie: 'van eigen helft' },
+      { type: 'goal', minute: 16, half: 1, team: 'home', scorer: 'Rayvano', assist: 'Gregory' },
+      { type: 'goal', minute: 19, half: 1, team: 'home', scorer: 'Kenneth',
+        notitie: 'van eigen helft' },
+      { type: 'goal', minute: 25, half: 2, team: 'away' },
+      { type: 'goal', minute: 33, half: 2, team: 'home', scorer: 'Lawin' },
+      { type: 'goal', minute: 34, half: 2, team: 'home', scorer: 'Gregory', assist: 'Irving' },
+      { type: 'goal', minute: 35, half: 2, team: 'home', scorer: 'Irving', assist: 'Kenneth' },
+      { type: 'goal', minute: 40, half: 2, team: 'home', scorer: 'Rayvano' },
+      { type: 'goal', minute: 40, half: 2, team: 'home', scorer: 'Rayvano' },
+    ],
+  },
 ];
 
 function importeerWedstrijden() {
@@ -1961,7 +1984,7 @@ function importeerWedstrijden() {
       squad: w.squad.map(idVan).filter(Boolean), lineup: [],
       keeper: idVan(w.keeper), captain: idVan(w.captain), flyingKeeper: false,
       events, scoreHome: w.scoreHome, scoreAway: w.scoreAway,
-      half: 2, motm: null, vlagger: idVan(w.vlagger), vlaggerNaam: w.vlagger || null,
+      half: 2, motm: idVan(w.motm), vlagger: idVan(w.vlagger), vlaggerNaam: w.vlagger || null,
       zaaldienst: null, zaaldienstNaam: null, status: 'finished',
     });
     gedaan.push(w.sleutel);
