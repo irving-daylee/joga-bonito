@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.13.2] — 16 september 2026
+
+### Opgelost
+- Gregory staat nu als vlagger bij Novia Facts. Hij regelde er een, en dat telt
+  net zo goed mee, dus de loting voor de volgende wedstrijd houdt er rekening
+  mee dat hij is geweest.
+
+---
+
 ## [2.13.1] — 16 september 2026
 
 ### Opgelost

@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.13.1';
+const APP_VERSION = '2.13.2';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1923,11 +1923,11 @@ const IMPORT_WEDSTRIJDEN = [
     ],
   },
   {
-    sleutel: '2026-09-16|Novia Facts', versie: 2,
+    sleutel: '2026-09-16|Novia Facts', versie: 3,
     date: '2026-09-16', opponent: 'Novia Facts', sporthal: 'Waterwijk', comp: 'comp',
     season: '2026/27', scoreHome: 8, scoreAway: 1,
     squad: ['Marco', 'Kenneth', 'Lawin', 'Said', 'Rayvano', 'Irving', 'Lyzairo', 'Gregory'],
-    keeper: 'Marco', captain: 'Irving', motm: 'Rayvano',
+    keeper: 'Marco', captain: 'Irving', motm: 'Rayvano', vlagger: 'Gregory',
     // Minuten uit srza, waar de klok van 1 naar 40 loopt; doelpuntenmakers en
     // assists zoals ze na afloop zijn doorgegeven. Bij de 1-4 wist niemand meer
     // wie de assist gaf, dus die blijft leeg in plaats van een gok.
