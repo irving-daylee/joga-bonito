@@ -9,6 +9,14 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.13.3] — 17 september 2026
+
+### Opgelost
+- Said staat nu als assist bij de laatste goal tegen Novia Facts. Die stond nog
+  als doelpunt zonder assist genoteerd.
+
+---
+
 ## [2.13.2] — 16 september 2026
 
 ### Opgelost
