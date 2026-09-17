@@ -2,6 +2,7 @@
   "_geimporteerd": [
     "2026-09-03|Limako",
     "2026-09-09|Ally United",
+    "2026-09-16|Novia Facts",
     "2026-09-16|Novia Facts"
   ],
   "_seedVersion": 6,
@@ -4060,7 +4061,7 @@
     },
     {
       "_import": "2026-09-16|Novia Facts",
-      "_importVersie": 1,
+      "_importVersie": 3,
       "captain": "p2",
       "comp": "comp",
       "date": "2026-09-16",
@@ -4076,7 +4077,7 @@
           "type": "goal"
         },
         {
-          "assistId": "p6",
+          "assistId": "p9",
           "half": 1,
           "minute": 16,
           "ownGoal": false,
@@ -4153,7 +4154,7 @@
       ],
       "flyingKeeper": false,
       "half": 2,
-      "id": "m49",
+      "id": "m50",
       "keeper": "p1",
       "motm": "p4",
       "opponent": "Novia Facts",
@@ -4172,10 +4173,12 @@
         "p6"
       ],
       "status": "finished",
-      "verzameltijd": ""
+      "verzameltijd": "",
+      "vlagger": "p6",
+      "vlaggerNaam": "Gregory"
     }
   ],
-  "nextMatchId": 50,
+  "nextMatchId": 51,
   "nextPlayerId": 13,
   "players": [
     {
@@ -4277,5 +4280,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1789596235200
+  "updatedAt": 1789597944164
 }
