@@ -9,6 +9,14 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.13.4] — 17 september 2026
+
+### Opgelost
+- Lawin staat nu als assist bij de 1–7 tegen Novia Facts. Daarmee heeft elke
+  goal van die wedstrijd zijn assist, op de 1–4 na.
+
+---
+
 ## [2.13.3] — 17 september 2026
 
 ### Opgelost
