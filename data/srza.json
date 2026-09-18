@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-17T09:45:17.757Z",
+  "lastUpdated": "2026-09-18T09:18:57.050Z",
   "team": {
     "played": 3,
     "wins": 3,
@@ -7,12 +7,24 @@
     "losses": 0,
     "goalsFor": 19,
     "goalsAgainst": 4,
-    "position": 1,
+    "position": 2,
     "points": 9
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Jai Hanuman 1",
+      "g": 3,
+      "w": 3,
+      "gl": 0,
+      "v": 0,
+      "dv": 23,
+      "dt": 5,
+      "ds": 18,
+      "p": 9
+    },
+    {
+      "pos": 2,
       "team": "Joga Bonito",
       "g": 3,
       "w": 3,
@@ -22,18 +34,6 @@
       "dt": 4,
       "ds": 15,
       "p": 9
-    },
-    {
-      "pos": 2,
-      "team": "Jai Hanuman 1",
-      "g": 2,
-      "w": 2,
-      "gl": 0,
-      "v": 0,
-      "dv": 19,
-      "dt": 4,
-      "ds": 15,
-      "p": 6
     },
     {
       "pos": 3,
@@ -49,6 +49,18 @@
     },
     {
       "pos": 4,
+      "team": "As Sport Events",
+      "g": 3,
+      "w": 2,
+      "gl": 0,
+      "v": 1,
+      "dv": 16,
+      "dt": 12,
+      "ds": 4,
+      "p": 6
+    },
+    {
+      "pos": 5,
       "team": "Ander Kallyber Fc",
       "g": 2,
       "w": 1,
@@ -60,31 +72,31 @@
       "p": 4
     },
     {
-      "pos": 5,
-      "team": "Galàcticos",
-      "g": 1,
+      "pos": 6,
+      "team": "De Onderste",
+      "g": 2,
       "w": 1,
-      "gl": 0,
+      "gl": 1,
       "v": 0,
-      "dv": 2,
-      "dt": 1,
+      "dv": 5,
+      "dt": 4,
       "ds": 1,
-      "p": 3
+      "p": 4
     },
     {
-      "pos": 6,
-      "team": "As Sport Events",
+      "pos": 7,
+      "team": "Galàcticos",
       "g": 2,
       "w": 1,
       "gl": 0,
       "v": 1,
-      "dv": 8,
-      "dt": 9,
-      "ds": -1,
+      "dv": 3,
+      "dt": 5,
+      "ds": -2,
       "p": 3
     },
     {
-      "pos": 7,
+      "pos": 8,
       "team": "Ally United",
       "g": 3,
       "w": 1,
@@ -96,43 +108,19 @@
       "p": 3
     },
     {
-      "pos": 8,
-      "team": "De Onderste",
-      "g": 1,
-      "w": 0,
-      "gl": 1,
-      "v": 0,
-      "dv": 2,
-      "dt": 2,
-      "ds": 0,
-      "p": 1
-    },
-    {
       "pos": 9,
       "team": "Weddingcars By Dk",
-      "g": 1,
-      "w": 0,
-      "gl": 0,
-      "v": 1,
-      "dv": 0,
-      "dt": 6,
-      "ds": -6,
-      "p": 0
-    },
-    {
-      "pos": 10,
-      "team": "Limako",
       "g": 2,
       "w": 0,
       "gl": 0,
       "v": 2,
       "dv": 2,
-      "dt": 6,
-      "ds": -4,
+      "dt": 9,
+      "ds": -7,
       "p": 0
     },
     {
-      "pos": 11,
+      "pos": 10,
       "team": "Ter Laak Boomverzorging",
       "g": 2,
       "w": 0,
@@ -141,6 +129,18 @@
       "dv": 6,
       "dt": 17,
       "ds": -11,
+      "p": 0
+    },
+    {
+      "pos": 11,
+      "team": "Limako",
+      "g": 3,
+      "w": 0,
+      "gl": 0,
+      "v": 3,
+      "dv": 5,
+      "dt": 14,
+      "ds": -9,
       "p": 0
     },
     {
