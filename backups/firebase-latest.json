@@ -4,7 +4,8 @@
     "2026-09-09|Ally United",
     "2026-09-16|Novia Facts",
     "2026-09-16|Novia Facts",
-    "2026-09-16|Novia Facts"
+    "2026-09-16|Novia Facts",
+    "2026-09-21|Ander Kallyber FC"
   ],
   "_seedVersion": 6,
   "matchday": {
@@ -4176,11 +4177,108 @@
         "p6"
       ],
       "status": "finished",
+      "verzameltijd": "",
       "vlagger": "p6",
       "vlaggerNaam": "Gregory"
+    },
+    {
+      "_import": "2026-09-21|Ander Kallyber FC",
+      "_importVersie": 1,
+      "captain": "p2",
+      "comp": "comp",
+      "date": "2026-09-21",
+      "events": [
+        {
+          "half": 1,
+          "minute": 3,
+          "ownGoal": false,
+          "scoreAfter": "1–0",
+          "scorerId": "p2",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p9",
+          "half": 1,
+          "minute": 14,
+          "ownGoal": false,
+          "scoreAfter": "2–0",
+          "scorerId": "p7",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p2",
+          "half": 2,
+          "minute": 26,
+          "ownGoal": false,
+          "scoreAfter": "3–0",
+          "scorerId": "p3",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p5",
+          "half": 2,
+          "minute": 26,
+          "ownGoal": false,
+          "scoreAfter": "4–0",
+          "scorerId": "p2",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 27,
+          "ownGoal": false,
+          "scoreAfter": "4–1",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 30,
+          "ownGoal": false,
+          "scoreAfter": "4–2",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 39,
+          "ownGoal": false,
+          "scoreAfter": "4–3",
+          "team": "away",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "m52",
+      "keeper": "p1",
+      "motm": "p2",
+      "opponent": "Ander Kallyber FC",
+      "scoreAway": 3,
+      "scoreHome": 4,
+      "season": "2026/27",
+      "sporthal": "Haven",
+      "squad": [
+        "p1",
+        "p2",
+        "p7",
+        "p5",
+        "p4",
+        "p3",
+        "p9",
+        "p10"
+      ],
+      "status": "finished",
+      "verzameltijd": "",
+      "vlagger": "p10",
+      "vlaggerNaam": "Said"
     }
   ],
-  "nextMatchId": 52,
+  "nextMatchId": 53,
   "nextPlayerId": 13,
   "players": [
     {
@@ -4282,5 +4380,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1790025370819
+  "updatedAt": 1790026413044
 }
