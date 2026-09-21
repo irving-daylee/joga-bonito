@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.13.4';
+const APP_VERSION = '2.14.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1943,6 +1943,24 @@ const IMPORT_WEDSTRIJDEN = [
       { type: 'goal', minute: 35, half: 2, team: 'home', scorer: 'Irving', assist: 'Kenneth' },
       { type: 'goal', minute: 40, half: 2, team: 'home', scorer: 'Rayvano', assist: 'Lawin' },
       { type: 'goal', minute: 40, half: 2, team: 'home', scorer: 'Rayvano', assist: 'Said' },
+    ],
+  },
+  {
+    sleutel: '2026-09-21|Ander Kallyber FC', versie: 1,
+    date: '2026-09-21', opponent: 'Ander Kallyber FC', sporthal: 'Haven', comp: 'comp',
+    season: '2026/27', scoreHome: 4, scoreAway: 3,
+    squad: ['Marco', 'Irving', 'Lawin', 'Bobby', 'Rayvano', 'Lyzairo', 'Kenneth', 'Said'],
+    keeper: 'Marco', captain: 'Irving', motm: 'Irving', vlagger: 'Said',
+    // Minuten uit srza, waar de klok van 1 naar 40 loopt. srza noteert de 3-0
+    // als L.A. Ortega; van de aanwezigen is dat Lyzairo.
+    events: [
+      { type: 'goal', minute: 3, half: 1, team: 'home', scorer: 'Irving' },
+      { type: 'goal', minute: 14, half: 1, team: 'home', scorer: 'Lawin', assist: 'Kenneth' },
+      { type: 'goal', minute: 26, half: 2, team: 'home', scorer: 'Lyzairo', assist: 'Irving' },
+      { type: 'goal', minute: 26, half: 2, team: 'home', scorer: 'Irving', assist: 'Bobby' },
+      { type: 'goal', minute: 27, half: 2, team: 'away' },
+      { type: 'goal', minute: 30, half: 2, team: 'away' },
+      { type: 'goal', minute: 39, half: 2, team: 'away' },
     ],
   },
 ];

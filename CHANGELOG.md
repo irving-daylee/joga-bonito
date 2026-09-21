@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.14.0] — 21 september 2026
+
+### Toegevoegd
+- **Ander Kallyber FC 4–3 staat in de app.** De thuiswedstrijd van maandag is
+  vastgelegd met de zeven doelpunten, de assists, de selectie van acht man,
+  Said als vlagger en Irving als man of the match.
+
+---
+
 ## [2.13.4] — 17 september 2026
 
 ### Opgelost
