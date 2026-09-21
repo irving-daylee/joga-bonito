@@ -9,6 +9,14 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.14.1] — 21 september 2026
+
+### Gewijzigd
+- De man of the match staat niet meer boven een teruggekeken wedstrijd. Hij
+  blijft wel vastgelegd: op de share card en in de MotM-stand op Stats.
+
+---
+
 ## [2.14.0] — 21 september 2026
 
 ### Toegevoegd

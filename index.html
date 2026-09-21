@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.14.0';
+const APP_VERSION = '2.14.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -3807,7 +3807,6 @@ function showMatchDetail(matchId) {
           <span class="match-score">${m.scoreHome} – ${m.scoreAway}</span>
           <span class="match-team-name away${teamNameClass(m.opponent)}">${m.opponent}</span>
         </div></div>
-        ${m.motm?`<div style="margin-top:12px;font-size:0.78rem;opacity:0.8">&#11088; Man of the Match: <strong>${getPlayerName(m.motm)}</strong></div>`:''}
       </div>`;
 
   if ((m.events || []).length > 0) {
