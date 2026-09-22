@@ -1,18 +1,30 @@
 {
-  "lastUpdated": "2026-09-21T10:19:46.119Z",
+  "lastUpdated": "2026-09-22T09:34:25.802Z",
   "team": {
-    "played": 3,
-    "wins": 3,
+    "played": 4,
+    "wins": 4,
     "draws": 0,
     "losses": 0,
-    "goalsFor": 19,
-    "goalsAgainst": 4,
-    "position": 2,
-    "points": 9
+    "goalsFor": 23,
+    "goalsAgainst": 7,
+    "position": 1,
+    "points": 12
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Joga Bonito",
+      "g": 4,
+      "w": 4,
+      "gl": 0,
+      "v": 0,
+      "dv": 23,
+      "dt": 7,
+      "ds": 16,
+      "p": 12
+    },
+    {
+      "pos": 2,
       "team": "Jai Hanuman 1",
       "g": 3,
       "w": 3,
@@ -21,18 +33,6 @@
       "dv": 23,
       "dt": 5,
       "ds": 18,
-      "p": 9
-    },
-    {
-      "pos": 2,
-      "team": "Joga Bonito",
-      "g": 3,
-      "w": 3,
-      "gl": 0,
-      "v": 0,
-      "dv": 19,
-      "dt": 4,
-      "ds": 15,
       "p": 9
     },
     {
@@ -61,18 +61,6 @@
     },
     {
       "pos": 5,
-      "team": "Ander Kallyber Fc",
-      "g": 2,
-      "w": 1,
-      "gl": 1,
-      "v": 0,
-      "dv": 9,
-      "dt": 6,
-      "ds": 3,
-      "p": 4
-    },
-    {
-      "pos": 6,
       "team": "De Onderste",
       "g": 2,
       "w": 1,
@@ -81,6 +69,18 @@
       "dv": 5,
       "dt": 4,
       "ds": 1,
+      "p": 4
+    },
+    {
+      "pos": 6,
+      "team": "Ander Kallyber Fc",
+      "g": 3,
+      "w": 1,
+      "gl": 1,
+      "v": 1,
+      "dv": 12,
+      "dt": 10,
+      "ds": 2,
       "p": 4
     },
     {
@@ -158,6 +158,16 @@
   ],
   "uitslagen": [
     {
+      "date": "2026-09-21",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "HAVEN",
+      "opp": "Ander Kallyber Fc",
+      "home": true,
+      "jb": 4,
+      "opp_s": 3
+    },
+    {
       "date": "2026-09-16",
       "comp": "1A",
       "time": "19:42",
@@ -189,14 +199,6 @@
     }
   ],
   "programma": [
-    {
-      "date": "2026-09-21",
-      "comp": "1A",
-      "time": "20:24",
-      "hal": "HAVEN",
-      "opp": "Ander Kallyber Fc",
-      "home": true
-    },
     {
       "date": "2026-09-29",
       "comp": "1A",
