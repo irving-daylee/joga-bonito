@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-22T09:34:25.802Z",
+  "lastUpdated": "2026-09-23T09:39:51.607Z",
   "team": {
     "played": 4,
     "wins": 4,
@@ -7,12 +7,24 @@
     "losses": 0,
     "goalsFor": 23,
     "goalsAgainst": 7,
-    "position": 1,
+    "position": 2,
     "points": 12
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Jai Hanuman 1",
+      "g": 4,
+      "w": 4,
+      "gl": 0,
+      "v": 0,
+      "dv": 28,
+      "dt": 8,
+      "ds": 20,
+      "p": 12
+    },
+    {
+      "pos": 2,
       "team": "Joga Bonito",
       "g": 4,
       "w": 4,
@@ -22,18 +34,6 @@
       "dt": 7,
       "ds": 16,
       "p": 12
-    },
-    {
-      "pos": 2,
-      "team": "Jai Hanuman 1",
-      "g": 3,
-      "w": 3,
-      "gl": 0,
-      "v": 0,
-      "dv": 23,
-      "dt": 5,
-      "ds": 18,
-      "p": 9
     },
     {
       "pos": 3,
@@ -61,18 +61,6 @@
     },
     {
       "pos": 5,
-      "team": "De Onderste",
-      "g": 2,
-      "w": 1,
-      "gl": 1,
-      "v": 0,
-      "dv": 5,
-      "dt": 4,
-      "ds": 1,
-      "p": 4
-    },
-    {
-      "pos": 6,
       "team": "Ander Kallyber Fc",
       "g": 3,
       "w": 1,
@@ -81,6 +69,18 @@
       "dv": 12,
       "dt": 10,
       "ds": 2,
+      "p": 4
+    },
+    {
+      "pos": 6,
+      "team": "De Onderste",
+      "g": 3,
+      "w": 1,
+      "gl": 1,
+      "v": 1,
+      "dv": 8,
+      "dt": 9,
+      "ds": -1,
       "p": 4
     },
     {
@@ -109,6 +109,18 @@
     },
     {
       "pos": 9,
+      "team": "Limako",
+      "g": 4,
+      "w": 1,
+      "gl": 0,
+      "v": 3,
+      "dv": 12,
+      "dt": 17,
+      "ds": -5,
+      "p": 3
+    },
+    {
+      "pos": 10,
       "team": "Weddingcars By Dk",
       "g": 2,
       "w": 0,
@@ -120,31 +132,7 @@
       "p": 0
     },
     {
-      "pos": 10,
-      "team": "Ter Laak Boomverzorging",
-      "g": 2,
-      "w": 0,
-      "gl": 0,
-      "v": 2,
-      "dv": 6,
-      "dt": 17,
-      "ds": -11,
-      "p": 0
-    },
-    {
       "pos": 11,
-      "team": "Limako",
-      "g": 3,
-      "w": 0,
-      "gl": 0,
-      "v": 3,
-      "dv": 5,
-      "dt": 14,
-      "ds": -9,
-      "p": 0
-    },
-    {
-      "pos": 12,
       "team": "Novia Facts",
       "g": 3,
       "w": 0,
@@ -153,6 +141,18 @@
       "dv": 5,
       "dt": 18,
       "ds": -13,
+      "p": 0
+    },
+    {
+      "pos": 12,
+      "team": "Ter Laak Boomverzorging",
+      "g": 3,
+      "w": 0,
+      "gl": 0,
+      "v": 3,
+      "dv": 9,
+      "dt": 24,
+      "ds": -15,
       "p": 0
     }
   ],
