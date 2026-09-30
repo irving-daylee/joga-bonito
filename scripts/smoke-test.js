@@ -490,6 +490,40 @@ await check('een rode kaart toont de speler als uitgesloten in het scorebord', a
   return 'uit in scorebord, geen countdown, verdwijnt bij terugdraaien';
 });
 
+await check('de eerstvolgende wedstrijd staat uitgelicht en is te delen', async () => {
+  const { w: wv, loginError: fout } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: spelers,
+    nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
+  }));
+  assert(!fout, `inloggen crasht de app: ${fout}`);
+
+  // Een gespeelde wedstrijd van gisteren mag de kop niet meer vullen; de
+  // eerstvolgende is die van morgen, niet die van volgende maand.
+  const dag = verschuiving => {
+    const d = new Date(Date.now() + verschuiving * 86400000);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const gisteren = dag(-1), morgen = dag(1), later = dag(30);
+  wv.eval(`srzaData = { uitslagen: [], standen: [], programma: [
+      { date: '${gisteren}', opp: 'Gisteren FC', time: '20:24', hal: 'HAVEN', home: true, comp: '1A' },
+      { date: '${morgen}', opp: 'Morgen United', time: '19:42', hal: 'WATERWIJK', home: false, comp: '1A' },
+      { date: '${later}', opp: 'Later Boys', time: '20:24', hal: 'BUITEN', home: true, comp: '1A' }
+    ] };
+    renderSchedulePage();`);
+
+  const kop = wv.document.querySelector('.next-match');
+  assert(kop, 'de eerstvolgende wedstrijd staat nergens uitgelicht');
+  const tekst = kop.textContent.replace(/\s+/g, ' ');
+  assert(/Morgen United/.test(tekst), `uitgelicht staat: ${tekst}`);
+  assert(!/Gisteren FC/.test(tekst), 'een gespeelde wedstrijd staat nog als eerstvolgende');
+  assert(/19:42/.test(tekst), `de aanvangstijd ontbreekt: ${tekst}`);
+  assert(/19:25/.test(tekst), `de verzameltijd ontbreekt: ${tekst}`);
+
+  const deel = kop.querySelector(`button[onclick="shareMatchdayCard('${morgen}')"]`);
+  assert(deel, 'er zit geen deelknop op de uitgelichte wedstrijd');
+  return tekst.slice(0, 60);
+});
+
 await check('Matchday werkt zonder dat er een wedstrijd bestaat', async () => {
   const { w: w11 } = await loadAndLogin(fbShape({
     teamName: 'Joga Bonito', season: '2026/27', players: spelers,

@@ -9,6 +9,17 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.16.0] — 30 september 2026
+
+### Toegevoegd
+- **De eerstvolgende wedstrijd staat uitgelicht bovenaan Wedstrijden.** Met
+  tegenstander, hal, thuis of uit, hoe lang het nog duurt, en de aanvangs- en
+  verzameltijd naast het aantal aanmeldingen. Eén tik op Delen levert de
+  Matchday-kaart op om in de groep te zetten; Matchday ernaast opent de lijst
+  om aan- en afmeldingen bij te werken.
+
+---
+
 ## [2.15.0] — 30 september 2026
 
 ### Toegevoegd
