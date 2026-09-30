@@ -9,6 +9,14 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.16.2] — 30 september 2026
+
+### Gewijzigd
+- Thuis of uit staat niet meer bij de uitgelichte wedstrijd. De hal zegt al
+  waar je moet zijn. In het programma eronder blijft het wel staan.
+
+---
+
 ## [2.16.1] — 30 september 2026
 
 ### Gewijzigd

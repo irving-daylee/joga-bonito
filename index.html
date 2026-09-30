@@ -1688,7 +1688,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.16.1';
+const APP_VERSION = '2.16.2';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -4363,12 +4363,12 @@ function volgendeWedstrijd() {
   const uitSrza = (srzaData?.programma || [])
     .filter(p => p.date >= vandaag)
     .map(p => ({ date: p.date, opponent: p.opp, hal: titelHal(p.hal), time: p.time,
-      thuis: p.home, beker: p.comp === 'BK', bron: 'srza' }));
+      beker: p.comp === 'BK', bron: 'srza' }));
 
   const eigen = toArray(DB.matches)
     .filter(m => m.status !== 'finished' && m.date && m.date >= vandaag)
     .map(m => ({ date: m.date, opponent: m.opponent, hal: m.sporthal, time: '',
-      thuis: null, beker: m.comp === 'beker', bron: 'app' }));
+      beker: m.comp === 'beker', bron: 'app' }));
 
   const alles = [...uitSrza, ...eigen].sort((a, b) =>
     a.date === b.date ? (a.bron === 'srza' ? -1 : 1) : (a.date < b.date ? -1 : 1));
@@ -4404,7 +4404,7 @@ function renderVolgendeWedstrijd() {
     <div class="next-match-label">VOLGENDE WEDSTRIJD</div>
     <div class="next-match-countdown">${dagenTot(w.date)} &middot; ${formatDate(w.date)}</div>
     <div class="next-match-opp">${w.opponent || 'Tegenstander'}</div>
-    <div class="next-match-where">${[w.hal, w.thuis === null ? '' : (w.thuis ? 'thuis' : 'uit'), w.beker ? 'beker' : ''].filter(Boolean).join(' &middot; ')}</div>
+    <div class="next-match-where">${[w.hal, w.beker ? 'beker' : ''].filter(Boolean).join(' &middot; ')}</div>
     <div class="next-match-grid">
       ${vakjes.map(([v, l]) => `<div><div class="nm-val">${v}</div><div class="nm-lbl">${l}</div></div>`).join('')}
     </div>
