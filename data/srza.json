@@ -1,18 +1,30 @@
 {
-  "lastUpdated": "2026-09-29T10:59:57.090Z",
+  "lastUpdated": "2026-09-30T10:50:14.133Z",
   "team": {
-    "played": 4,
-    "wins": 4,
+    "played": 5,
+    "wins": 5,
     "draws": 0,
     "losses": 0,
-    "goalsFor": 23,
-    "goalsAgainst": 7,
-    "position": 2,
-    "points": 12
+    "goalsFor": 27,
+    "goalsAgainst": 9,
+    "position": 1,
+    "points": 15
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Joga Bonito",
+      "g": 5,
+      "w": 5,
+      "gl": 0,
+      "v": 0,
+      "dv": 27,
+      "dt": 9,
+      "ds": 18,
+      "p": 15
+    },
+    {
+      "pos": 2,
       "team": "Jai Hanuman 1",
       "g": 4,
       "w": 4,
@@ -21,18 +33,6 @@
       "dv": 28,
       "dt": 8,
       "ds": 20,
-      "p": 12
-    },
-    {
-      "pos": 2,
-      "team": "Joga Bonito",
-      "g": 4,
-      "w": 4,
-      "gl": 0,
-      "v": 0,
-      "dv": 23,
-      "dt": 7,
-      "ds": 16,
       "p": 12
     },
     {
@@ -50,14 +50,14 @@
     {
       "pos": 4,
       "team": "As Sport Events",
-      "g": 3,
-      "w": 2,
+      "g": 4,
+      "w": 3,
       "gl": 0,
       "v": 1,
-      "dv": 16,
-      "dt": 12,
-      "ds": 4,
-      "p": 6
+      "dv": 25,
+      "dt": 15,
+      "ds": 10,
+      "p": 9
     },
     {
       "pos": 5,
@@ -97,18 +97,6 @@
     },
     {
       "pos": 8,
-      "team": "Galàcticos",
-      "g": 3,
-      "w": 1,
-      "gl": 0,
-      "v": 2,
-      "dv": 5,
-      "dt": 14,
-      "ds": -9,
-      "p": 3
-    },
-    {
-      "pos": 9,
       "team": "Limako",
       "g": 4,
       "w": 1,
@@ -120,15 +108,27 @@
       "p": 3
     },
     {
+      "pos": 9,
+      "team": "Galàcticos",
+      "g": 4,
+      "w": 1,
+      "gl": 0,
+      "v": 3,
+      "dv": 8,
+      "dt": 23,
+      "ds": -15,
+      "p": 3
+    },
+    {
       "pos": 10,
       "team": "Weddingcars By Dk",
-      "g": 3,
+      "g": 4,
       "w": 0,
       "gl": 1,
-      "v": 2,
-      "dv": 4,
-      "dt": 11,
-      "ds": -7,
+      "v": 3,
+      "dv": 6,
+      "dt": 15,
+      "ds": -9,
       "p": 1
     },
     {
@@ -157,6 +157,16 @@
     }
   ],
   "uitslagen": [
+    {
+      "date": "2026-09-29",
+      "comp": "1A",
+      "time": "22:30",
+      "hal": "BUITEN",
+      "opp": "Weddingcars By Dk",
+      "home": false,
+      "jb": 4,
+      "opp_s": 2
+    },
     {
       "date": "2026-09-21",
       "comp": "1A",
@@ -199,14 +209,6 @@
     }
   ],
   "programma": [
-    {
-      "date": "2026-09-29",
-      "comp": "1A",
-      "time": "22:30",
-      "hal": "BUITEN",
-      "opp": "Weddingcars By Dk",
-      "home": false
-    },
     {
       "date": "2026-10-07",
       "comp": "1A",
