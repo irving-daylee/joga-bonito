@@ -5,7 +5,8 @@
     "2026-09-16|Novia Facts",
     "2026-09-16|Novia Facts",
     "2026-09-16|Novia Facts",
-    "2026-09-21|Ander Kallyber FC"
+    "2026-09-21|Ander Kallyber FC",
+    "2026-09-29|Weddingcars by DK"
   ],
   "_seedVersion": 6,
   "matchday": {
@@ -4276,9 +4277,94 @@
       "verzameltijd": "",
       "vlagger": "p10",
       "vlaggerNaam": "Said"
+    },
+    {
+      "_import": "2026-09-29|Weddingcars by DK",
+      "_importVersie": 1,
+      "comp": "comp",
+      "date": "2026-09-29",
+      "events": [
+        {
+          "assistId": "p5",
+          "half": 1,
+          "minute": 3,
+          "ownGoal": false,
+          "scoreAfter": "1–0",
+          "scorerId": "p7",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 21,
+          "ownGoal": false,
+          "scoreAfter": "2–0",
+          "scorerId": "p9",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p11",
+          "half": 2,
+          "minute": 29,
+          "ownGoal": false,
+          "scoreAfter": "3–0",
+          "scorerId": "p10",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 32,
+          "ownGoal": false,
+          "scoreAfter": "4–0",
+          "scorerId": "p12",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 40,
+          "ownGoal": false,
+          "scoreAfter": "4–1",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 40,
+          "ownGoal": false,
+          "scoreAfter": "4–2",
+          "team": "away",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "m53",
+      "keeper": "p1",
+      "opponent": "Weddingcars by DK",
+      "scoreAway": 2,
+      "scoreHome": 4,
+      "season": "2026/27",
+      "sporthal": "Buiten",
+      "squad": [
+        "p1",
+        "p5",
+        "p9",
+        "p10",
+        "p7",
+        "p11",
+        "p3",
+        "p12"
+      ],
+      "status": "finished",
+      "verzameltijd": "",
+      "vlagger": "p9",
+      "vlaggerNaam": "Kenneth"
     }
   ],
-  "nextMatchId": 53,
+  "nextMatchId": 54,
   "nextPlayerId": 13,
   "players": [
     {
@@ -4380,5 +4466,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1790030184079
+  "updatedAt": 1790743920505
 }
