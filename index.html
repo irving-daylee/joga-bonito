@@ -862,7 +862,7 @@ label {
   background: var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
-  margin: 14px 0;
+  margin: 14px 0 0;
 }
 .next-match-grid > div { background: var(--surface); padding: 8px 4px; text-align: center; }
 .next-match-grid .nm-val {
@@ -872,8 +872,6 @@ label {
   color: var(--text);
 }
 .next-match-grid .nm-lbl { font-size: 0.62rem; color: var(--text-muted); margin-top: 2px; }
-.next-match-acties { display: flex; gap: 8px; }
-.next-match-acties .btn { flex: 1; }
 
 /* ===== SCHEDULE ===== */
 .schedule-match {
@@ -1688,7 +1686,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.16.2';
+const APP_VERSION = '2.16.3';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -4407,10 +4405,6 @@ function renderVolgendeWedstrijd() {
     <div class="next-match-where">${[w.hal, w.beker ? 'beker' : ''].filter(Boolean).join(' &middot; ')}</div>
     <div class="next-match-grid">
       ${vakjes.map(([v, l]) => `<div><div class="nm-val">${v}</div><div class="nm-lbl">${l}</div></div>`).join('')}
-    </div>
-    <div class="next-match-acties">
-      <button class="btn btn-outline btn-sm" onclick="openMatchdayModal('${w.date}')">Matchday</button>
-      <button class="btn btn-primary btn-sm" onclick="shareMatchdayCard('${w.date}')">Delen</button>
     </div>
   </div>`;
 }
