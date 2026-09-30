@@ -490,7 +490,7 @@ await check('een rode kaart toont de speler als uitgesloten in het scorebord', a
   return 'uit in scorebord, geen countdown, verdwijnt bij terugdraaien';
 });
 
-await check('de eerstvolgende wedstrijd staat uitgelicht en is te delen', async () => {
+await check('de eerstvolgende wedstrijd staat uitgelicht', async () => {
   const { w: wv, loginError: fout } = await loadAndLogin(fbShape({
     teamName: 'Joga Bonito', season: '2026/27', players: spelers,
     nextPlayerId: 13, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
@@ -519,8 +519,6 @@ await check('de eerstvolgende wedstrijd staat uitgelicht en is te delen', async 
   assert(/19:42/.test(tekst), `de aanvangstijd ontbreekt: ${tekst}`);
   assert(/19:25/.test(tekst), `de verzameltijd ontbreekt: ${tekst}`);
 
-  const deel = kop.querySelector(`button[onclick="shareMatchdayCard('${morgen}')"]`);
-  assert(deel, 'er zit geen deelknop op de uitgelichte wedstrijd');
   return tekst.slice(0, 60);
 });
 

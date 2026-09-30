@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.16.3] — 30 september 2026
+
+### Gewijzigd
+- De knoppen Matchday en Delen zijn van de uitgelichte wedstrijd gehaald. Hij
+  toont nu alleen wanneer, tegen wie en waar. Aankondigen en delen gaat weer
+  via het megafoonknopje bij de wedstrijd in het programma eronder.
+
+---
+
 ## [2.16.2] — 30 september 2026
 
 ### Gewijzigd
