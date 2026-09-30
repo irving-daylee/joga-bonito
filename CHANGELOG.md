@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.16.1] — 30 september 2026
+
+### Gewijzigd
+- Het vakje met het aantal aanmeldingen is van de uitgelichte wedstrijd
+  gehaald. Wie er komt zie je in de Matchday-lijst zelf; een los getal zei
+  te weinig. Aanvang en verzameltijd blijven staan.
+
+---
+
 ## [2.16.0] — 30 september 2026
 
 ### Toegevoegd

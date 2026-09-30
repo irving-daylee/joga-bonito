@@ -857,7 +857,7 @@ label {
 }
 .next-match-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1px;
   background: var(--border);
   border-radius: var(--radius-sm);
@@ -1688,7 +1688,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.16.0';
+const APP_VERSION = '2.16.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -4394,12 +4394,10 @@ function renderVolgendeWedstrijd() {
 
   const md = (DB.matchday || {})[w.date];
   const verzamel = (md && md.verzameltijd) || standaardVerzameltijd(w.date);
-  const aanwezig = md ? toArray(md.aanwezig).length : 0;
 
   const vakjes = [
     [w.time || '–', 'Aanvang'],
     [verzamel || '–', 'Verzamelen'],
-    [aanwezig ? `${aanwezig}` : '–', 'Aanwezig'],
   ];
 
   return `<div class="next-match">
