@@ -1632,7 +1632,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.14.1';
+const APP_VERSION = '2.15.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -1961,6 +1961,24 @@ const IMPORT_WEDSTRIJDEN = [
       { type: 'goal', minute: 27, half: 2, team: 'away' },
       { type: 'goal', minute: 30, half: 2, team: 'away' },
       { type: 'goal', minute: 39, half: 2, team: 'away' },
+    ],
+  },
+  {
+    sleutel: '2026-09-29|Weddingcars by DK', versie: 1,
+    date: '2026-09-29', opponent: 'Weddingcars by DK', sporthal: 'Buiten', comp: 'comp',
+    season: '2026/27', scoreHome: 4, scoreAway: 2,
+    squad: ['Marco', 'Bobby', 'Kenneth', 'Said', 'Lawin', 'Amine', 'Lyzairo', 'Fouad'],
+    keeper: 'Marco', vlagger: 'Kenneth',
+    // Minuten uit srza, waar de klok van 1 naar 40 loopt. Bij de 0-2 en de 0-4
+    // wist niemand meer wie de assist gaf; die blijven leeg. De groene kaart in
+    // de 27e minuut was voor Weddingcars en hoort dus niet in onze tijdlijn.
+    events: [
+      { type: 'goal', minute: 3, half: 1, team: 'home', scorer: 'Lawin', assist: 'Bobby' },
+      { type: 'goal', minute: 21, half: 2, team: 'home', scorer: 'Kenneth' },
+      { type: 'goal', minute: 29, half: 2, team: 'home', scorer: 'Said', assist: 'Amine' },
+      { type: 'goal', minute: 32, half: 2, team: 'home', scorer: 'Fouad' },
+      { type: 'goal', minute: 40, half: 2, team: 'away' },
+      { type: 'goal', minute: 40, half: 2, team: 'away' },
     ],
   },
 ];

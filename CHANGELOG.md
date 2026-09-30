@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.15.0] — 30 september 2026
+
+### Toegevoegd
+- **Weddingcars by DK 4–2 staat in de app.** De uitwedstrijd van dinsdag is
+  vastgelegd met de zes doelpunten, de assists die bekend waren, de selectie
+  van acht man en Kenneth als vlagger.
+
+---
+
 ## [2.14.1] — 21 september 2026
 
 ### Gewijzigd
