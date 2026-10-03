@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-02T10:49:18.094Z",
+  "lastUpdated": "2026-10-03T10:09:15.791Z",
   "team": {
     "played": 5,
     "wins": 5,
@@ -7,12 +7,24 @@
     "losses": 0,
     "goalsFor": 27,
     "goalsAgainst": 9,
-    "position": 1,
+    "position": 2,
     "points": 15
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Jai Hanuman 1",
+      "g": 5,
+      "w": 5,
+      "gl": 0,
+      "v": 0,
+      "dv": 31,
+      "dt": 9,
+      "ds": 22,
+      "p": 15
+    },
+    {
+      "pos": 2,
       "team": "Joga Bonito",
       "g": 5,
       "w": 5,
@@ -24,7 +36,7 @@
       "p": 15
     },
     {
-      "pos": 2,
+      "pos": 3,
       "team": "Fc Ada",
       "g": 4,
       "w": 4,
@@ -33,18 +45,6 @@
       "dv": 31,
       "dt": 8,
       "ds": 23,
-      "p": 12
-    },
-    {
-      "pos": 3,
-      "team": "Jai Hanuman 1",
-      "g": 4,
-      "w": 4,
-      "gl": 0,
-      "v": 0,
-      "dv": 28,
-      "dt": 8,
-      "ds": 20,
       "p": 12
     },
     {
@@ -74,13 +74,13 @@
     {
       "pos": 6,
       "team": "Ander Kallyber Fc",
-      "g": 3,
+      "g": 4,
       "w": 1,
       "gl": 1,
-      "v": 1,
-      "dv": 12,
-      "dt": 10,
-      "ds": 2,
+      "v": 2,
+      "dv": 13,
+      "dt": 13,
+      "ds": 0,
       "p": 4
     },
     {
