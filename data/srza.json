@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-05T11:57:51.703Z",
+  "lastUpdated": "2026-10-06T11:37:39.782Z",
   "team": {
     "played": 5,
     "wins": 5,
@@ -97,6 +97,18 @@
     },
     {
       "pos": 8,
+      "team": "Weddingcars By Dk",
+      "g": 5,
+      "w": 1,
+      "gl": 1,
+      "v": 3,
+      "dv": 9,
+      "dt": 17,
+      "ds": -8,
+      "p": 4
+    },
+    {
+      "pos": 9,
       "team": "Ally United",
       "g": 3,
       "w": 1,
@@ -108,28 +120,16 @@
       "p": 3
     },
     {
-      "pos": 9,
+      "pos": 10,
       "team": "Galàcticos",
-      "g": 4,
+      "g": 5,
       "w": 1,
       "gl": 0,
-      "v": 3,
-      "dv": 8,
-      "dt": 23,
-      "ds": -15,
+      "v": 4,
+      "dv": 10,
+      "dt": 26,
+      "ds": -16,
       "p": 3
-    },
-    {
-      "pos": 10,
-      "team": "Weddingcars By Dk",
-      "g": 4,
-      "w": 0,
-      "gl": 1,
-      "v": 3,
-      "dv": 6,
-      "dt": 15,
-      "ds": -9,
-      "p": 1
     },
     {
       "pos": 11,
