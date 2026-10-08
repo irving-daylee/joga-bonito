@@ -9,6 +9,16 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.17.0] — 8 oktober 2026
+
+### Toegevoegd
+- **AS Sport Events 7–6 staat in de app.** De uitwedstrijd van woensdag is
+  vastgelegd met alle dertien doelpunten, de assists, de selectie van acht man
+  en Gregory als vlagger. Bij de 6–6 staat Amine als aangever, zoals hij met
+  een vraagteken is doorgegeven.
+
+---
+
 ## [2.16.3] — 30 september 2026
 
 ### Gewijzigd
