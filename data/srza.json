@@ -1,12 +1,12 @@
 {
-  "lastUpdated": "2026-10-07T11:27:05.625Z",
+  "lastUpdated": "2026-10-08T11:42:38.039Z",
   "team": {
-    "played": 5,
+    "played": 6,
     "wins": 5,
     "draws": 0,
-    "losses": 0,
-    "goalsFor": 27,
-    "goalsAgainst": 9,
+    "losses": 1,
+    "goalsFor": 33,
+    "goalsAgainst": 16,
     "position": 2,
     "points": 15
   },
@@ -26,13 +26,13 @@
     {
       "pos": 2,
       "team": "Joga Bonito",
-      "g": 5,
+      "g": 6,
       "w": 5,
       "gl": 0,
-      "v": 0,
-      "dv": 27,
-      "dt": 9,
-      "ds": 18,
+      "v": 1,
+      "dv": 33,
+      "dt": 16,
+      "ds": 17,
       "p": 15
     },
     {
@@ -50,14 +50,14 @@
     {
       "pos": 4,
       "team": "As Sport Events",
-      "g": 4,
-      "w": 3,
+      "g": 5,
+      "w": 4,
       "gl": 0,
       "v": 1,
-      "dv": 25,
-      "dt": 15,
-      "ds": 10,
-      "p": 9
+      "dv": 32,
+      "dt": 21,
+      "ds": 11,
+      "p": 12
     },
     {
       "pos": 5,
@@ -158,6 +158,16 @@
   ],
   "uitslagen": [
     {
+      "date": "2026-10-07",
+      "comp": "1A",
+      "time": "21:48",
+      "hal": "WATERWIJK",
+      "opp": "As Sport Events",
+      "home": false,
+      "jb": 6,
+      "opp_s": 7
+    },
+    {
       "date": "2026-09-29",
       "comp": "1A",
       "time": "22:30",
@@ -209,14 +219,6 @@
     }
   ],
   "programma": [
-    {
-      "date": "2026-10-07",
-      "comp": "1A",
-      "time": "21:48",
-      "hal": "WATERWIJK",
-      "opp": "As Sport Events",
-      "home": false
-    },
     {
       "date": "2026-10-26",
       "comp": "1A",
