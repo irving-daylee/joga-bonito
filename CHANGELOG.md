@@ -9,6 +9,14 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.17.1] — 8 oktober 2026
+
+### Opgelost
+- Said staat nu als aangever bij de 2–4 van Lawin tegen AS Sport Events. De
+  wedstrijd werkt zichzelf bij op je telefoon.
+
+---
+
 ## [2.17.0] — 8 oktober 2026
 
 ### Toegevoegd

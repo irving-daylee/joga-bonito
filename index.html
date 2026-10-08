@@ -1686,7 +1686,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.17.0';
+const APP_VERSION = '2.17.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2036,7 +2036,7 @@ const IMPORT_WEDSTRIJDEN = [
     ],
   },
   {
-    sleutel: '2026-10-07|AS Sport Events', versie: 1,
+    sleutel: '2026-10-07|AS Sport Events', versie: 2,
     date: '2026-10-07', opponent: 'AS Sport Events', sporthal: 'Waterwijk', comp: 'comp',
     season: '2026/27', scoreHome: 6, scoreAway: 7,
     squad: ['Marco', 'Irving', 'Gregory', 'Said', 'Lawin', 'Amine', 'Lyzairo', 'Kenneth'],
@@ -2049,7 +2049,7 @@ const IMPORT_WEDSTRIJDEN = [
       { type: 'goal', minute: 12, half: 1, team: 'home', scorer: 'Lyzairo', assist: 'Irving' },
       { type: 'goal', minute: 14, half: 1, team: 'away' },
       { type: 'goal', minute: 14, half: 1, team: 'home', scorer: 'Lyzairo', assist: 'Gregory' },
-      { type: 'goal', minute: 16, half: 1, team: 'home', scorer: 'Lawin',
+      { type: 'goal', minute: 16, half: 1, team: 'home', scorer: 'Lawin', assist: 'Said',
         notitie: 'van eigen helft' },
       { type: 'goal', minute: 19, half: 1, team: 'away' },
       { type: 'goal', minute: 24, half: 2, team: 'away' },
