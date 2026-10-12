@@ -6,7 +6,9 @@
     "2026-09-16|Novia Facts",
     "2026-09-16|Novia Facts",
     "2026-09-21|Ander Kallyber FC",
-    "2026-09-29|Weddingcars by DK"
+    "2026-09-29|Weddingcars by DK",
+    "2026-10-07|AS Sport Events",
+    "2026-10-07|AS Sport Events"
   ],
   "_seedVersion": 6,
   "matchday": {
@@ -4362,9 +4364,158 @@
       "verzameltijd": "",
       "vlagger": "p9",
       "vlaggerNaam": "Kenneth"
+    },
+    {
+      "_import": "2026-10-07|AS Sport Events",
+      "_importVersie": 2,
+      "captain": "p2",
+      "comp": "comp",
+      "date": "2026-10-07",
+      "events": [
+        {
+          "assistId": "p7",
+          "half": 1,
+          "minute": 5,
+          "ownGoal": false,
+          "scoreAfter": "1–0",
+          "scorerId": "p10",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 1,
+          "minute": 11,
+          "ownGoal": false,
+          "scoreAfter": "1–1",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "assistId": "p2",
+          "half": 1,
+          "minute": 12,
+          "ownGoal": false,
+          "scoreAfter": "2–1",
+          "scorerId": "p3",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 1,
+          "minute": 14,
+          "ownGoal": false,
+          "scoreAfter": "2–2",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "assistId": "p6",
+          "half": 1,
+          "minute": 14,
+          "ownGoal": false,
+          "scoreAfter": "3–2",
+          "scorerId": "p3",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "assistId": "p10",
+          "half": 1,
+          "minute": 16,
+          "notitie": "van eigen helft",
+          "ownGoal": false,
+          "scoreAfter": "4–2",
+          "scorerId": "p7",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 1,
+          "minute": 19,
+          "ownGoal": false,
+          "scoreAfter": "4–3",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 24,
+          "ownGoal": false,
+          "scoreAfter": "4–4",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "assistId": "p2",
+          "half": 2,
+          "minute": 24,
+          "ownGoal": false,
+          "scoreAfter": "5–4",
+          "scorerId": "p7",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 25,
+          "ownGoal": false,
+          "scoreAfter": "5–5",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 25,
+          "ownGoal": false,
+          "scoreAfter": "5–6",
+          "team": "away",
+          "type": "goal"
+        },
+        {
+          "assistId": "p11",
+          "half": 2,
+          "minute": 32,
+          "ownGoal": false,
+          "scoreAfter": "6–6",
+          "scorerId": "p2",
+          "team": "home",
+          "type": "goal"
+        },
+        {
+          "half": 2,
+          "minute": 39,
+          "ownGoal": false,
+          "scoreAfter": "6–7",
+          "team": "away",
+          "type": "goal"
+        }
+      ],
+      "flyingKeeper": false,
+      "half": 2,
+      "id": "m55",
+      "keeper": "p1",
+      "opponent": "AS Sport Events",
+      "scoreAway": 7,
+      "scoreHome": 6,
+      "season": "2026/27",
+      "sporthal": "Waterwijk",
+      "squad": [
+        "p1",
+        "p2",
+        "p6",
+        "p10",
+        "p7",
+        "p11",
+        "p3",
+        "p9"
+      ],
+      "status": "finished",
+      "verzameltijd": "",
+      "vlagger": "p6",
+      "vlaggerNaam": "Gregory"
     }
   ],
-  "nextMatchId": 54,
+  "nextMatchId": 56,
   "nextPlayerId": 13,
   "players": [
     {
@@ -4466,5 +4617,5 @@
   ],
   "season": "2026/27",
   "teamName": "Joga Bonito",
-  "updatedAt": 1791136978326
+  "updatedAt": 1791493822682
 }
