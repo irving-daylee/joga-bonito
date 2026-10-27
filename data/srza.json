@@ -1,14 +1,14 @@
 {
-  "lastUpdated": "2026-10-26T10:40:26.893Z",
+  "lastUpdated": "2026-10-27T10:08:32.322Z",
   "team": {
-    "played": 6,
+    "played": 7,
     "wins": 5,
-    "draws": 0,
+    "draws": 1,
     "losses": 1,
-    "goalsFor": 33,
-    "goalsAgainst": 16,
+    "goalsFor": 37,
+    "goalsAgainst": 20,
     "position": 2,
-    "points": 15
+    "points": 16
   },
   "standen": [
     {
@@ -26,65 +26,77 @@
     {
       "pos": 2,
       "team": "Joga Bonito",
-      "g": 6,
+      "g": 7,
       "w": 5,
-      "gl": 0,
+      "gl": 1,
       "v": 1,
-      "dv": 33,
-      "dt": 16,
+      "dv": 37,
+      "dt": 20,
       "ds": 17,
-      "p": 15
+      "p": 16
     },
     {
       "pos": 3,
       "team": "Fc Ada",
-      "g": 4,
-      "w": 4,
+      "g": 5,
+      "w": 5,
       "gl": 0,
       "v": 0,
-      "dv": 31,
-      "dt": 8,
-      "ds": 23,
-      "p": 12
+      "dv": 38,
+      "dt": 10,
+      "ds": 28,
+      "p": 15
     },
     {
       "pos": 4,
       "team": "As Sport Events",
-      "g": 5,
+      "g": 6,
       "w": 4,
       "gl": 0,
-      "v": 1,
-      "dv": 32,
-      "dt": 21,
-      "ds": 11,
+      "v": 2,
+      "dv": 34,
+      "dt": 28,
+      "ds": 6,
       "p": 12
     },
     {
       "pos": 5,
       "team": "Ander Kallyber Fc",
-      "g": 5,
-      "w": 2,
+      "g": 6,
+      "w": 3,
       "gl": 1,
       "v": 2,
-      "dv": 20,
-      "dt": 17,
-      "ds": 3,
-      "p": 7
+      "dv": 24,
+      "dt": 19,
+      "ds": 5,
+      "p": 10
     },
     {
       "pos": 6,
       "team": "Limako",
-      "g": 5,
+      "g": 6,
       "w": 2,
-      "gl": 0,
+      "gl": 1,
       "v": 3,
-      "dv": 16,
-      "dt": 20,
+      "dv": 21,
+      "dt": 25,
       "ds": -4,
-      "p": 6
+      "p": 7
     },
     {
       "pos": 7,
+      "team": "Weddingcars By Dk",
+      "g": 6,
+      "w": 1,
+      "gl": 2,
+      "v": 3,
+      "dv": 14,
+      "dt": 22,
+      "ds": -8,
+      "p": 5
+    },
+    {
+      "pos": 8,
       "team": "De Onderste",
       "g": 4,
       "w": 1,
@@ -93,18 +105,6 @@
       "dv": 9,
       "dt": 18,
       "ds": -9,
-      "p": 4
-    },
-    {
-      "pos": 8,
-      "team": "Weddingcars By Dk",
-      "g": 5,
-      "w": 1,
-      "gl": 1,
-      "v": 3,
-      "dv": 9,
-      "dt": 17,
-      "ds": -8,
       "p": 4
     },
     {
@@ -122,17 +122,29 @@
     {
       "pos": 10,
       "team": "Galàcticos",
-      "g": 5,
+      "g": 6,
       "w": 1,
       "gl": 0,
-      "v": 4,
-      "dv": 10,
-      "dt": 26,
-      "ds": -16,
+      "v": 5,
+      "dv": 12,
+      "dt": 30,
+      "ds": -18,
       "p": 3
     },
     {
       "pos": 11,
+      "team": "Ter Laak Boomverzorging",
+      "g": 4,
+      "w": 0,
+      "gl": 1,
+      "v": 3,
+      "dv": 13,
+      "dt": 28,
+      "ds": -15,
+      "p": 1
+    },
+    {
+      "pos": 12,
       "team": "Novia Facts",
       "g": 6,
       "w": 0,
@@ -142,21 +154,19 @@
       "dt": 31,
       "ds": -17,
       "p": 1
-    },
-    {
-      "pos": 12,
-      "team": "Ter Laak Boomverzorging",
-      "g": 3,
-      "w": 0,
-      "gl": 0,
-      "v": 3,
-      "dv": 9,
-      "dt": 24,
-      "ds": -15,
-      "p": 0
     }
   ],
   "uitslagen": [
+    {
+      "date": "2026-10-26",
+      "comp": "1A",
+      "time": "19:00",
+      "hal": "STAD",
+      "opp": "Ter Laak Boomverzorging",
+      "home": false,
+      "jb": 4,
+      "opp_s": 4
+    },
     {
       "date": "2026-10-07",
       "comp": "1A",
@@ -219,14 +229,6 @@
     }
   ],
   "programma": [
-    {
-      "date": "2026-10-26",
-      "comp": "1A",
-      "time": "19:00",
-      "hal": "STAD",
-      "opp": "Ter Laak Boomverzorging",
-      "home": false
-    },
     {
       "date": "2026-11-03",
       "comp": "1A",
