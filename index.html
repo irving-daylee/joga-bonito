@@ -1686,7 +1686,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.17.1';
+const APP_VERSION = '2.18.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2058,6 +2058,25 @@ const IMPORT_WEDSTRIJDEN = [
       { type: 'goal', minute: 25, half: 2, team: 'away' },
       { type: 'goal', minute: 32, half: 2, team: 'home', scorer: 'Irving', assist: 'Amine' },
       { type: 'goal', minute: 39, half: 2, team: 'away' },
+    ],
+  },
+  {
+    sleutel: '2026-10-26|Ter Laak Boomverzorging', versie: 1,
+    date: '2026-10-26', opponent: 'Ter Laak Boomverzorging', sporthal: 'Stad', comp: 'comp',
+    season: '2026/27', scoreHome: 4, scoreAway: 4,
+    squad: ['Marco', 'Gregory', 'Lyzairo', 'Lawin', 'Said', 'Kenneth', 'Fouad'],
+    keeper: 'Marco',
+    // Minuten uit srza, waar de klok van 1 naar 40 loopt. Van deze wedstrijd
+    // zijn geen assists bekend.
+    events: [
+      { type: 'goal', minute: 3, half: 1, team: 'away' },
+      { type: 'goal', minute: 3, half: 1, team: 'home', scorer: 'Kenneth' },
+      { type: 'goal', minute: 12, half: 1, team: 'away' },
+      { type: 'goal', minute: 21, half: 2, team: 'home', scorer: 'Fouad' },
+      { type: 'goal', minute: 22, half: 2, team: 'home', scorer: 'Gregory' },
+      { type: 'goal', minute: 23, half: 2, team: 'away' },
+      { type: 'goal', minute: 27, half: 2, team: 'home', scorer: 'Gregory' },
+      { type: 'goal', minute: 38, half: 2, team: 'away' },
     ],
   },
 ];

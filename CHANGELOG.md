@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.18.0] — 27 oktober 2026
+
+### Toegevoegd
+- **Ter Laak Boomverzorging 4–4 staat in de app.** De uitwedstrijd van maandag
+  in de Stad is vastgelegd met de acht doelpunten en de selectie van zeven
+  man. Assists zijn van deze wedstrijd niet bekend.
+
+---
+
 ## [2.17.1] — 8 oktober 2026
 
 ### Opgelost
