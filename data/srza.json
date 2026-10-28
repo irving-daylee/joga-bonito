@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-27T10:08:32.322Z",
+  "lastUpdated": "2026-10-28T10:54:42.400Z",
   "team": {
     "played": 7,
     "wins": 5,
@@ -14,14 +14,14 @@
     {
       "pos": 1,
       "team": "Jai Hanuman 1",
-      "g": 6,
-      "w": 6,
+      "g": 7,
+      "w": 7,
       "gl": 0,
       "v": 0,
-      "dv": 40,
-      "dt": 11,
-      "ds": 29,
-      "p": 18
+      "dv": 44,
+      "dt": 13,
+      "ds": 31,
+      "p": 21
     },
     {
       "pos": 2,
@@ -146,13 +146,13 @@
     {
       "pos": 12,
       "team": "Novia Facts",
-      "g": 6,
+      "g": 7,
       "w": 0,
       "gl": 1,
-      "v": 5,
-      "dv": 14,
-      "dt": 31,
-      "ds": -17,
+      "v": 6,
+      "dv": 16,
+      "dt": 35,
+      "ds": -19,
       "p": 1
     }
   ],
@@ -243,6 +243,14 @@
       "time": "20:24",
       "hal": "STAD",
       "opp": "Galàcticos",
+      "home": true
+    },
+    {
+      "date": "2026-12-02",
+      "comp": "BK",
+      "time": "19:00",
+      "hal": "WATERWIJK",
+      "opp": "Tandmere City (2b)",
       "home": true
     },
     {
