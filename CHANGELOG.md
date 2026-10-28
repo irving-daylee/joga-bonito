@@ -9,6 +9,17 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.18.1] — 28 oktober 2026
+
+### Opgelost
+- Kenneth heeft een assist bij Ter Laak Boomverzorging. Bij welk doelpunt
+  weet niemand meer, dus hij staat los onder de tijdlijn in plaats van bij een
+  goal — maar telt wel mee in zijn seizoensstand en op zijn profiel.
+- Zulke losse assists tellen nu ook mee in de stand op Stats en in de analyse.
+  Tot nu toe kwamen ze alleen op het spelersprofiel terecht.
+
+---
+
 ## [2.18.0] — 27 oktober 2026
 
 ### Toegevoegd

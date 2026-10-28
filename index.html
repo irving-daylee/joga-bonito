@@ -1686,7 +1686,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.18.0';
+const APP_VERSION = '2.18.1';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2061,13 +2061,15 @@ const IMPORT_WEDSTRIJDEN = [
     ],
   },
   {
-    sleutel: '2026-10-26|Ter Laak Boomverzorging', versie: 1,
+    sleutel: '2026-10-26|Ter Laak Boomverzorging', versie: 2,
     date: '2026-10-26', opponent: 'Ter Laak Boomverzorging', sporthal: 'Stad', comp: 'comp',
     season: '2026/27', scoreHome: 4, scoreAway: 4,
     squad: ['Marco', 'Gregory', 'Lyzairo', 'Lawin', 'Said', 'Kenneth', 'Fouad'],
     keeper: 'Marco',
-    // Minuten uit srza, waar de klok van 1 naar 40 loopt. Van deze wedstrijd
-    // zijn geen assists bekend.
+    // Minuten uit srza, waar de klok van 1 naar 40 loopt. Kenneth gaf één
+    // assist, maar niemand weet meer bij welk doelpunt; die telt dus mee
+    // zonder dat hij aan een goal hangt.
+    assistsNamen: [['Kenneth', 1]],
     events: [
       { type: 'goal', minute: 3, half: 1, team: 'away' },
       { type: 'goal', minute: 3, half: 1, team: 'home', scorer: 'Kenneth' },
@@ -2117,7 +2119,7 @@ function importeerWedstrijden() {
       date: w.date, opponent: w.opponent, sporthal: w.sporthal, comp: w.comp,
       squad: w.squad.map(idVan).filter(Boolean), lineup: [],
       keeper: idVan(w.keeper), captain: idVan(w.captain), flyingKeeper: false,
-      events, scoreHome: w.scoreHome, scoreAway: w.scoreAway,
+      events, scoreHome: w.scoreHome, scoreAway: w.scoreAway, assistsNamen: w.assistsNamen || [],
       half: 2, motm: idVan(w.motm), vlagger: idVan(w.vlagger), vlaggerNaam: w.vlagger || null,
       zaaldienst: null, zaaldienstNaam: null, status: 'finished',
     });
@@ -2137,6 +2139,15 @@ function needsSeed() {
 function matchSeason(m) { return m.season || DB.season; }
 function seasonMatches(season) {
   return toArray(DB.matches).filter(m => m.status === 'finished' && matchSeason(m) === season);
+}
+
+// Assists die niet aan een doelpunt te koppelen zijn staan als [naam, aantal]
+// op de wedstrijd. Voor de tellingen zetten we ze om naar speler-id's; een
+// oud-speler zonder id telt dan niet mee in de stand van de huidige selectie.
+function losseAssists(m) {
+  return toArray(m.assistsNamen)
+    .map(([naam, n]) => [(DB.players.find(p => p.name === naam) || {}).id, Number(n) || 0])
+    .filter(([id, n]) => id && n > 0);
 }
 
 // ===== TAKEN: VLAGGER EN ZAALDIENST =====
@@ -3937,7 +3948,7 @@ function showMatchDetail(matchId) {
         m.assistsNamen.map(([naam, n]) => `${naam}${n > 1 ? ` (${n}x)` : ''}`).join(', ')
       }</p>
       <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px">
-        Uit de seizoensadministratie; niet te herleiden naar een specifiek doelpunt.</p></div>`;
+        Niet te koppelen aan een specifiek doelpunt.</p></div>`;
   }
 
   const taakRegels = ['vlagger', 'zaaldienst']
@@ -4176,6 +4187,7 @@ function setupSeasonLeaderboard(season) {
         else ps[ev.playerId].reds++;
       }
     });
+    losseAssists(m).forEach(([pid, n]) => { if (ps[pid]) ps[pid].assists += n; });
     if (m.motm && ps[m.motm]) ps[m.motm].motm++;
     if (m.scoreAway === 0 && m.keeper && ps[m.keeper]) ps[m.keeper].cleanSheets++;
   });
@@ -4897,6 +4909,10 @@ function getPlayerStats(matches) {
         if (!stats[ev.assistId]) stats[ev.assistId] = { id: ev.assistId, goals: 0, assists: 0, played: 0, matches: [] };
         stats[ev.assistId].assists++;
       }
+    });
+    losseAssists(m).forEach(([id, n]) => {
+      if (!stats[id]) stats[id] = { id, goals: 0, assists: 0, played: 0, matches: [] };
+      stats[id].assists += n;
     });
   });
   return stats;

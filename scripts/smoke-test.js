@@ -522,6 +522,35 @@ await check('de eerstvolgende wedstrijd staat uitgelicht', async () => {
   return tekst.slice(0, 60);
 });
 
+await check('een assist zonder doelpunt telt mee in de stand van dit seizoen', async () => {
+  // Bij Ter Laak gaf Kenneth één assist, maar niemand weet meer bij welke
+  // goal. Die hangt dus niet aan een doelpunt en moet toch meetellen.
+  const kenneth = { id: 'p14', name: 'Kenneth', number: 14, isKeeper: false, isCaptain: false, foot: 'R', photo: null };
+  const { w: wa, loginError: fout } = await loadAndLogin(fbShape({
+    teamName: 'Joga Bonito', season: '2026/27', players: [...spelers, kenneth],
+    nextPlayerId: 15, nextMatchId: 2, matches: [], _seedVersion: 6, updatedAt: 1, currentMatch: null,
+  }));
+  assert(!fout, `inloggen crasht de app: ${fout}`);
+
+  const terLaak = JSON.parse(wa.eval("JSON.stringify(DB.matches.find(m => m._import === '2026-10-26|Ter Laak Boomverzorging'))"));
+  assert(terLaak, 'Ter Laak ontbreekt');
+  assert((terLaak.assistsNamen || []).some(([n, a]) => n === 'Kenneth' && a === 1),
+    `losse assist niet meegekomen: ${JSON.stringify(terLaak.assistsNamen)}`);
+
+  // Verwacht: alle gekoppelde assists van Kenneth dit seizoen, plus de losse.
+  const verwacht = Number(wa.eval(`seasonMatches('2026/27').reduce((n, m) =>
+    n + (m.events || []).filter(e => e.type === 'goal' && e.assistId === 'p14').length, 0)`)) + 1;
+
+  wa.eval("selectedStatsSeason = 'current'; renderStatsPage();");
+  const rij = [...wa.document.querySelectorAll('#leaderboard .leaderboard-item')]
+    .find(el => el.querySelector('.player-name')?.textContent.trim() === 'Kenneth');
+  assert(rij, 'Kenneth staat niet in de stand');
+  const kolommen = [...rij.querySelectorAll('.lb-stats span')].map(s => s.textContent.trim());
+  assert(Number(kolommen[1]) === verwacht,
+    `Kenneth heeft ${kolommen[1]} assists in de stand, verwacht ${verwacht}`);
+  return `Kenneth ${verwacht} assists, waarvan 1 los`;
+});
+
 await check('Matchday werkt zonder dat er een wedstrijd bestaat', async () => {
   const { w: w11 } = await loadAndLogin(fbShape({
     teamName: 'Joga Bonito', season: '2026/27', players: spelers,
