@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-02T12:58:56.857Z",
+  "lastUpdated": "2026-11-03T12:32:00.206Z",
   "team": {
     "played": 7,
     "wins": 5,
@@ -50,13 +50,13 @@
     {
       "pos": 4,
       "team": "As Sport Events",
-      "g": 6,
+      "g": 7,
       "w": 4,
       "gl": 0,
-      "v": 2,
-      "dv": 34,
-      "dt": 28,
-      "ds": 6,
+      "v": 3,
+      "dv": 35,
+      "dt": 31,
+      "ds": 4,
       "p": 12
     },
     {
@@ -73,39 +73,39 @@
     },
     {
       "pos": 6,
-      "team": "Limako",
-      "g": 6,
+      "team": "Weddingcars By Dk",
+      "g": 7,
       "w": 2,
-      "gl": 1,
+      "gl": 2,
       "v": 3,
-      "dv": 21,
-      "dt": 25,
-      "ds": -4,
-      "p": 7
+      "dv": 17,
+      "dt": 23,
+      "ds": -6,
+      "p": 8
     },
     {
       "pos": 7,
-      "team": "Weddingcars By Dk",
-      "g": 6,
-      "w": 1,
-      "gl": 2,
-      "v": 3,
-      "dv": 14,
+      "team": "De Onderste",
+      "g": 5,
+      "w": 2,
+      "gl": 1,
+      "v": 2,
+      "dv": 16,
       "dt": 22,
-      "ds": -8,
-      "p": 5
+      "ds": -6,
+      "p": 7
     },
     {
       "pos": 8,
-      "team": "De Onderste",
-      "g": 4,
-      "w": 1,
+      "team": "Limako",
+      "g": 7,
+      "w": 2,
       "gl": 1,
-      "v": 2,
-      "dv": 9,
-      "dt": 18,
-      "ds": -9,
-      "p": 4
+      "v": 4,
+      "dv": 25,
+      "dt": 32,
+      "ds": -7,
+      "p": 7
     },
     {
       "pos": 9,
