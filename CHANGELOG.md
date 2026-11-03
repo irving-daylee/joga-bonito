@@ -9,6 +9,16 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.19.1] — 3 november 2026
+
+### Opgelost
+- Novia Facts 7–3 is aangevuld: de selectie van zeven man met Marco als
+  aanvoerder, Rayvano als man of the match, en de assists van Rayvano (2) en
+  Irving (1). Bij welke goals die vielen is niet bekend, dus ze staan los
+  onder de tijdlijn. Er was die avond geen vlagger.
+
+---
+
 ## [2.19.0] — 3 november 2026
 
 ### Toegevoegd
