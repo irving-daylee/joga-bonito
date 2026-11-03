@@ -822,8 +822,11 @@ await check('het spelersprofiel telt de historie niet dubbel', async () => {
   let wed = ditSeizoen.length;
   let g = ditSeizoen.reduce((n, m) => n + (m.events || []).filter(ev =>
     ev.type === 'goal' && ev.team === 'home' && !ev.ownGoal && ev.scorerId === 'p2').length, 0);
+  // Assists tellen mee aan een doelpunt gekoppeld én los op de wedstrijd, als
+  // niet bekend is bij welke goal ze vielen.
   let a = ditSeizoen.reduce((n, m) => n + (m.events || []).filter(ev =>
-    ev.type === 'goal' && ev.assistId === 'p2').length, 0);
+    ev.type === 'goal' && ev.assistId === 'p2').length
+    + (m.assistsNamen || []).filter(([naam]) => naam === 'Irving').reduce((s, [, x]) => s + x, 0), 0);
   geseed.forEach(key => {
     const hp = ((hist[key] || {}).players || []).find(p => p.name === 'Irving');
     if (hp && hp.played > 0) { wed += hp.played; g += hp.goals; a += hp.assists; }
