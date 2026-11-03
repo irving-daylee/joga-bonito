@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.19.0] — 3 november 2026
+
+### Toegevoegd
+- **Novia Facts 7–3 staat in de app.** De thuiswedstrijd van vanavond is
+  vastgelegd met de tien doelpunten — Rayvano viermaal. Selectie, assists en
+  vlagger volgen nog.
+
+---
+
 ## [2.18.1] — 28 oktober 2026
 
 ### Opgelost

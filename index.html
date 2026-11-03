@@ -1686,7 +1686,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.18.1';
+const APP_VERSION = '2.19.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2079,6 +2079,26 @@ const IMPORT_WEDSTRIJDEN = [
       { type: 'goal', minute: 23, half: 2, team: 'away' },
       { type: 'goal', minute: 27, half: 2, team: 'home', scorer: 'Gregory' },
       { type: 'goal', minute: 38, half: 2, team: 'away' },
+    ],
+  },
+  {
+    sleutel: '2026-11-03|Novia Facts', versie: 1,
+    date: '2026-11-03', opponent: 'Novia Facts', sporthal: 'Buiten', comp: 'comp',
+    season: '2026/27', scoreHome: 7, scoreAway: 3,
+    // Voorlopig alleen wie scoorde; de rest van de selectie volgt nog.
+    squad: ['Rayvano', 'Lawin', 'Fouad'],
+    // Minuten en doelpuntenmakers uit srza, waar de klok van 1 naar 40 loopt.
+    events: [
+      { type: 'goal', minute: 2, half: 1, team: 'home', scorer: 'Rayvano' },
+      { type: 'goal', minute: 5, half: 1, team: 'home', scorer: 'Rayvano' },
+      { type: 'goal', minute: 12, half: 1, team: 'home', scorer: 'Rayvano' },
+      { type: 'goal', minute: 13, half: 1, team: 'home', scorer: 'Lawin' },
+      { type: 'goal', minute: 13, half: 1, team: 'away' },
+      { type: 'goal', minute: 15, half: 1, team: 'away' },
+      { type: 'goal', minute: 16, half: 1, team: 'away' },
+      { type: 'goal', minute: 24, half: 2, team: 'home', scorer: 'Fouad' },
+      { type: 'goal', minute: 35, half: 2, team: 'home', scorer: 'Lawin' },
+      { type: 'goal', minute: 37, half: 2, team: 'home', scorer: 'Rayvano' },
     ],
   },
 ];
