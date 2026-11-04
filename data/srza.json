@@ -1,14 +1,14 @@
 {
-  "lastUpdated": "2026-11-03T12:32:00.206Z",
+  "lastUpdated": "2026-11-04T12:42:32.633Z",
   "team": {
-    "played": 7,
-    "wins": 5,
+    "played": 8,
+    "wins": 6,
     "draws": 1,
     "losses": 1,
-    "goalsFor": 37,
-    "goalsAgainst": 20,
+    "goalsFor": 44,
+    "goalsAgainst": 23,
     "position": 2,
-    "points": 16
+    "points": 19
   },
   "standen": [
     {
@@ -26,14 +26,14 @@
     {
       "pos": 2,
       "team": "Joga Bonito",
-      "g": 7,
-      "w": 5,
+      "g": 8,
+      "w": 6,
       "gl": 1,
       "v": 1,
-      "dv": 37,
-      "dt": 20,
-      "ds": 17,
-      "p": 16
+      "dv": 44,
+      "dt": 23,
+      "ds": 21,
+      "p": 19
     },
     {
       "pos": 3,
@@ -109,26 +109,26 @@
     },
     {
       "pos": 9,
-      "team": "Ally United",
-      "g": 4,
-      "w": 1,
+      "team": "Galàcticos",
+      "g": 7,
+      "w": 2,
       "gl": 0,
-      "v": 3,
-      "dv": 13,
-      "dt": 27,
-      "ds": -14,
-      "p": 3
+      "v": 5,
+      "dv": 16,
+      "dt": 33,
+      "ds": -17,
+      "p": 6
     },
     {
       "pos": 10,
-      "team": "Galàcticos",
-      "g": 6,
+      "team": "Ally United",
+      "g": 5,
       "w": 1,
       "gl": 0,
-      "v": 5,
-      "dv": 12,
-      "dt": 30,
-      "ds": -18,
+      "v": 4,
+      "dv": 16,
+      "dt": 31,
+      "ds": -15,
       "p": 3
     },
     {
@@ -146,17 +146,27 @@
     {
       "pos": 12,
       "team": "Novia Facts",
-      "g": 7,
+      "g": 8,
       "w": 0,
       "gl": 1,
-      "v": 6,
-      "dv": 16,
-      "dt": 35,
-      "ds": -19,
+      "v": 7,
+      "dv": 19,
+      "dt": 42,
+      "ds": -23,
       "p": 1
     }
   ],
   "uitslagen": [
+    {
+      "date": "2026-11-03",
+      "comp": "1A",
+      "time": "20:24",
+      "hal": "BUITEN",
+      "opp": "Novia Facts",
+      "home": true,
+      "jb": 7,
+      "opp_s": 3
+    },
     {
       "date": "2026-10-26",
       "comp": "1A",
@@ -229,14 +239,6 @@
     }
   ],
   "programma": [
-    {
-      "date": "2026-11-03",
-      "comp": "1A",
-      "time": "20:24",
-      "hal": "BUITEN",
-      "opp": "Novia Facts",
-      "home": true
-    },
     {
       "date": "2026-11-09",
       "comp": "1A",
