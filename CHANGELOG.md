@@ -9,6 +9,15 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.20.0] — 9 november 2026
+
+### Toegevoegd
+- **Galàcticos 4–3 staat in de app.** De thuiswedstrijd van vanavond in de
+  Stad is vastgelegd met de zeven doelpunten, de selectie van acht man met
+  Erfan op doel, Rayvano als vlagger en de assist van Irving.
+
+---
+
 ## [2.19.1] — 3 november 2026
 
 ### Opgelost

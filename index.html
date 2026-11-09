@@ -1686,7 +1686,7 @@ body.overlay-open { overflow: hidden; }
 // Hét versienummer van de app; hier ophogen bij een release. De deploy leest
 // deze waarde en hangt er het commit-kenmerk achter voor de naam van de
 // service worker cache, zodat die ook verloopt als je het bumpen vergeet.
-const APP_VERSION = '2.19.1';
+const APP_VERSION = '2.20.0';
 
 const STORAGE_KEY = 'jogaBonito_v2';
 const UNSYNCED_KEY = 'jogaBonito_unsynced';
@@ -2102,6 +2102,26 @@ const IMPORT_WEDSTRIJDEN = [
       { type: 'goal', minute: 24, half: 2, team: 'home', scorer: 'Fouad' },
       { type: 'goal', minute: 35, half: 2, team: 'home', scorer: 'Lawin' },
       { type: 'goal', minute: 37, half: 2, team: 'home', scorer: 'Rayvano' },
+    ],
+  },
+  {
+    sleutel: '2026-11-09|Galàcticos', versie: 1,
+    date: '2026-11-09', opponent: 'Galàcticos', sporthal: 'Stad', comp: 'comp',
+    season: '2026/27', scoreHome: 4, scoreAway: 3,
+    squad: ['Irving', 'Said', 'Amine', 'Lyzairo', 'Erfan', 'Lawin', 'Rayvano', 'Fouad'],
+    keeper: 'Erfan', captain: 'Irving', vlagger: 'Rayvano',
+    // Minuten en doelpuntenmakers uit srza, waar de klok van 1 naar 40 loopt.
+    // Marco was er niet, dus Erfan keepte. Irving gaf één assist, maar bij
+    // welke goal is niet bekend; die telt mee zonder aan een doelpunt te hangen.
+    assistsNamen: [['Irving', 1]],
+    events: [
+      { type: 'goal', minute: 2, half: 1, team: 'home', scorer: 'Lawin' },
+      { type: 'goal', minute: 4, half: 1, team: 'home', scorer: 'Lyzairo' },
+      { type: 'goal', minute: 6, half: 1, team: 'away' },
+      { type: 'goal', minute: 13, half: 1, team: 'home', scorer: 'Lyzairo' },
+      { type: 'goal', minute: 14, half: 1, team: 'away' },
+      { type: 'goal', minute: 14, half: 1, team: 'away' },
+      { type: 'goal', minute: 17, half: 1, team: 'home', scorer: 'Irving' },
     ],
   },
 ];
