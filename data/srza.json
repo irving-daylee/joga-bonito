@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-17T14:01:16.144Z",
+  "lastUpdated": "2026-11-18T13:35:50.602Z",
   "team": {
     "played": 9,
     "wins": 7,
@@ -7,12 +7,24 @@
     "losses": 1,
     "goalsFor": 48,
     "goalsAgainst": 26,
-    "position": 1,
+    "position": 2,
     "points": 22
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Jai Hanuman 1",
+      "g": 9,
+      "w": 8,
+      "gl": 0,
+      "v": 1,
+      "dv": 58,
+      "dt": 22,
+      "ds": 36,
+      "p": 24
+    },
+    {
+      "pos": 2,
       "team": "Joga Bonito",
       "g": 9,
       "w": 7,
@@ -24,7 +36,7 @@
       "p": 22
     },
     {
-      "pos": 2,
+      "pos": 3,
       "team": "Fc Ada",
       "g": 7,
       "w": 7,
@@ -33,18 +45,6 @@
       "dv": 54,
       "dt": 19,
       "ds": 35,
-      "p": 21
-    },
-    {
-      "pos": 3,
-      "team": "Jai Hanuman 1",
-      "g": 8,
-      "w": 7,
-      "gl": 0,
-      "v": 1,
-      "dv": 50,
-      "dt": 20,
-      "ds": 30,
       "p": 21
     },
     {
@@ -62,13 +62,13 @@
     {
       "pos": 5,
       "team": "As Sport Events",
-      "g": 8,
+      "g": 9,
       "w": 4,
       "gl": 0,
-      "v": 4,
-      "dv": 39,
-      "dt": 36,
-      "ds": 3,
+      "v": 5,
+      "dv": 41,
+      "dt": 44,
+      "ds": -3,
       "p": 12
     },
     {
