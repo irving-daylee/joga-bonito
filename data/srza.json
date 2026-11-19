@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-18T13:35:50.602Z",
+  "lastUpdated": "2026-11-19T14:01:41.928Z",
   "team": {
     "played": 9,
     "wins": 7,
@@ -98,13 +98,13 @@
     {
       "pos": 8,
       "team": "Limako",
-      "g": 8,
+      "g": 9,
       "w": 2,
       "gl": 1,
-      "v": 5,
-      "dv": 28,
-      "dt": 36,
-      "ds": -8,
+      "v": 6,
+      "dv": 31,
+      "dt": 41,
+      "ds": -10,
       "p": 7
     },
     {
@@ -133,6 +133,18 @@
     },
     {
       "pos": 11,
+      "team": "Ter Laak Boomverzorging",
+      "g": 5,
+      "w": 1,
+      "gl": 1,
+      "v": 3,
+      "dv": 18,
+      "dt": 31,
+      "ds": -13,
+      "p": 4
+    },
+    {
+      "pos": 12,
       "team": "Novia Facts",
       "g": 9,
       "w": 1,
@@ -142,18 +154,6 @@
       "dt": 45,
       "ds": -22,
       "p": 4
-    },
-    {
-      "pos": 12,
-      "team": "Ter Laak Boomverzorging",
-      "g": 4,
-      "w": 0,
-      "gl": 1,
-      "v": 3,
-      "dv": 13,
-      "dt": 28,
-      "ds": -15,
-      "p": 1
     }
   ],
   "uitslagen": [
