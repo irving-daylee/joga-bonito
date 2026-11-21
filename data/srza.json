@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-20T13:45:12.274Z",
+  "lastUpdated": "2026-11-21T13:10:06.151Z",
   "team": {
     "played": 9,
     "wins": 7,
@@ -7,12 +7,24 @@
     "losses": 1,
     "goalsFor": 48,
     "goalsAgainst": 26,
-    "position": 2,
+    "position": 3,
     "points": 22
   },
   "standen": [
     {
       "pos": 1,
+      "team": "Fc Ada",
+      "g": 8,
+      "w": 8,
+      "gl": 0,
+      "v": 0,
+      "dv": 61,
+      "dt": 22,
+      "ds": 39,
+      "p": 24
+    },
+    {
+      "pos": 2,
       "team": "Jai Hanuman 1",
       "g": 9,
       "w": 8,
@@ -24,7 +36,7 @@
       "p": 24
     },
     {
-      "pos": 2,
+      "pos": 3,
       "team": "Joga Bonito",
       "g": 9,
       "w": 7,
@@ -34,18 +46,6 @@
       "dt": 26,
       "ds": 22,
       "p": 22
-    },
-    {
-      "pos": 3,
-      "team": "Fc Ada",
-      "g": 7,
-      "w": 7,
-      "gl": 0,
-      "v": 0,
-      "dv": 54,
-      "dt": 19,
-      "ds": 35,
-      "p": 21
     },
     {
       "pos": 4,
@@ -110,13 +110,13 @@
     {
       "pos": 9,
       "team": "Ally United",
-      "g": 6,
+      "g": 7,
       "w": 2,
       "gl": 0,
-      "v": 4,
-      "dv": 20,
-      "dt": 34,
-      "ds": -14,
+      "v": 5,
+      "dv": 23,
+      "dt": 41,
+      "ds": -18,
       "p": 6
     },
     {
