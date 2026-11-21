@@ -12,6 +12,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import vm from 'vm';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 // Fouten in de app komen niet altijd via een return of throw terug: een crash
@@ -80,7 +81,16 @@ window.firebase = {
   database: () => ({
     goOnline() {},
     ref: () => ({
-      set(data) { window.__fb.writes.push(JSON.parse(JSON.stringify(data))); return Promise.resolve(); },
+      // Net als de echte webSDK: set() controleert het hele object vooraf en
+      // gooit meteen bij een undefined. JSON.stringify zou die stil weglaten,
+      // en dan slaagt hier een schrijfactie die Firebase zelf weigert.
+      set(data) {
+        (function nergensUndefined(v, pad) {
+          if (v === undefined) throw new Error("set failed: value argument contains undefined in property '" + pad + "'");
+          if (v && typeof v === 'object') for (const k of Object.keys(v)) nergensUndefined(v[k], pad + '.' + k);
+        })(data, 'data');
+        window.__fb.writes.push(JSON.parse(JSON.stringify(data))); return Promise.resolve();
+      },
       once: () => Promise.resolve({ val: () => window.__fb.snapshot }),
       on(_evt, cb) { window.__fb.valueCb = cb; },
       off() { window.__fb.valueCb = null; }
@@ -942,6 +952,91 @@ await check('een stand uit een andere poule wordt niet als actueel gepresenteerd
   })`);
   assert(actueel === true, 'een stand die wél bij het programma hoort wordt onterecht als oud gezien');
   return 'eindstand 2025/26 blijft 3e';
+});
+
+// De app staat op een project-site (irvingliesdek.github.io/joga-bonito/).
+// Een pad dat met '/' begint wijst daar naar de hoofdpagina van het account:
+// een icoon op het beginscherm opende een 404 en de service worker kon zich
+// niet installeren.
+await check('manifest, sw.js en index.html gaan niet uit van de rootmap', () => {
+  const dir = path.dirname(HTML_PATH);
+  const manifest = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
+  const fout = [];
+  for (const veld of ['start_url', 'scope']) {
+    const v = manifest[veld];
+    if (typeof v !== 'string') fout.push(`manifest.json mist "${veld}"`);
+    else if (v.startsWith('/') || /^https?:/.test(v)) fout.push(`manifest.json "${veld}": "${v}"`);
+  }
+  (manifest.icons || []).filter(i => i.src.startsWith('/')).forEach(i => fout.push(`manifest-icoon ${i.src}`));
+  const sw = fs.readFileSync(path.join(dir, 'sw.js'), 'utf8');
+  (sw.match(/'\/[^'/][^']*'|'\/'/g) || []).forEach(p => fout.push(`sw.js ${p}`));
+  const html = fs.readFileSync(HTML_PATH, 'utf8');
+  (html.match(/(?:href|src)=["']\/(?!\/)[^"']*["']|(?:register|fetch)\(\s*['"`]\/(?!\/)[^'"`]*/g) || [])
+    .forEach(p => fout.push(`index.html ${p}`));
+  assert(fout.length === 0, 'absolute paden: ' + fout.join(', '));
+  return `start_url ${manifest.start_url}, scope ${manifest.scope}`;
+});
+
+// Draait sw.js zoals de browser dat doet onder /joga-bonito/, met een server
+// die alles buiten die map met een 404 beantwoordt.
+async function startServiceWorker(serveer) {
+  const BASIS = 'https://irvingliesdek.github.io/joga-bonito/sw.js';
+  const opslag = new Map();
+  const sleutel = (req, opts) => {
+    const u = new URL(typeof req === 'string' ? req : req.url, BASIS);
+    if (opts && opts.ignoreSearch) u.search = '';
+    return u.href;
+  };
+  const fakeFetch = async req => serveer(new URL(typeof req === 'string' ? req : req.url, BASIS));
+  const cache = {
+    async addAll(urls) {
+      for (const u of urls) {
+        const res = await fakeFetch(u);
+        if (!res.ok) throw new TypeError(`addAll: ${new URL(u, BASIS).href} gaf ${res.status}`);
+        opslag.set(sleutel(u), res);
+      }
+    },
+    async put(req, res) { opslag.set(sleutel(req), res); },
+  };
+  const caches = {
+    open: async () => cache,
+    keys: async () => [],
+    delete: async () => true,
+    match: async (req, opts) => { const r = opslag.get(sleutel(req, opts)); return r ? r.clone() : undefined; },
+  };
+  const handlers = {};
+  const self = {
+    addEventListener: (type, fn) => { handlers[type] = fn; },
+    skipWaiting: async () => {}, clients: { claim: async () => {} },
+  };
+  vm.runInNewContext(fs.readFileSync(path.join(path.dirname(HTML_PATH), 'sw.js'), 'utf8'),
+    { self, caches, fetch: fakeFetch, URL, Response, Promise, console });
+  let wacht;
+  handlers.install({ waitUntil: p => { wacht = p; } });
+  await wacht;
+  const navigeer = async url => {
+    let antwoord;
+    handlers.fetch({ request: { url, mode: 'navigate', method: 'GET' }, respondWith: p => { antwoord = p; } });
+    return antwoord;
+  };
+  return { navigeer, opslag };
+}
+
+await check('de service worker valt bij een mislukte pagina terug op de bewaarde app', async () => {
+  const APP = '<!doctype html><title>Joga Bonito</title>';
+  let online = true;
+  const { navigeer } = await startServiceWorker(url => {
+    if (!online) return new Response('GitHub Pages: 404', { status: 404 });
+    if (!url.pathname.startsWith('/joga-bonito/')) return new Response('niet hier', { status: 404 });
+    return new Response(url.pathname.endsWith('.png') ? 'png' : APP, { status: 200 });
+  });
+
+  online = false;
+  const res = await navigeer('https://irvingliesdek.github.io/joga-bonito/?utm_source=pwa');
+  const tekst = await res.text();
+  assert(res.status === 200 && tekst === APP,
+    `na een 404 op de pagina krijgt de gebruiker "${tekst}" (status ${res.status}) in plaats van de app`);
+  return 'installeert onder /joga-bonito/, 404 → bewaarde app';
 });
 
 await check('srza-datums zijn ISO en renderen zonder NaN', () => {

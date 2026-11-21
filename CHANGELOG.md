@@ -9,6 +9,21 @@ wordt opgeslagen, **minor** bij een nieuwe functie of zichtbare gedragsveranderi
 
 ---
 
+## [2.20.1] — 21 november 2026
+
+### Opgelost
+- **De app staat op een nieuw adres:
+  [irvingliesdek.github.io/joga-bonito](https://irvingliesdek.github.io/joga-bonito/).**
+  Het oude adres onder irving-daylee werkt niet meer. Zet het icoon op je
+  beginscherm opnieuw vanaf het nieuwe adres.
+- Het icoon op het beginscherm opent de app weer in plaats van een 404-pagina.
+- De app werkt nu ook offline: de bewaarde versie kon zich op dit adres niet
+  installeren.
+- Geeft de site een foutpagina, bijvoorbeeld bij een storing of een
+  verhuizing, dan opent de app gewoon de laatst bewaarde versie.
+
+---
+
 ## [2.20.0] — 9 november 2026
 
 ### Toegevoegd
